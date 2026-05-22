@@ -3,40 +3,36 @@ change_id: deployment
 phase: 5
 status: partial
 updated_at: 2026-05-22
-active_version: 9335ad39-4075-4342-974c-13f39091a55c
+production_url: https://rafcio-czyta.krzysztof-pupowski.workers.dev
 ---
 
 # Phase 5 — Observability & rollback
 
-## Worker versions (rollback targets)
+## Done in repo
 
-```text
-9335ad39-4075-4342-974c-13f39091a55c  ← current production deploy
-021613b5-25f7-481d-8d43-9b2d7836bec1
-2acd1335-898f-48ba-9a47-62caa4ee504a
-```
+- Rollback + `wrangler tail` documented in [README.md](../../../README.md#deployment)
+- `observability.enabled` in [wrangler.jsonc](../../../wrangler.jsonc)
+- CI deploy live — versions managed via GitHub Actions + Wrangler
 
-Rollback example:
+## Manual checklist
+
+| Task | Status |
+|------|--------|
+| `npx wrangler tail rafcio-czyta` while hitting the site | [ ] |
+| CF dashboard → Workers → `rafcio-czyta` → Observability | [ ] |
+| CF Billing → spend notifications ($1 / $5) | [ ] |
+
+## Rollback
 
 ```bash
-npx wrangler versions deploy 021613b5-25f7-481d-8d43-9b2d7836bec1 --message "rollback: reason"
+npx wrangler versions list
+npx wrangler versions deploy <VERSION_ID> --message "rollback: reason"
 ```
 
-Reverts Worker code only — not Supabase schema/data.
+Worker code only — not Supabase data.
 
 ## Live logs
 
 ```bash
 npx wrangler tail rafcio-czyta
 ```
-
-Hit the site in another terminal; expect request logs in the tail stream.
-
-## Dashboard (manual)
-
-- **Workers & Pages → rafcio-czyta → Observability** — confirm metrics/logs (enabled in [wrangler.jsonc](../../../wrangler.jsonc))
-- **Manage Account → Billing → Notifications** — set spend alerts at $1 / $5
-
-## README
-
-Rollback, deploy, and `wrangler tail` documented in [README.md](../../../README.md#deployment).

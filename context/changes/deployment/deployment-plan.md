@@ -84,12 +84,8 @@ Runtime secrets (`SUPABASE_URL`, `SUPABASE_KEY`) live in Cloudflare (set once vi
 
 ## Phase 4 — GitHub Actions: auto + manual deploy
 
-- [ ] In Cloudflare dashboard → My Profile → API Tokens → "Create Token" → use the **"Edit Cloudflare Workers"** template (scopes: `Account: Workers Scripts:Edit`, `Account: Account Settings:Read`, `User: Memberships:Read`, `User: User Details:Read`, Zone read for any custom domain). Copy the token immediately — it's shown only once.
-- [ ] Add GitHub Actions secrets (web UI **or** GitHub CLI — see [gh-cli-setup.md](./gh-cli-setup.md)):
-  - `CLOUDFLARE_API_TOKEN`
-  - `CLOUDFLARE_ACCOUNT_ID`
-  - Confirm `SUPABASE_URL` and `SUPABASE_KEY` already exist (used by the current build job).
-  - CLI: `gh secret set CLOUDFLARE_API_TOKEN` (etc.); verify with `.\scripts\gh-verify-setup.ps1`.
+- [x] In Cloudflare dashboard → API Tokens → **Edit Cloudflare Workers** (must include **Workers KV Storage** edit for `SESSION` binding). → [phase-4-record.md](./phase-4-record.md)
+- [x] Add GitHub Actions secrets (all four): `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID`, `SUPABASE_URL`, `SUPABASE_KEY`. Verify: `.\scripts\gh-verify-setup.ps1`
 - [x] Extend [.github/workflows/ci.yml](../../../.github/workflows/ci.yml):
   - Add `workflow_dispatch:` to the `on:` triggers (manual deploys).
   - Split the file into two jobs: keep the existing `ci` job (lint + build on push/PR), and add a `deploy` job that **`needs: ci`** and runs only on `push` to `main` or `workflow_dispatch`.
@@ -131,8 +127,8 @@ jobs:
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
 ```
 
-- [ ] Validation: trigger `workflow_dispatch` from the Actions tab first (low risk, deliberate). Watch the run, then visit the Worker URL. If deploy fails with `Authentication error [code: 10000]`, re-issue the API token per [phase-4-record.md](./phase-4-record.md).
-- [ ] Validation: open a trivial PR (e.g. README typo), confirm `ci` runs but `deploy` is skipped on PR. Merge and confirm `deploy` runs on `main` push.
+- [x] Validation: `workflow_dispatch` deploy succeeded ([run 26290469829](https://github.com/krzysztofpupowski-cmd/RafcioCzyta/actions/runs/26290469829)); production URL responds.
+- [ ] Validation (optional): trivial PR → `ci` only; merge → `ci` + `deploy`.
 
 ---
 
@@ -140,10 +136,7 @@ jobs:
 
 - [ ] `npx wrangler tail` against `rafcio-czyta` while hitting the site — confirms live log stream works.
 - [ ] In CF dashboard → Workers & Pages → `rafcio-czyta` → Observability — confirm logs/metrics are populated (already enabled in [wrangler.jsonc](../../../wrangler.jsonc)).
-- [ ] Document rollback in [README.md](../../../README.md):
-  - `npx wrangler versions list`
-  - `npx wrangler versions deploy <VERSION_ID> --message "rollback: <reason>"`
-  - Note: rollback reverts Worker code only — **not** Supabase schema/data (Edge Case C).
+- [x] Document rollback in [README.md](../../../README.md) (see Deploy section; Edge Case C: Worker code only).
 - [ ] CF dashboard → Manage Account → Billing → set **spend notifications** (email at $1 / $5 thresholds) — guards against the "unexpected Workers Paid charges" risk in infrastructure.md.
 - [x] Add a short "Deploy" section to [README.md](../../../README.md) covering: manual deploy command, GH Actions auto/manual deploy, rollback, and how to push new secrets.
 
