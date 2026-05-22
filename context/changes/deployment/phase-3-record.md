@@ -41,3 +41,5 @@ If confirmation links fail: **Authentication** → **Email Templates** → **Con
 - [ ] Redirect URLs include production workers.dev URL
 - [ ] Signup → email confirm → signin → `/dashboard` on production
 - [ ] `sb-*` cookies visible on workers.dev domain (DevTools → Application → Cookies)
+
+<!-- ci-pr-test -->
