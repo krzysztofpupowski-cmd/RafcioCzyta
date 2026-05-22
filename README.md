@@ -181,7 +181,7 @@ GitHub Actions (`.github/workflows/ci.yml`):
 - **Every push / PR to `master`**: lint + build
 - **Push to `master` or manual `workflow_dispatch`**: deploy via `cloudflare/wrangler-action@v3`
 
-Repository secrets: `SUPABASE_URL`, `SUPABASE_KEY`, `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID`.
+Repository secrets: `SUPABASE_URL`, `SUPABASE_KEY`, `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID`. The Cloudflare token must use the **Edit Cloudflare Workers** template (includes Workers KV write for the `SESSION` binding).
 
 Manual deploy from CLI (requires [GitHub CLI](https://cli.github.com/)):
 

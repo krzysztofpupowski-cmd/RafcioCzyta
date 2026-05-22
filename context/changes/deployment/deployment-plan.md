@@ -181,13 +181,16 @@ Production cookies from [src/lib/supabase.ts](../../../src/lib/supabase.ts) must
 2. If a runtime error mentions `node:` modules at deploy-time, prefer a fetch-based or `cloudflare:*`-compatible alternative.
 3. Keep LLM calls (per [context/foundation/prd.md](../../foundation/prd.md) FR-003) as outbound `fetch` to a hosted provider — never bundle heavy SDKs into the Worker.
 
-### Edge Case E — CI deploy fails authentication
+### Edge Case E — CI deploy fails authentication or KV bindings
 
-Most common cause: API token scope mismatch.
+| Error | Cause | Fix |
+|-------|--------|-----|
+| `Authentication error [code: 10000]` | Invalid token or wrong account | Re-issue **Edit Cloudflare Workers** token; include account `2c788d5ea383324e978394f1cda7696a` |
+| `kv bindings require kv write perms [code: 10023]` | Token lacks **Workers KV Storage** edit | Same template, or custom token with **Workers KV Storage → Edit** (required for `SESSION` KV in [wrangler.jsonc](../../../wrangler.jsonc)) |
 
-1. Re-issue the token using the **"Edit Cloudflare Workers"** template (not a custom token).
+1. Re-issue the token using the **"Edit Cloudflare Workers"** template (includes KV write), or add **Workers KV Storage Edit** on a custom token.
 2. Confirm the token's "Account Resources" includes the target account.
-3. `npx wrangler whoami` locally with the same token (`CLOUDFLARE_API_TOKEN=… npx wrangler whoami`) to validate before re-running CI.
+3. `CLOUDFLARE_API_TOKEN=… CLOUDFLARE_ACCOUNT_ID=… npx wrangler whoami` locally, then `npm run build && npx wrangler deploy` to validate before re-running CI.
 
 ### Edge Case F — Fork PR previews
 

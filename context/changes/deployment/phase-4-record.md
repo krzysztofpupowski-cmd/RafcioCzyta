@@ -1,7 +1,7 @@
 ---
 change_id: deployment
 phase: 4
-status: deploy-blocked-token-permissions
+status: deploy-blocked-kv-token-scope
 updated_at: 2026-05-22
 ---
 
@@ -19,15 +19,39 @@ updated_at: 2026-05-22
 |-----|---------|------|----------|-------|
 | [26288901045](https://github.com/krzysztofpupowski-cmd/RafcioCzyta/actions/runs/26288901045) | push | ✅ | ❌ | No `CLOUDFLARE_API_TOKEN` |
 | [26289250289](https://github.com/krzysztofpupowski-cmd/RafcioCzyta/actions/runs/26289250289) | workflow_dispatch | ✅ | ❌ | `Authentication error [code: 10000]` |
+| (latest) | workflow_dispatch | ✅ | ❌ | `kv bindings require kv write perms [code: 10023]` |
 
-## Fix — re-create Cloudflare API token
+## Fix — API token must include Workers KV (current blocker)
 
-The token secret exists but Cloudflare rejected it (wrong template, account scope, or typo).
+Deploy uploads the Worker then fails binding `env.SESSION` (KV namespace in [wrangler.jsonc](../../../wrangler.jsonc)). Astro sessions require KV; the CI token must be able to **write** KV bindings on deploy.
+
+**Error:** `kv bindings require kv write perms [code: 10023]`
+
+### Option A — Template (preferred)
 
 1. Cloudflare → **My Profile** → **API Tokens** → **Create Token**
-2. Use template **Edit Cloudflare Workers** (not a custom read-only token)
-3. **Account Resources** → Include → **your account** (ID `2c788d5ea383324e978394f1cda7696a`)
-4. Create and copy the token once
+2. Template: **Edit Cloudflare Workers** (includes **Workers KV Storage** write on the account)
+3. **Account Resources** → Include → account `2c788d5ea383324e978394f1cda7696a`
+4. Create token → copy once
+
+### Option B — Custom token (if template still fails)
+
+Create **Custom token** with these **Account** permissions:
+
+| Permission | Access |
+|------------|--------|
+| Workers Scripts | Edit |
+| Workers KV Storage | Edit |
+| Account Settings | Read |
+
+Plus **User** permissions: User Details Read, Memberships Read.
+
+Account Resources: **Include** → your account only.
+
+### Re-set GitHub secret and re-run
+
+1. Cloudflare → **My Profile** → **API Tokens** → **Create Token** (see above)
+2. Copy token once
 
 Re-set the GitHub secret (paste only the token, no spaces/newlines):
 
@@ -55,7 +79,7 @@ Expect your account in the table; then `npm run build` + `npx wrangler deploy` (
 
 | Secret | Status |
 |--------|--------|
-| `CLOUDFLARE_API_TOKEN` | Set — **must be re-issued** with Workers edit scopes |
+| `CLOUDFLARE_API_TOKEN` | Set — **re-issue** with **Workers Scripts Edit + Workers KV Storage Edit** |
 | `CLOUDFLARE_ACCOUNT_ID` | ✅ |
 | `SUPABASE_URL` | ✅ |
 | `SUPABASE_KEY` | ✅ |
