@@ -53,7 +53,7 @@ Adjust visibility (`--public`) and name if your GitHub org/username differs.
 
 ```powershell
 git remote add origin https://github.com/YOUR_USER/rafcio-czyta.git
-git push -u origin master
+git push -u origin main
 ```
 
 Confirm `gh` sees the repo:

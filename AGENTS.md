@@ -42,4 +42,4 @@ No automated test runner is configured; verify with lint, build, and manual chec
 
 ## Pull Requests
 
-CI (@.github/workflows/ci.yml) on push/PR to `master`: `npm ci`, `npx astro sync`, `npm run lint`, `npm run build` (needs `SUPABASE_URL` and `SUPABASE_KEY` repo secrets). Run `npm run lint` and `npm run build` locally before opening a PR.
+CI (@.github/workflows/ci.yml) on push/PR to `main`: `npm ci`, `npx astro sync`, `npm run lint`, `npm run build` (needs `SUPABASE_URL` and `SUPABASE_KEY` repo secrets). Deploy job on push to `main` / `workflow_dispatch` needs `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID`. Run `npm run lint` and `npm run build` locally before opening a PR.
