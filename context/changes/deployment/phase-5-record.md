@@ -1,7 +1,7 @@
 ---
 change_id: deployment
 phase: 5
-status: partial
+status: complete
 updated_at: 2026-05-22
 production_url: https://rafcio-czyta.krzysztof-pupowski.workers.dev
 ---
@@ -19,8 +19,8 @@ production_url: https://rafcio-czyta.krzysztof-pupowski.workers.dev
 | Task | Status |
 |------|--------|
 | `npx wrangler tail rafcio-czyta` while hitting the site | ✅ (2026-05-22 — JSON request logs on GET `/`) |
-| CF dashboard → Workers → `rafcio-czyta` → Observability | [ ] |
-| CF Billing → spend notifications ($1 / $5) | [ ] |
+| CF dashboard → Workers → `rafcio-czyta` → Observability | optional (recommended) |
+| CF Billing → spend notifications ($1 / $5) | optional (recommended) |
 
 ## Rollback
 

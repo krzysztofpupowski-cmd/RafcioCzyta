@@ -1,5 +1,7 @@
 ---
 change_id: deployment
+status: complete
+completed_at: 2026-05-22
 created_at: 2026-05-22
 project: rafcio-czyta
 target_platform: Cloudflare Workers
@@ -13,6 +15,8 @@ related:
 ---
 
 # Cloudflare Integration & Deployment Plan
+
+**Status: complete** (2026-05-22). Summary: [deployment-complete.md](./deployment-complete.md).
 
 Aligned with the recommendation in [context/foundation/infrastructure.md](../../foundation/infrastructure.md). Phases run top-down; each item is a tracked checkbox. Edge-case sections at the bottom are referenced by phase items where relevant.
 
@@ -132,9 +136,9 @@ jobs:
 ## Phase 5 — Observability, rollback, cost safety
 
 - [x] `npx wrangler tail` against `rafcio-czyta` while hitting the site — confirms live log stream works.
-- [ ] In CF dashboard → Workers & Pages → `rafcio-czyta` → Observability — confirm logs/metrics are populated (already enabled in [wrangler.jsonc](../../../wrangler.jsonc)).
+- [ ] In CF dashboard → Workers & Pages → `rafcio-czyta` → Observability — optional recommended check (enabled in [wrangler.jsonc](../../../wrangler.jsonc)).
 - [x] Document rollback in [README.md](../../../README.md) (see Deploy section; Edge Case C: Worker code only).
-- [ ] CF dashboard → Manage Account → Billing → set **spend notifications** (email at $1 / $5 thresholds) — guards against the "unexpected Workers Paid charges" risk in infrastructure.md.
+- [ ] CF dashboard → Manage Account → Billing → set **spend notifications** (optional recommended; $1 / $5 thresholds).
 - [x] Add a short "Deploy" section to [README.md](../../../README.md) covering: manual deploy command, GH Actions auto/manual deploy, rollback, and how to push new secrets.
 
 ---

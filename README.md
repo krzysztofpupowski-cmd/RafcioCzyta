@@ -150,6 +150,8 @@ Route protection is handled in `src/middleware.ts`. Add paths to the `PROTECTED_
 
 ## Deployment
 
+**Status:** production baseline complete (2026-05-22). Details: [context/changes/deployment/deployment-complete.md](context/changes/deployment/deployment-complete.md).
+
 Production Worker: **https://rafcio-czyta.krzysztof-pupowski.workers.dev**
 
 This project deploys to [Cloudflare Workers](https://workers.cloudflare.com/) via [Wrangler](https://developers.cloudflare.com/workers/wrangler/).
@@ -178,8 +180,8 @@ In Supabase → **Authentication** → **URL Configuration**, set **Site URL** a
 
 GitHub Actions (`.github/workflows/ci.yml`):
 
-- **Every push / PR to `master`**: lint + build
-- **Push to `master` or manual `workflow_dispatch`**: deploy via `cloudflare/wrangler-action@v3`
+- **Every push / PR to `main`**: lint + build
+- **Push to `main` or manual `workflow_dispatch`**: deploy via `cloudflare/wrangler-action@v3`
 
 Repository secrets: `SUPABASE_URL`, `SUPABASE_KEY`, `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID`. The Cloudflare token must use the **Edit Cloudflare Workers** template (includes Workers KV write for the `SESSION` binding).
 
