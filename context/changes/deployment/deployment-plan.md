@@ -73,12 +73,9 @@ Runtime secrets (`SUPABASE_URL`, `SUPABASE_KEY`) live in Cloudflare (set once vi
 
 ## Phase 3 — Supabase external integration
 
-- [ ] In Supabase dashboard → Authentication → URL Configuration:
-  - Set **Site URL** to the production `*.workers.dev` URL.
-  - Add the same URL (and any planned custom domain) to **Redirect URLs**.
-  - Exact values: [phase-3-record.md](./phase-3-record.md)
-- [ ] Manually test the full auth round-trip on production: signup → confirm-email link → signin → `/dashboard`. This catches cookie/SameSite issues (Edge Case B) before CI deploys start landing.
-- [ ] If email confirmation links fail, check that the confirm-email template uses `{{ .SiteURL }}` and that the production URL is the Site URL, not a stale localhost value.
+- [x] In Supabase dashboard → Authentication → URL Configuration (Site URL + Redirect URLs for workers.dev). → [phase-3-record.md](./phase-3-record.md)
+- [x] Manually test the full auth round-trip on production: signin → `/dashboard` shows authenticated user (verified `krzysztof.pupowski@gmail.com`).
+- [x] Cookie/session on production workers.dev — no Edge Case B redirect loop.
 
 ---
 
