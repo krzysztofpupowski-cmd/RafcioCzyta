@@ -131,7 +131,7 @@ jobs:
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
 ```
 
-- [ ] Validation: trigger `workflow_dispatch` from the Actions tab first (low risk, deliberate). Watch the run, then visit the Worker URL.
+- [ ] Validation: trigger `workflow_dispatch` from the Actions tab first (low risk, deliberate). Watch the run, then visit the Worker URL. If deploy fails with `Authentication error [code: 10000]`, re-issue the API token per [phase-4-record.md](./phase-4-record.md).
 - [ ] Validation: open a trivial PR (e.g. README typo), confirm `ci` runs but `deploy` is skipped on PR. Merge and confirm `deploy` runs on `main` push.
 
 ---
