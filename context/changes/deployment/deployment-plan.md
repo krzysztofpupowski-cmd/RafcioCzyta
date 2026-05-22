@@ -128,13 +128,13 @@ jobs:
 ```
 
 - [x] Validation: `workflow_dispatch` deploy succeeded ([run 26290469829](https://github.com/krzysztofpupowski-cmd/RafcioCzyta/actions/runs/26290469829)); production URL responds.
-- [ ] Validation (optional): trivial PR → `ci` only; merge → `ci` + `deploy`.
+- [x] Validation: PR [#1](https://github.com/krzysztofpupowski-cmd/RafcioCzyta/pull/1) → `ci` only, `deploy` skipped; closed after verify.
 
 ---
 
 ## Phase 5 — Observability, rollback, cost safety
 
-- [ ] `npx wrangler tail` against `rafcio-czyta` while hitting the site — confirms live log stream works.
+- [x] `npx wrangler tail` against `rafcio-czyta` while hitting the site — confirms live log stream works.
 - [ ] In CF dashboard → Workers & Pages → `rafcio-czyta` → Observability — confirm logs/metrics are populated (already enabled in [wrangler.jsonc](../../../wrangler.jsonc)).
 - [x] Document rollback in [README.md](../../../README.md) (see Deploy section; Edge Case C: Worker code only).
 - [ ] CF dashboard → Manage Account → Billing → set **spend notifications** (email at $1 / $5 thresholds) — guards against the "unexpected Workers Paid charges" risk in infrastructure.md.

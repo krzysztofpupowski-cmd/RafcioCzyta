@@ -1,7 +1,7 @@
 ---
 change_id: deployment
 phase: 3
-status: pending-dashboard-config
+status: awaiting-supabase-dashboard-and-auth-test
 updated_at: 2026-05-22
 production_url: https://rafcio-czyta.krzysztof-pupowski.workers.dev
 ---
