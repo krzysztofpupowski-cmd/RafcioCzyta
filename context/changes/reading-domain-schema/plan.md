@@ -254,13 +254,13 @@ Not applicable — F-01 ships no callable surface (no API routes, no UI). The fi
 
 #### Automated
 
-- [x] 2.1 `src/db/database.types.ts` exists and is non-empty
-- [x] 2.2 `src/types.ts` exists and compiles under `npx tsc --noEmit`
-- [x] 2.3 `npm run lint` passes
-- [x] 2.4 `npm run build` passes
+- [x] 2.1 `src/db/database.types.ts` exists and is non-empty — ebba5c9
+- [x] 2.2 `src/types.ts` exists and compiles under `npx tsc --noEmit` — ebba5c9
+- [x] 2.3 `npm run lint` passes — ebba5c9
+- [x] 2.4 `npm run build` passes — ebba5c9
 
 #### Manual
 
-- [x] 2.5 Generated file contains all five tables and three enums under `Database`
-- [x] 2.6 Sample import `import type { Child, ReadingLevel } from "@/types"` resolves in an editor without surfacing `Database` plumbing
-- [x] 2.7 Re-running `npx supabase gen types typescript --local` produces no diff against the committed file
+- [x] 2.5 Generated file contains all five tables and three enums under `Database` — ebba5c9
+- [x] 2.6 Sample import `import type { Child, ReadingLevel } from "@/types"` resolves in an editor without surfacing `Database` plumbing — ebba5c9
+- [x] 2.7 Re-running `npx supabase gen types typescript --local` produces no diff against the committed file — ebba5c9
