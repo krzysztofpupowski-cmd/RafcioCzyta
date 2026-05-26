@@ -1,0 +1,14 @@
+-- ============================================================================
+-- supabase/seed.sql
+--
+-- Intentionally empty.
+--
+-- supabase/config.toml has `[db.seed] enabled = true` with
+-- `sql_paths = ["./seed.sql"]`, so the CLI looks for this file on every
+-- `npx supabase db reset --local`. This stub exists purely to satisfy that
+-- CLI path; F-01 explicitly ships no fixtures or demo data.
+--
+-- Downstream slices (S-01..S-05) may introduce real seed data here if they
+-- need a curated local dev experience. Keep production-only fixtures out:
+-- this file runs on every local reset.
+-- ============================================================================
