@@ -236,31 +236,31 @@ Not applicable — F-01 ships no callable surface (no API routes, no UI). The fi
 
 #### Automated
 
-- [x] 1.1 Local Supabase resets cleanly with new migration applied (`npx supabase db reset --local`)
-- [x] 1.2 Migration file exists and is non-empty at `supabase/migrations/20260526143400_reading_domain_schema.sql`
-- [x] 1.3 `psql` shows all five tables, both functions, and child-alignment FKs (`\dt public.*`, `\df public.is_my_child`, `\df public.set_updated_at`, `\d public.practice_attempts`, `\d public.flashcards`)
-- [x] 1.4 RLS is enabled on every domain table (`pg_class.relrowsecurity = t`)
-- [x] 1.5 `npm run lint` passes
+- [x] 1.1 Local Supabase resets cleanly with new migration applied (`npx supabase db reset --local`) — 114a225
+- [x] 1.2 Migration file exists and is non-empty at `supabase/migrations/20260526143400_reading_domain_schema.sql` — 114a225
+- [x] 1.3 `psql` shows all five tables, both functions, and child-alignment FKs (`\dt public.*`, `\df public.is_my_child`, `\df public.set_updated_at`, `\d public.practice_attempts`, `\d public.flashcards`) — 114a225
+- [x] 1.4 RLS is enabled on every domain table (`pg_class.relrowsecurity = t`) — 114a225
+- [x] 1.5 `npm run lint` passes — 114a225
 
 #### Manual
 
-- [x] 1.6 Supabase Studio shows five tables with expected columns and FKs
-- [x] 1.7 `is_my_child(<random uuid>)` returns `false` with no auth context
-- [x] 1.8 Cross-user RLS check: user B cannot read user A's `children` or `flashcards`
-- [x] 1.9 Cascade check: deleting an `auth.users` row removes all owned domain rows
-- [x] 1.10 Cross-child FK check: inserting an attempt with one child's session and another child's flashcard fails
+- [x] 1.6 Supabase Studio shows five tables with expected columns and FKs — 114a225
+- [x] 1.7 `is_my_child(<random uuid>)` returns `false` with no auth context — 114a225
+- [x] 1.8 Cross-user RLS check: user B cannot read user A's `children` or `flashcards` — 114a225
+- [x] 1.9 Cascade check: deleting an `auth.users` row removes all owned domain rows — 114a225
+- [x] 1.10 Cross-child FK check: inserting an attempt with one child's session and another child's flashcard fails — 114a225
 
 ### Phase 2: Typed bindings & domain DTOs
 
 #### Automated
 
-- [ ] 2.1 `src/db/database.types.ts` exists and is non-empty
-- [ ] 2.2 `src/types.ts` exists and compiles under `npx tsc --noEmit`
-- [ ] 2.3 `npm run lint` passes
-- [ ] 2.4 `npm run build` passes
+- [x] 2.1 `src/db/database.types.ts` exists and is non-empty
+- [x] 2.2 `src/types.ts` exists and compiles under `npx tsc --noEmit`
+- [x] 2.3 `npm run lint` passes
+- [x] 2.4 `npm run build` passes
 
 #### Manual
 
-- [ ] 2.5 Generated file contains all five tables and three enums under `Database`
-- [ ] 2.6 Sample import `import type { Child, ReadingLevel } from "@/types"` resolves in an editor without surfacing `Database` plumbing
-- [ ] 2.7 Re-running `npx supabase gen types typescript --local` produces no diff against the committed file
+- [x] 2.5 Generated file contains all five tables and three enums under `Database`
+- [x] 2.6 Sample import `import type { Child, ReadingLevel } from "@/types"` resolves in an editor without surfacing `Database` plumbing
+- [x] 2.7 Re-running `npx supabase gen types typescript --local` produces no diff against the committed file
