@@ -10,6 +10,7 @@ Astro 6 SSR starter with React 19 islands, Tailwind 4, Supabase cookie auth, and
 - React components: no Next.js directives (`"use client"`). Put hooks in `src/components/hooks/`.
 - Tailwind: merge classes with `cn()` from @src/lib/utils.ts, not string concatenation.
 - New Supabase tables: migrations in `supabase/migrations/` as `YYYYMMDDHHmmss_short_description.sql` with RLS and per-operation policies.
+- **Do not run Docker / Supabase CLI commands through the agent shell** on Windows. `npx supabase db reset|start|stop`, `npm run dev`, `npx wrangler dev`, and other long-running or interactive commands wedge the PowerShell + conpty bridge and require a session restart. Ask the user to run them in their own terminal and paste output back. Agent-friendly: `npm run lint`, `npm run build`, `npx astro sync`, `git`, file edits.
 
 ## Project Structure
 

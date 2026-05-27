@@ -13,6 +13,16 @@ This file provides guidance to AI Agent when working with code in this repositor
 
 Pre-commit hooks: husky + lint-staged runs `eslint --fix` on `*.{ts,tsx,astro}` and `prettier --write` on `*.{json,css,md}`.
 
+## Agent shell
+
+**Do not run Docker / Supabase CLI commands through the agent shell on Windows.** `npx supabase db reset|start|stop`, `npm run dev`, `npx wrangler dev`, and other long-running or interactive commands wedge the PowerShell + conpty bridge that the agent uses to drive terminals — once wedged, every subsequent command returns "no exit status" or "Execution backend unavailable" and only restarting the chat session frees it.
+
+Protocol:
+
+- The agent must ask the user to run Docker- or daemon-touching Supabase/Wrangler commands in their own terminal, then paste back the relevant output.
+- Agent-friendly commands (safe to invoke directly): `npm run lint`, `npm run build`, `npx astro sync`, `git`, file edits, short scripts.
+- If a Supabase migration was just edited and needs re-applying, ask the user to run `npx supabase db reset --local` manually before continuing review or implementation steps.
+
 ## Architecture
 
 **Astro 6 SSR app** with React 19 islands, Tailwind 4, Supabase auth, and shadcn/ui components. Deployed to Cloudflare Workers.
