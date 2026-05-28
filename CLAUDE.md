@@ -15,7 +15,21 @@ Pre-commit hooks: husky + lint-staged runs `eslint --fix` on `*.{ts,tsx,astro}` 
 
 ## Agent shell
 
-**Do not run Docker / Supabase CLI commands through the agent shell on Windows.** `npx supabase db reset|start|stop`, `npm run dev`, `npx wrangler dev`, and other long-running or interactive commands wedge the PowerShell + conpty bridge that the agent uses to drive terminals — once wedged, every subsequent command returns "no exit status" or "Execution backend unavailable" and only restarting the chat session frees it.
+**Recommended shell: Git Bash.** Cursor is configured to use Git Bash as the default terminal on Windows (`terminal.integrated.defaultProfile.windows: "Git Bash"` in Cursor user settings). Git Bash supports bash heredocs (`<<'EOF'`), does not suffer from the PowerShell + conpty bridge wedging issue, and lets the agent run `npm run lint`, `npm run build`, `git`, and short scripts without manual intervention.
+
+**If the shell is PowerShell** (e.g. in a session started before the setting took effect): `<<'EOF'` heredocs are not supported. Use a PowerShell here-string written to a temp file for multi-line git commits:
+```powershell
+$msg = @"
+<subject>
+
+<body>
+"@
+$tmp = [System.IO.Path]::GetTempFileName()
+[System.IO.File]::WriteAllText($tmp, $msg, [System.Text.Encoding]::UTF8)
+git commit -F $tmp; Remove-Item $tmp
+```
+
+**Do not run Docker / Supabase CLI commands through the agent shell.** `npx supabase db reset|start|stop`, `npm run dev`, `npx wrangler dev`, and other long-running or interactive commands can wedge the terminal bridge — once wedged, every subsequent command returns "no exit status" and only restarting the chat session frees it.
 
 Protocol:
 
