@@ -329,19 +329,19 @@ Not applicable — no test runner. The end-to-end flow is validated manually in 
 
 #### Automated
 
-- [x] 2.1 `src/components/child/ReadingLevelField.tsx` and `src/components/child/ChildProfileForm.tsx` exist and compile
-- [x] 2.2 `src/pages/dashboard.astro` imports `ChildProfileForm` and `getMyChild` and hydrates the island via `client:load`
-- [x] 2.3 `npm run lint` passes
-- [x] 2.4 `npm run build` passes
-- [x] 2.5 `npx astro sync` passes
+- [x] 2.1 `src/components/child/ReadingLevelField.tsx` and `src/components/child/ChildProfileForm.tsx` exist and compile — d1173a3
+- [x] 2.2 `src/pages/dashboard.astro` imports `ChildProfileForm` and `getMyChild` and hydrates the island via `client:load` — d1173a3
+- [x] 2.3 `npm run lint` passes — d1173a3
+- [x] 2.4 `npm run build` passes — d1173a3
+- [x] 2.5 `npx astro sync` passes — d1173a3
 
 #### Manual
 
-- [x] 2.6 First-time parent sees onboarding form (empty name, "Nie wiem" pre-selected)
-- [x] 2.7 Submitting valid form persists child and renders form pre-filled on reload
-- [x] 2.8 Changing level from `unknown` to a concrete enum value persists and renders correctly
-- [x] 2.9 Changing level back to `unknown` writes `NULL` and pre-selects "Nie wiem" on reload
-- [x] 2.10 Client-side validation blocks empty `displayName` without a network call
-- [x] 2.11 Server-side validation path (JS disabled) renders error banner on `/dashboard?error=…`
-- [x] 2.12 Sign-in → `/dashboard` integration (FR-001 → FR-002 hand-off) works end-to-end
-- [x] 2.13 Mobile width (≤375px) renders form correctly with stacked radios
+- [x] 2.6 First-time parent sees onboarding form (empty name, "Nie wiem" pre-selected) — d1173a3
+- [x] 2.7 Submitting valid form persists child and renders form pre-filled on reload — d1173a3
+- [x] 2.8 Changing level from `unknown` to a concrete enum value persists and renders correctly — d1173a3
+- [x] 2.9 Changing level back to `unknown` writes `NULL` and pre-selects "Nie wiem" on reload — d1173a3
+- [x] 2.10 Client-side validation blocks empty `displayName` without a network call — d1173a3
+- [x] 2.11 Server-side validation path (JS disabled) renders error banner on `/dashboard?error=…` — d1173a3
+- [x] 2.12 Sign-in → `/dashboard` integration (FR-001 → FR-002 hand-off) works end-to-end — d1173a3
+- [x] 2.13 Mobile width (≤375px) renders form correctly with stacked radios — d1173a3
