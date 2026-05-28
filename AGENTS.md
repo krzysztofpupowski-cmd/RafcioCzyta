@@ -40,6 +40,7 @@ No automated test runner is configured; verify with lint, build, and manual chec
 - API routes: uppercase `GET`/`POST` exports; validate request bodies with zod.
 - Astro for layouts and static content; React for interactivity only.
 - ESLint enforces strict TypeScript, React Compiler, Astro a11y rules, and Prettier. Husky pre-commit runs lint-staged (`eslint --fix` on `*.{ts,tsx,astro}`, Prettier on `*.{json,css,md}`).
+- **`src/db/database.types.ts` is excluded from ESLint's type resolution** (`eslint.config.js` line 73: `{ ignores: ["src/db/database.types.ts"] }`). Every type derived from `Database` — i.e. all exports from `src/types.ts` (`Child`, `Flashcard`, `ReadingLevel`, etc.) — is treated as an error type by `@typescript-eslint`, causing `no-unsafe-assignment`, `no-unsafe-member-access`, `no-unsafe-return`, and `no-redundant-type-constituents` errors. **Pattern**: service modules (`src/lib/services/`) use a file-wide `/* eslint-disable */` block (see `src/lib/services/children.ts` as the canonical template). Astro pages and React components that receive these types use `// eslint-disable-next-line` inline comments on the specific problem lines. Do NOT remove the ignore entry — `database.types.ts` is auto-generated and must stay out of the type-checked graph.
 
 ## Pull Requests
 

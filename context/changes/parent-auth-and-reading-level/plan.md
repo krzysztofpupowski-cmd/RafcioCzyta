@@ -309,39 +309,39 @@ Not applicable — no test runner. The end-to-end flow is validated manually in 
 
 #### Automated
 
-- [x] 1.1 `zod` listed under `dependencies` in `package.json`
-- [x] 1.2 `src/lib/reading-level-form.ts`, `src/lib/schemas/child.ts`, `src/lib/services/children.ts`, `src/pages/api/children.ts` all exist and `npx astro sync` exits 0
-- [x] 1.3 `src/pages/api/auth/signin.ts` success path redirects to `/dashboard`
-- [x] 1.4 `src/pages/api/children.ts` exports `const prerender = false;` and `const POST`
-- [x] 1.5 `npm run lint` passes
-- [x] 1.6 `npm run build` passes
+- [x] 1.1 `zod` listed under `dependencies` in `package.json` — a962345
+- [x] 1.2 `src/lib/reading-level-form.ts`, `src/lib/schemas/child.ts`, `src/lib/services/children.ts`, `src/pages/api/children.ts` all exist and `npx astro sync` exits 0 — a962345
+- [x] 1.3 `src/pages/api/auth/signin.ts` success path redirects to `/dashboard` — a962345
+- [x] 1.4 `src/pages/api/children.ts` exports `const prerender = false;` and `const POST` — a962345
+- [x] 1.5 `npm run lint` passes — a962345
+- [x] 1.6 `npm run build` passes — a962345
 
 #### Manual
 
-- [x] 1.7 Sign-in success redirects to `/dashboard` (not `/`)
-- [x] 1.8 `POST /api/children` with valid name + level inserts a row and redirects to `/dashboard`
-- [x] 1.9 Re-submitting `POST /api/children` updates the existing row (no 23505 surfacing)
-- [x] 1.10 `POST /api/children` with `level=unknown` writes `current_level = NULL`
-- [x] 1.11 `POST /api/children` with empty displayName redirects to `/dashboard?error=…`
-- [x] 1.12 Unauthenticated `POST /api/children` redirects to `/auth/signin`
+- [x] 1.7 Sign-in success redirects to `/dashboard` (not `/`) — a962345
+- [x] 1.8 `POST /api/children` with valid name + level inserts a row and redirects to `/dashboard` — a962345
+- [x] 1.9 Re-submitting `POST /api/children` updates the existing row (no 23505 surfacing) — a962345
+- [x] 1.10 `POST /api/children` with `level=unknown` writes `current_level = NULL` — a962345
+- [x] 1.11 `POST /api/children` with empty displayName redirects to `/dashboard?error=…` — a962345
+- [x] 1.12 Unauthenticated `POST /api/children` redirects to `/auth/signin` — a962345
 
 ### Phase 2: Frontend — dashboard becomes the child-profile home
 
 #### Automated
 
-- [ ] 2.1 `src/components/child/ReadingLevelField.tsx` and `src/components/child/ChildProfileForm.tsx` exist and compile
-- [ ] 2.2 `src/pages/dashboard.astro` imports `ChildProfileForm` and `getMyChild` and hydrates the island via `client:load`
-- [ ] 2.3 `npm run lint` passes
-- [ ] 2.4 `npm run build` passes
-- [ ] 2.5 `npx astro sync` passes
+- [x] 2.1 `src/components/child/ReadingLevelField.tsx` and `src/components/child/ChildProfileForm.tsx` exist and compile
+- [x] 2.2 `src/pages/dashboard.astro` imports `ChildProfileForm` and `getMyChild` and hydrates the island via `client:load`
+- [x] 2.3 `npm run lint` passes
+- [x] 2.4 `npm run build` passes
+- [x] 2.5 `npx astro sync` passes
 
 #### Manual
 
-- [ ] 2.6 First-time parent sees onboarding form (empty name, "Nie wiem" pre-selected)
-- [ ] 2.7 Submitting valid form persists child and renders form pre-filled on reload
-- [ ] 2.8 Changing level from `unknown` to a concrete enum value persists and renders correctly
-- [ ] 2.9 Changing level back to `unknown` writes `NULL` and pre-selects "Nie wiem" on reload
-- [ ] 2.10 Client-side validation blocks empty `displayName` without a network call
-- [ ] 2.11 Server-side validation path (JS disabled) renders error banner on `/dashboard?error=…`
-- [ ] 2.12 Sign-in → `/dashboard` integration (FR-001 → FR-002 hand-off) works end-to-end
-- [ ] 2.13 Mobile width (≤375px) renders form correctly with stacked radios
+- [x] 2.6 First-time parent sees onboarding form (empty name, "Nie wiem" pre-selected)
+- [x] 2.7 Submitting valid form persists child and renders form pre-filled on reload
+- [x] 2.8 Changing level from `unknown` to a concrete enum value persists and renders correctly
+- [x] 2.9 Changing level back to `unknown` writes `NULL` and pre-selects "Nie wiem" on reload
+- [x] 2.10 Client-side validation blocks empty `displayName` without a network call
+- [x] 2.11 Server-side validation path (JS disabled) renders error banner on `/dashboard?error=…`
+- [x] 2.12 Sign-in → `/dashboard` integration (FR-001 → FR-002 hand-off) works end-to-end
+- [x] 2.13 Mobile width (≤375px) renders form correctly with stacked radios
