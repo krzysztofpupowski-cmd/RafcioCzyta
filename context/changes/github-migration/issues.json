@@ -1,0 +1,17 @@
+[
+  {"key":"Q-SRS","title":"Decyzja: ktory gotowy SRS w MVP?","labels":"roadmap,decision,status:blocked","body":"Q-SRS.md"},
+  {"key":"Q-LLM","title":"Decyzja: ktory dostawca LLM i polityka danych dziecka?","labels":"roadmap,decision,status:blocked","body":"Q-LLM.md"},
+  {"key":"F-01","title":"Schemat Supabase: poziom, fiszki, postep","labels":"roadmap,foundation,status:ready,10x-plan-ready","body":"F-01.md"},
+  {"key":"F-02","title":"Integracja LLM do generacji fiszek","labels":"roadmap,foundation,status:blocked","body":"F-02.md"},
+  {"key":"F-03","title":"Adapter gotowego SRS","labels":"roadmap,foundation,status:blocked","body":"F-03.md"},
+  {"key":"S-01","title":"Poziom dziecka po zalogowaniu","labels":"roadmap,slice,stream:a,status:proposed","body":"S-01.md"},
+  {"key":"S-02","title":"Generacja partii fiszek AI","labels":"roadmap,slice,stream:b,status:blocked","body":"S-02.md"},
+  {"key":"S-03","title":"Akceptacja partiami i lista fiszek","labels":"roadmap,slice,stream:b,status:proposed","body":"S-03.md"},
+  {"key":"S-04","title":"Sesja cwiczen na zaakceptowanych fiszkach","labels":"roadmap,slice,stream:c,status:blocked","body":"S-04.md"},
+  {"key":"S-05","title":"Prosty wskaznik opanowania","labels":"roadmap,slice,stream:c,status:proposed,north-star","body":"S-05.md"},
+  {"key":"P-voice","title":"[Parked] Sprawdzanie wymowy glosem","labels":"roadmap,parked,wontfix","body":"P-voice.md"},
+  {"key":"P-editor","title":"[Parked] Pelny edytor tresci fiszek","labels":"roadmap,parked,wontfix","body":"P-editor.md"},
+  {"key":"P-custom-srs","title":"[Parked] Wlasny algorytm powtorek","labels":"roadmap,parked,wontfix","body":"P-custom-srs.md"},
+  {"key":"P-worksheets","title":"[Parked] Automatyczne karty pracy","labels":"roadmap,parked,wontfix","body":"P-worksheets.md"},
+  {"key":"P-observability","title":"[Parked] Gleboka observability (Sentry, APM)","labels":"roadmap,parked,wontfix","body":"P-observability.md"}
+]
