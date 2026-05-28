@@ -32,7 +32,7 @@ Tradycyjna nauka czytania nie nadąża za tempem dziecka, które potrzebuje szyb
 | F-01 | reading-domain-schema | (foundation) schemat domeny: poziom, fiszki, status akceptacji, postęp ćwiczeń | — | Access Control, Business Logic | done |
 | F-02 | llm-flashcard-provider | (foundation) generacja fiszek przez skonfigurowanego dostawcę AI | F-01 | NFR (generacja <10 s) | blocked |
 | F-03 | srs-adapter | (foundation) zaakceptowane fiszki synchronizują się z gotowym algorytmem powtórek | F-01 | Non-Goals (bez własnego SRS) | blocked |
-| S-01 | parent-auth-and-reading-level | zalogować się i ustawić poziom dziecka (w tym „nie wiem / najprostszy start”) | F-01 | US-01, FR-001, FR-002 | ready |
+| S-01 | parent-auth-and-reading-level | zalogować się i ustawić poziom dziecka (w tym „nie wiem / najprostszy start”) | F-01 | US-01, FR-001, FR-002 | done |
 | S-02 | ai-flashcard-generation | wygenerować partię fiszek dopasowanych do wybranego poziomu | F-01, F-02, S-01 | US-01, FR-003 | blocked |
 | S-03 | batch-flashcard-acceptance | zaakceptować lub odrzucić partię propozycji AI i przeglądać przygotowane oraz zaakceptowane fiszki | S-02 | US-01, FR-004, FR-005 | proposed |
 | S-04 | srs-practice-session | uruchomić prostą sesję ćwiczeń na zaakceptowanych fiszkach w gotowym SRS | S-03, F-03 | US-01, FR-006, NFR (sesja <10 min) | blocked |
@@ -44,7 +44,7 @@ Navigation aid — groups items that share a Prerequisites chain. Canonical orde
 
 | Stream | Theme | Chain | Note |
 |---|---|---|---|
-| A | Konto i dane | `F-01` → `S-01` | `speed`: najpierw trwały poziom i konto, bez tego reszta nie ma sensu. |
+| A | Konto i dane | `F-01` → `S-01` | `S-01` done (2026-05-28) — poziom i konto gotowe; Stream B czeka na F-02. |
 | B | Materiał AI | `F-02` → `S-02` → `S-03` | Dołącza do A po `S-01` (poziom jako wejście generacji). |
 | C | Ćwiczenia i postęp | `F-03` → `S-04` → `S-05` | Dołącza do B po `S-03` (zaakceptowane fiszki); `S-05` to gwiazda przewodnia. |
 
@@ -55,8 +55,8 @@ Foundations below assume these are present and do NOT re-scaffold them.
 
 - **Frontend:** present — per tech-stack.md: Astro 6 SSR + React 19 + Tailwind 4
 - **Backend / API:** present — per tech-stack.md: Astro API routes (`src/pages/api/`)
-- **Data:** partial — Supabase client (`src/lib/supabase.ts`); brak migracji i tabel domenowych (fiszki, poziom, postęp)
-- **Auth:** present — per tech-stack.md: Supabase cookie auth (`src/middleware.ts`, `src/pages/api/auth/`)
+- **Data:** partial — Supabase client + migracja F-01 (`children`, fiszki, postęp); S-01 podpiął profil dziecka (`POST /api/children`, `/dashboard`)
+- **Auth:** present — Supabase cookie auth; sign-in ląduje na `/dashboard` z formularzem poziomu dziecka (S-01)
 - **Deploy / infra:** present — per tech-stack.md: Cloudflare Workers + `.github/workflows/ci.yml`
 - **Observability:** partial — `wrangler.jsonc` observability; brak Sentry/otel w aplikacji
 
@@ -116,7 +116,8 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **Blockers:** —
 - **Unknowns:** —
 - **Risk:** Auth jest w baseline — ryzyko to duplikacja scaffoldu zamiast podpięcia poziomu pod nowy schemat.
-- **Status:** ready
+- **Completed:** 2026-05-28 — `/dashboard` z formularzem profilu dziecka, `POST /api/children`, sign-in → `/dashboard`, „Nie wiem” → `current_level = NULL`. Impl-review (F1–F8 triaged) zamknięty — patrz `context/changes/parent-auth-and-reading-level/reviews/impl-review.md`.
+- **Status:** done
 
 ### S-02: Generacja fiszek przez AI
 
@@ -173,8 +174,8 @@ Foundations below assume these are present and do NOT re-scaffold them.
 | F-01 | reading-domain-schema | Schemat Supabase: poziom, fiszki, postęp | [#5](https://github.com/krzysztofpupowski-cmd/RafcioCzyta/issues/5) | done | Zakończone 2026-05-27 — odblokowało Stream A (S-01 → ready) |
 | F-02 | llm-flashcard-provider | Integracja LLM do generacji fiszek | [#6](https://github.com/krzysztofpupowski-cmd/RafcioCzyta/issues/6) | no | Wymaga wyboru dostawcy AI (Open Roadmap Q #2) |
 | F-03 | srs-adapter | Adapter gotowego SRS | [#7](https://github.com/krzysztofpupowski-cmd/RafcioCzyta/issues/7) | no | Wymaga wyboru SRS (Open Roadmap Q #1) |
-| S-01 | parent-auth-and-reading-level | Poziom dziecka po zalogowaniu | [#8](https://github.com/krzysztofpupowski-cmd/RafcioCzyta/issues/8) | yes | F-01 gotowe — następny w kolejce (Stream A) |
-| S-02 | ai-flashcard-generation | Generacja partii fiszek AI | [#9](https://github.com/krzysztofpupowski-cmd/RafcioCzyta/issues/9) | no | Po F-02 + S-01 |
+| S-01 | parent-auth-and-reading-level | Poziom dziecka po zalogowaniu | [#8](https://github.com/krzysztofpupowski-cmd/RafcioCzyta/issues/8) | done | Zakończone 2026-05-28 — odblokowało S-02 (czeka na F-02) |
+| S-02 | ai-flashcard-generation | Generacja partii fiszek AI | [#9](https://github.com/krzysztofpupowski-cmd/RafcioCzyta/issues/9) | no | Po F-02 (S-01 gotowe) |
 | S-03 | batch-flashcard-acceptance | Akceptacja partiami i lista fiszek | [#10](https://github.com/krzysztofpupowski-cmd/RafcioCzyta/issues/10) | no | Po S-02 |
 | S-04 | srs-practice-session | Sesja ćwiczeń na zaakceptowanych fiszkach | [#11](https://github.com/krzysztofpupowski-cmd/RafcioCzyta/issues/11) | no | Po F-03 + S-03 |
 | S-05 | mastery-indicator | Prosty wskaźnik opanowania | [#12](https://github.com/krzysztofpupowski-cmd/RafcioCzyta/issues/12) | no | Po S-04; gwiazda przewodnia US-01 |
@@ -219,3 +220,4 @@ Migrated from this roadmap on 2026-05-25. Filter: [`label:roadmap`](https://gith
 | ID | Change ID | Completed | GitHub | Notes |
 |---|---|---|---|---|
 | F-01 | reading-domain-schema | 2026-05-27 | [#5](https://github.com/krzysztofpupowski-cmd/RafcioCzyta/issues/5) | Migracja + RLS + typy + impl-review (F1/F2/F3 fixed). Odblokowało S-01. Folder zmiany: `context/changes/reading-domain-schema/` (jeszcze nie zarchiwizowany). |
+| S-01 | parent-auth-and-reading-level | 2026-05-28 | [#8](https://github.com/krzysztofpupowski-cmd/RafcioCzyta/issues/8) | Profil dziecka na `/dashboard`, API + formularz poziomu, impl-review (6 fixed / 2 skipped). Odblokowało S-02 (czeka na F-02). Folder: `context/changes/parent-auth-and-reading-level/`. |
