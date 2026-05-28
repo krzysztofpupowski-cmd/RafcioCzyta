@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { BookOpen } from "lucide-react";
+import { BookOpen, Save } from "lucide-react";
 import { FormField } from "@/components/auth/FormField";
 import { SubmitButton } from "@/components/auth/SubmitButton";
 import { ServerError } from "@/components/auth/ServerError";
@@ -73,7 +73,7 @@ export default function ChildProfileForm({ initialDisplayName, initialLevel, ser
 
       <ServerError message={serverError} />
 
-      <SubmitButton pendingText="Zapisywanie..." icon={<BookOpen className="size-4" />}>
+      <SubmitButton pendingText="Zapisywanie..." icon={<Save className="size-4" />}>
         {isCreating ? "Utwórz profil dziecka" : "Zapisz profil dziecka"}
       </SubmitButton>
     </form>

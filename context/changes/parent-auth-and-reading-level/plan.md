@@ -225,6 +225,17 @@ Replace `/dashboard`'s placeholder content with a server-fetch of the current pa
 - The form is a React island: `<ChildProfileForm initialChild={child} serverError={error} client:load />`.
 - Layout title: `"Profil dziecka"` (replacing `"Dashboard"`). Keep the cosmic background visuals so the design language of the rest of the app is preserved.
 
+#### Addendum (post-implementation): primitive props instead of `Child | null`
+
+During Phase 2 implementation, the team hit the ESLint cascade documented as Lesson L-001 (`context/foundation/lessons.md`): every type derived from the `Database` alias — including `Child` — is treated as an error type by `@typescript-eslint`'s project service because `src/db/database.types.ts` is excluded from the ESLint graph. Passing `Child | null` as a React prop pulls the error type into the component, forcing `@/types` imports and per-line `eslint-disable` annotations there.
+
+L-001's accepted pattern (and the shape actually shipped) is to extract primitive fields in the Astro page and pass them down. The contract therefore changes to:
+
+- `ChildProfileForm` props: `{ initialDisplayName: string; initialLevel: string | null; serverError?: string | null }`.
+- `dashboard.astro` extracts `child.display_name` and `child.current_level` into local primitives and passes them as `initialDisplayName` / `initialLevel`.
+
+Implementation-Review F1 also restored the `Database` generic on the Supabase client (`createServerClient<Database>` in `src/lib/supabase.ts`); the dashboard's primitive extraction is now type-clean at the TS layer without per-line ESLint disables, while still respecting L-001's "do not pass `Child | null` into React" guidance.
+
 #### 4. Co-locate hooks if extracted (optional, only if needed)
 
 **File**: `src/components/hooks/useChildProfileForm.ts` (or similar)

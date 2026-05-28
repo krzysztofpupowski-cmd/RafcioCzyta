@@ -1,17 +1,18 @@
-// The project's createClient() returns SupabaseClient<any> (no Database generic passed in
-// supabase.ts), so all .from() query results are untyped. The unsafe-* and
-// no-redundant-type-constituents rules are disabled file-wide because every type derived
-// from Database (Child, ReadingLevel) is treated as an error type by ESLint's project
-// service (database.types.ts is in the ESLint ignores list). Type correctness is
-// enforced by callers and Supabase RLS.
-/* eslint-disable @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-return, @typescript-eslint/no-redundant-type-constituents */
+// database.types.ts is excluded from ESLint's project service (eslint.config.js); every
+// type derived from Database (Child, ReadingLevel, etc.) is treated as an error type by
+// @typescript-eslint here, so the unsafe-* and no-redundant-type-constituents rules are
+// disabled file-wide. The Supabase JS client is typed against Database (see supabase.ts)
+// so query results carry the right shape at the TS layer; the disables only hide the
+// ESLint-side noise. See context/foundation/lessons.md L-001.
+/* eslint-disable @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-return */
 
 import type { SupabaseClient } from "@supabase/supabase-js";
 
 import type { Child } from "@/types";
-import type { toCurrentLevel } from "@/lib/schemas/child";
+import type { Database } from "@/db/database.types";
+import type { StoredReadingLevel } from "@/lib/reading-level-form";
 
-export type AppSupabase = SupabaseClient;
+export type AppSupabase = SupabaseClient<Database>;
 
 export async function getMyChild(supabase: AppSupabase, parentUserId: string) {
   const { data, error } = await supabase
@@ -25,7 +26,7 @@ export async function getMyChild(supabase: AppSupabase, parentUserId: string) {
     throw new Error(error.message);
   }
 
-  return data as Child | null;
+  return data;
 }
 
 export async function upsertMyChild(
@@ -33,7 +34,7 @@ export async function upsertMyChild(
   input: {
     parentUserId: string;
     displayName: string;
-    currentLevel: ReturnType<typeof toCurrentLevel>;
+    currentLevel: StoredReadingLevel | null;
   },
 ) {
   const existing = await getMyChild(supabase, input.parentUserId);

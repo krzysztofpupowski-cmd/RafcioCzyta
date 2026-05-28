@@ -1,6 +1,10 @@
 import { z } from "zod";
 
-import { READING_LEVEL_FORM_VALUES, type ReadingLevelFormValue } from "@/lib/reading-level-form";
+import {
+  READING_LEVEL_FORM_VALUES,
+  type ReadingLevelFormValue,
+  type StoredReadingLevel,
+} from "@/lib/reading-level-form";
 
 export const childProfileFormSchema = z.object({
   displayName: z
@@ -16,8 +20,8 @@ export const childProfileFormSchema = z.object({
 export type ChildProfileFormData = z.infer<typeof childProfileFormSchema>;
 
 // Returns null for "unknown" (the FR-002 "Nie wiem" choice), otherwise the literal value.
-// Return type is intentionally inferred to avoid ESLint error-type cascades from Database imports.
-export function toCurrentLevel(value: ReadingLevelFormValue) {
+// StoredReadingLevel matches @/types ReadingLevel without importing the Database-derived alias.
+export function toCurrentLevel(value: ReadingLevelFormValue): StoredReadingLevel | null {
   if (value === "unknown") {
     return null;
   }
