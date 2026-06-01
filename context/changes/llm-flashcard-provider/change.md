@@ -1,7 +1,7 @@
 ---
 change_id: llm-flashcard-provider
 title: LLM provider integration for flashcard generation with child reading-level context
-status: implementing
+status: implemented
 created: 2026-06-01
 updated: 2026-06-01
 archived_at: null

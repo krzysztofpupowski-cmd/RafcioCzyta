@@ -224,13 +224,13 @@ No new DB migrations required. F-01 tables and enums are fully in place. `prompt
 
 #### Automated
 
-- [x] 2.1 `npm run lint` passes with no new errors on `src/lib/services/flashcard-generation.ts`
-- [x] 2.2 `npm run build` passes
+- [x] 2.1 `npm run lint` passes with no new errors on `src/lib/services/flashcard-generation.ts` — e7e020c
+- [x] 2.2 `npm run build` passes — e7e020c
 
 #### Manual
 
-- [x] 2.3 `generateFlashcards` returns within 10 s on `npm run dev` (workerd runtime)
-- [x] 2.4 All returned cards have `level ≤ requestedLevel`
-- [x] 2.5 `flashcard_generations` row visible in Supabase Studio with `model = 'openai:gpt-4o-mini'`
-- [x] 2.6 Linked `flashcards` rows visible with `status = 'draft'`
-- [x] 2.7 `AbortSignal.timeout` verified on workerd runtime
+- [x] 2.3 `generateFlashcards` returns within 10 s on `npm run dev` (workerd runtime) — e7e020c
+- [x] 2.4 All returned cards have `level ≤ requestedLevel` — e7e020c
+- [x] 2.5 `flashcard_generations` row visible in Supabase Studio with `model = 'openai:gpt-4o-mini'` — e7e020c
+- [x] 2.6 Linked `flashcards` rows visible with `status = 'draft'` — e7e020c
+- [x] 2.7 `AbortSignal.timeout` verified on workerd runtime — e7e020c
