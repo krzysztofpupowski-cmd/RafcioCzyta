@@ -2,6 +2,10 @@
 // types are error-typed here. Type safety is enforced by callers and Supabase RLS.
 /* eslint-disable @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access */
 
+export const FLASHCARD_ERROR_MISSING_API_KEY = "OpenAI API key is not configured.";
+export const FLASHCARD_ERROR_TIMEOUT = "Flashcard generation timed out. Please try again.";
+export const FLASHCARD_ERROR_GENERATION_FAILED = "Flashcard generation failed. Please try again later.";
+
 import { createOpenAI } from "@ai-sdk/openai";
 import { generateText, Output } from "ai";
 import { z } from "zod";
