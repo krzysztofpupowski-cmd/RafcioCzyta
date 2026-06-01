@@ -346,15 +346,15 @@ No migration required. Existing draft rows from S-02 are immediately visible onc
 
 #### Automated
 
-- [x] 2.1 Frontend files exist (`FlashcardDashboardCard`, dashboard SSR props; `FlashcardGenerationCard` deleted/unreferenced)
-- [x] 2.2 `npx astro sync` exits 0
-- [x] 2.3 `npm run lint` exits 0
-- [x] 2.4 `npm run build` exits 0
+- [x] 2.1 Frontend files exist (`FlashcardDashboardCard`, dashboard SSR props; `FlashcardGenerationCard` deleted/unreferenced) — d628ddb
+- [x] 2.2 `npx astro sync` exits 0 — d628ddb
+- [x] 2.3 `npm run lint` exits 0 — d628ddb
+- [x] 2.4 `npm run build` exits 0 — d628ddb
 
 #### Manual
 
-- [x] 2.5 SSR shows all pending draft batches on page load
-- [x] 2.6 Generate appends new batch to Przygotowane without reload
-- [x] 2.7 Accept moves batch to Zaakceptowane optimistically; persists after refresh
-- [x] 2.8 Reject removes batch from UI; rejected cards not listed anywhere
-- [x] 2.9 Mobile layout (≤375px) — tabs and lists usable without overflow
+- [x] 2.5 SSR shows all pending draft batches on page load — d628ddb
+- [x] 2.6 Generate appends new batch to Przygotowane without reload — d628ddb
+- [x] 2.7 Accept moves batch to Zaakceptowane optimistically; persists after refresh — d628ddb
+- [x] 2.8 Reject removes batch from UI; rejected cards not listed anywhere — d628ddb
+- [x] 2.9 Mobile layout (≤375px) — tabs and lists usable without overflow — d628ddb
