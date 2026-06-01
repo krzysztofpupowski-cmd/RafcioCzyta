@@ -177,9 +177,9 @@ Production cookies from [src/lib/supabase.ts](../../../src/lib/supabase.ts) must
 
 ### Edge Case E — CI deploy fails authentication or KV bindings
 
-| Error | Cause | Fix |
-|-------|--------|-----|
-| `Authentication error [code: 10000]` | Invalid token or wrong account | Re-issue **Edit Cloudflare Workers** token; include account `2c788d5ea383324e978394f1cda7696a` |
+| Error                                              | Cause                                   | Fix                                                                                                                                        |
+| -------------------------------------------------- | --------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
+| `Authentication error [code: 10000]`               | Invalid token or wrong account          | Re-issue **Edit Cloudflare Workers** token; include account `2c788d5ea383324e978394f1cda7696a`                                             |
 | `kv bindings require kv write perms [code: 10023]` | Token lacks **Workers KV Storage** edit | Same template, or custom token with **Workers KV Storage → Edit** (required for `SESSION` KV in [wrangler.jsonc](../../../wrangler.jsonc)) |
 
 1. Re-issue the token using the **"Edit Cloudflare Workers"** template (includes KV write), or add **Workers KV Storage Edit** on a custom token.

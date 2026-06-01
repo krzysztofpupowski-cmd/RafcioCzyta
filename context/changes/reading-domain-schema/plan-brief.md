@@ -4,7 +4,7 @@
 
 ## What & Why
 
-Land the first Supabase migration for RafcioCzyta: a child profile, batches of AI-generated flashcards with an acceptance status, SRS-agnostic mastery columns, and practice sessions with per-card outcomes — plus per-operation RLS on every table. Without a persisted domain model every downstream slice becomes in-memory mocks; per the roadmap risk note this is *"the largest hidden cost"* under the `time` constraint.
+Land the first Supabase migration for RafcioCzyta: a child profile, batches of AI-generated flashcards with an acceptance status, SRS-agnostic mastery columns, and practice sessions with per-card outcomes — plus per-operation RLS on every table. Without a persisted domain model every downstream slice becomes in-memory mocks; per the roadmap risk note this is _"the largest hidden cost"_ under the `time` constraint.
 
 ## Starting Point
 
@@ -16,17 +16,17 @@ The 10x Astro Starter is bootstrapped with Supabase cookie auth (`src/middleware
 
 ## Key Decisions Made
 
-| Decision                          | Choice                                                                                              | Why (1 sentence)                                                                                          | Source |
-| --------------------------------- | --------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------- | ------ |
-| Child entity                      | Explicit `children` table with unique index on `parent_user_id` (one child per parent in MVP)        | Future multi-child is one `drop index` away without breaking downstream slices.                           | Plan   |
-| Reading level model               | Postgres enum `reading_level` with `letters / syllables / words / simple_sentences`                 | PRD names exactly these levels; enum gives type safety and ordering at no schema cost.                    | Plan   |
-| Flashcard batch                   | `flashcard_generations` table + `flashcards.status` enum + `flashcards.generation_id` FK             | Lets FR-004 "accept a batch" be a real action while keeping per-card acceptance as the unit of truth.     | Plan   |
-| Flashcard content shape           | `front_text` + nullable `hint_text` + `level` enum                                                  | Matches FR-005 "no full editor" — minimal fields, no jsonb soup that downstream UIs would have to schema. | Plan   |
-| SRS-state storage                 | Generic columns on `flashcards`: `reps_count`, `last_reviewed_at`, `mastery_score smallint 0..100`   | Readable by any SRS; F-03 adapter normalizes its lib's state into these columns when Q-SRS resolves.      | Plan   |
-| Practice model                    | `practice_sessions` + `practice_attempts` (`correct`/`incorrect`)                                   | Sessions back FR-006 "<10 min" UX; attempts back FR-007 mastery indicator without a JSON blob.            | Plan   |
-| Business-invariant enforcement    | Application layer only (no DB triggers blocking practice on non-accepted flashcards)                | Keeps schema simple per the `speed` main goal; risk is acknowledged in "Open Risks" below.                | Plan   |
-| RLS pattern                       | `SECURITY DEFINER` helper `is_my_child(uuid)` reused by every policy on every domain table          | Single point of audit and revocation; cheaper to reason about than inline subselects per policy.          | Plan   |
-| "Don't know / simplest start"     | `children.current_level` is nullable; `NULL` = unsure → app starts at `letters`                     | One column, no extra flag, FR-002 honored without polluting the enum.                                     | Plan   |
+| Decision                       | Choice                                                                                             | Why (1 sentence)                                                                                          | Source |
+| ------------------------------ | -------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------- | ------ |
+| Child entity                   | Explicit `children` table with unique index on `parent_user_id` (one child per parent in MVP)      | Future multi-child is one `drop index` away without breaking downstream slices.                           | Plan   |
+| Reading level model            | Postgres enum `reading_level` with `letters / syllables / words / simple_sentences`                | PRD names exactly these levels; enum gives type safety and ordering at no schema cost.                    | Plan   |
+| Flashcard batch                | `flashcard_generations` table + `flashcards.status` enum + `flashcards.generation_id` FK           | Lets FR-004 "accept a batch" be a real action while keeping per-card acceptance as the unit of truth.     | Plan   |
+| Flashcard content shape        | `front_text` + nullable `hint_text` + `level` enum                                                 | Matches FR-005 "no full editor" — minimal fields, no jsonb soup that downstream UIs would have to schema. | Plan   |
+| SRS-state storage              | Generic columns on `flashcards`: `reps_count`, `last_reviewed_at`, `mastery_score smallint 0..100` | Readable by any SRS; F-03 adapter normalizes its lib's state into these columns when Q-SRS resolves.      | Plan   |
+| Practice model                 | `practice_sessions` + `practice_attempts` (`correct`/`incorrect`)                                  | Sessions back FR-006 "<10 min" UX; attempts back FR-007 mastery indicator without a JSON blob.            | Plan   |
+| Business-invariant enforcement | Application layer only (no DB triggers blocking practice on non-accepted flashcards)               | Keeps schema simple per the `speed` main goal; risk is acknowledged in "Open Risks" below.                | Plan   |
+| RLS pattern                    | `SECURITY DEFINER` helper `is_my_child(uuid)` reused by every policy on every domain table         | Single point of audit and revocation; cheaper to reason about than inline subselects per policy.          | Plan   |
+| "Don't know / simplest start"  | `children.current_level` is nullable; `NULL` = unsure → app starts at `letters`                    | One column, no extra flag, FR-002 honored without polluting the enum.                                     | Plan   |
 
 ## Scope
 
@@ -51,10 +51,10 @@ One SQL file in `supabase/migrations/` lands the whole package in a single `npx 
 
 ## Phases at a Glance
 
-| Phase                                | What it delivers                                                          | Key risk                                                                                                    |
-| ------------------------------------ | ------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------- |
-| 1. Database migration & RLS          | The migration file + working schema with RLS enabled, per-op policies, and child-aligned FKs | RLS helper mis-grant, missing `SECURITY DEFINER` config, or missing composite FK silently breaks downstream slice security/integrity model. |
-| 2. Typed bindings & domain DTOs      | `src/db/database.types.ts` (generated) + `src/types.ts` (hand-authored)    | Generated file drift if a downstream migration lands without regenerating it.                                |
+| Phase                           | What it delivers                                                                             | Key risk                                                                                                                                    |
+| ------------------------------- | -------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1. Database migration & RLS     | The migration file + working schema with RLS enabled, per-op policies, and child-aligned FKs | RLS helper mis-grant, missing `SECURITY DEFINER` config, or missing composite FK silently breaks downstream slice security/integrity model. |
+| 2. Typed bindings & domain DTOs | `src/db/database.types.ts` (generated) + `src/types.ts` (hand-authored)                      | Generated file drift if a downstream migration lands without regenerating it.                                                               |
 
 **Prerequisites:** Docker running for `npx supabase start`; Supabase CLI authenticated (`npx supabase login`) only required when pushing to remote (out of F-01 scope).
 **Estimated effort:** ~1 evening session, ~2–4 hours including manual Studio verification.

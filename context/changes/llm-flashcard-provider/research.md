@@ -50,7 +50,7 @@ z.object({
     z.object({
       front_text: z.string(),
       hint_text: z.string().nullable(),
-      level: z.enum(['letters', 'syllables', 'words', 'simple_sentences']),
+      level: z.enum(["letters", "syllables", "words", "simple_sentences"]),
     }),
   ),
 });
@@ -58,11 +58,11 @@ z.object({
 
 Each field maps to the F-01 migration and generated types:
 
-| Zod field | DB column | SQL constraint | TS type |
-|-----------|-----------|----------------|---------|
-| `front_text: z.string()` | `flashcards.front_text` | `text not null` | `string` |
-| `hint_text: z.string().nullable()` | `flashcards.hint_text` | `text null` | `string \| null` |
-| `level: z.enum([...])` | `flashcards.level` | `reading_level not null` | `"letters" \| "syllables" \| "words" \| "simple_sentences"` |
+| Zod field                          | DB column               | SQL constraint           | TS type                                                     |
+| ---------------------------------- | ----------------------- | ------------------------ | ----------------------------------------------------------- |
+| `front_text: z.string()`           | `flashcards.front_text` | `text not null`          | `string`                                                    |
+| `hint_text: z.string().nullable()` | `flashcards.hint_text`  | `text null`              | `string \| null`                                            |
+| `level: z.enum([...])`             | `flashcards.level`      | `reading_level not null` | `"letters" \| "syllables" \| "words" \| "simple_sentences"` |
 
 The four enum values in the Zod schema — `letters`, `syllables`, `words`, `simple_sentences` — are **exactly** the values of the `reading_level` DB enum (migration `supabase/migrations/20260526143400_reading_domain_schema.sql:41–46`, types `src/db/database.types.ts:247`).
 
@@ -153,15 +153,15 @@ The dashboard currently shows only a child-profile form — no flashcard generat
 
 ### 6. Cloudflare Workers runtime — compatible
 
-| Concern | Finding |
-|---------|---------|
-| `nodejs_compat` | Enabled (`wrangler.jsonc:7`) — broadens Node API surface |
-| `compatibility_date` | `2026-05-08` — very recent; standard Web APIs including `AbortSignal.timeout()` available |
-| AI SDK fetch path | `ai` + `@ai-sdk/openai` are fetch-based — no Node-specific networking required |
-| `AbortSignal.timeout(9_500)` | Should work on this runtime date; validate in `npm run dev` after wiring |
-| Workers AI binding | **Not configured** — only needed if using `workers-ai-provider`; not required for external providers |
-| `zod` | Already installed (`package.json`: `"zod": "^4.0.0"`) |
-| `ai`, `@ai-sdk/*` | **Not installed** — additive step, no removal or version conflict |
+| Concern                      | Finding                                                                                              |
+| ---------------------------- | ---------------------------------------------------------------------------------------------------- |
+| `nodejs_compat`              | Enabled (`wrangler.jsonc:7`) — broadens Node API surface                                             |
+| `compatibility_date`         | `2026-05-08` — very recent; standard Web APIs including `AbortSignal.timeout()` available            |
+| AI SDK fetch path            | `ai` + `@ai-sdk/openai` are fetch-based — no Node-specific networking required                       |
+| `AbortSignal.timeout(9_500)` | Should work on this runtime date; validate in `npm run dev` after wiring                             |
+| Workers AI binding           | **Not configured** — only needed if using `workers-ai-provider`; not required for external providers |
+| `zod`                        | Already installed (`package.json`: `"zod": "^4.0.0"`)                                                |
+| `ai`, `@ai-sdk/*`            | **Not installed** — additive step, no removal or version conflict                                    |
 
 - `wrangler.jsonc:1–25` — full Workers config
 - `astro.config.mjs:10–23` — adapter config (default `cloudflare()`, no overrides needed)
@@ -196,12 +196,12 @@ The dashboard currently shows only a child-profile form — no flashcard generat
 
 **Layer mapping from ai-sdk-notes.md is correct and maps cleanly to repo conventions:**
 
-| Layer | File | Convention fit |
-|-------|------|---------------|
-| F-02 provider/service | `src/lib/services/flashcard-generation.ts` | `src/lib/services/` pattern ✅ |
-| S-02 API route | `src/pages/api/flashcards/generate.ts` (suggested) | `src/pages/api/` + `prerender = false` ✅ |
-| Schema | Zod in service file | Already in codebase (children schema in `src/lib/schemas/child.ts`) ✅ |
-| Secrets | `astro:env/server` | Established pattern ✅ |
+| Layer                 | File                                               | Convention fit                                                         |
+| --------------------- | -------------------------------------------------- | ---------------------------------------------------------------------- |
+| F-02 provider/service | `src/lib/services/flashcard-generation.ts`         | `src/lib/services/` pattern ✅                                         |
+| S-02 API route        | `src/pages/api/flashcards/generate.ts` (suggested) | `src/pages/api/` + `prerender = false` ✅                              |
+| Schema                | Zod in service file                                | Already in codebase (children schema in `src/lib/schemas/child.ts`) ✅ |
+| Secrets               | `astro:env/server`                                 | Established pattern ✅                                                 |
 
 **Option A (`generateObject` with nested `cards` array) is the recommended approach** — it maps to a single Zod object that can be declared alongside the service, and aligns with "validate input with Zod" in `AGENTS.md`.
 

@@ -10,13 +10,13 @@ production_url: https://rafcio-czyta.krzysztof-pupowski.workers.dev
 
 ## Complete
 
-| Item | Status |
-|------|--------|
-| GitHub secrets (all 4) | ✅ |
-| `ci.yml` — lint, build, deploy on `main` | ✅ |
-| `wrangler.jsonc` `account_id` + KV token scopes | ✅ |
-| Manual `workflow_dispatch` deploy | ✅ [26290469829](https://github.com/krzysztofpupowski-cmd/RafcioCzyta/actions/runs/26290469829) |
-| Production smoke-test | ✅ `/` 200, `/dashboard` → `/auth/signin` |
+| Item                                            | Status                                                                                          |
+| ----------------------------------------------- | ----------------------------------------------------------------------------------------------- |
+| GitHub secrets (all 4)                          | ✅                                                                                              |
+| `ci.yml` — lint, build, deploy on `main`        | ✅                                                                                              |
+| `wrangler.jsonc` `account_id` + KV token scopes | ✅                                                                                              |
+| Manual `workflow_dispatch` deploy               | ✅ [26290469829](https://github.com/krzysztofpupowski-cmd/RafcioCzyta/actions/runs/26290469829) |
+| Production smoke-test                           | ✅ `/` 200, `/dashboard` → `/auth/signin`                                                       |
 
 ## Token note (resolved)
 

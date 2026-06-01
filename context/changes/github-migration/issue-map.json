@@ -1,62 +1,62 @@
 ﻿{
-    "P-observability":  {
-                            "number":  17,
-                            "url":  "https://github.com/krzysztofpupowski-cmd/RafcioCzyta/issues/17"
-                        },
-    "S-02":  {
-                 "number":  9,
-                 "url":  "https://github.com/krzysztofpupowski-cmd/RafcioCzyta/issues/9"
-             },
-    "P-voice":  {
-                    "number":  13,
-                    "url":  "https://github.com/krzysztofpupowski-cmd/RafcioCzyta/issues/13"
-                },
-    "S-03":  {
-                 "number":  10,
-                 "url":  "https://github.com/krzysztofpupowski-cmd/RafcioCzyta/issues/10"
-             },
-    "P-worksheets":  {
-                         "number":  16,
-                         "url":  "https://github.com/krzysztofpupowski-cmd/RafcioCzyta/issues/16"
-                     },
-    "P-editor":  {
-                     "number":  14,
-                     "url":  "https://github.com/krzysztofpupowski-cmd/RafcioCzyta/issues/14"
-                 },
-    "Q-LLM":  {
-                  "number":  4,
-                  "url":  "https://github.com/krzysztofpupowski-cmd/RafcioCzyta/issues/4"
-              },
-    "S-04":  {
-                 "number":  11,
-                 "url":  "https://github.com/krzysztofpupowski-cmd/RafcioCzyta/issues/11"
-             },
-    "S-01":  {
-                 "number":  8,
-                 "url":  "https://github.com/krzysztofpupowski-cmd/RafcioCzyta/issues/8"
-             },
-    "S-05":  {
-                 "number":  12,
-                 "url":  "https://github.com/krzysztofpupowski-cmd/RafcioCzyta/issues/12"
-             },
-    "Q-SRS":  {
-                  "number":  3,
-                  "url":  "https://github.com/krzysztofpupowski-cmd/RafcioCzyta/issues/3"
-              },
-    "F-03":  {
-                 "number":  7,
-                 "url":  "https://github.com/krzysztofpupowski-cmd/RafcioCzyta/issues/7"
-             },
-    "F-01":  {
-                 "number":  5,
-                 "url":  "https://github.com/krzysztofpupowski-cmd/RafcioCzyta/issues/5"
-             },
-    "P-custom-srs":  {
-                         "number":  15,
-                         "url":  "https://github.com/krzysztofpupowski-cmd/RafcioCzyta/issues/15"
-                     },
-    "F-02":  {
-                 "number":  6,
-                 "url":  "https://github.com/krzysztofpupowski-cmd/RafcioCzyta/issues/6"
-             }
+  "P-observability": {
+    "number": 17,
+    "url": "https://github.com/krzysztofpupowski-cmd/RafcioCzyta/issues/17"
+  },
+  "S-02": {
+    "number": 9,
+    "url": "https://github.com/krzysztofpupowski-cmd/RafcioCzyta/issues/9"
+  },
+  "P-voice": {
+    "number": 13,
+    "url": "https://github.com/krzysztofpupowski-cmd/RafcioCzyta/issues/13"
+  },
+  "S-03": {
+    "number": 10,
+    "url": "https://github.com/krzysztofpupowski-cmd/RafcioCzyta/issues/10"
+  },
+  "P-worksheets": {
+    "number": 16,
+    "url": "https://github.com/krzysztofpupowski-cmd/RafcioCzyta/issues/16"
+  },
+  "P-editor": {
+    "number": 14,
+    "url": "https://github.com/krzysztofpupowski-cmd/RafcioCzyta/issues/14"
+  },
+  "Q-LLM": {
+    "number": 4,
+    "url": "https://github.com/krzysztofpupowski-cmd/RafcioCzyta/issues/4"
+  },
+  "S-04": {
+    "number": 11,
+    "url": "https://github.com/krzysztofpupowski-cmd/RafcioCzyta/issues/11"
+  },
+  "S-01": {
+    "number": 8,
+    "url": "https://github.com/krzysztofpupowski-cmd/RafcioCzyta/issues/8"
+  },
+  "S-05": {
+    "number": 12,
+    "url": "https://github.com/krzysztofpupowski-cmd/RafcioCzyta/issues/12"
+  },
+  "Q-SRS": {
+    "number": 3,
+    "url": "https://github.com/krzysztofpupowski-cmd/RafcioCzyta/issues/3"
+  },
+  "F-03": {
+    "number": 7,
+    "url": "https://github.com/krzysztofpupowski-cmd/RafcioCzyta/issues/7"
+  },
+  "F-01": {
+    "number": 5,
+    "url": "https://github.com/krzysztofpupowski-cmd/RafcioCzyta/issues/5"
+  },
+  "P-custom-srs": {
+    "number": 15,
+    "url": "https://github.com/krzysztofpupowski-cmd/RafcioCzyta/issues/15"
+  },
+  "F-02": {
+    "number": 6,
+    "url": "https://github.com/krzysztofpupowski-cmd/RafcioCzyta/issues/6"
+  }
 }

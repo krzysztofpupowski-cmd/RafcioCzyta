@@ -18,11 +18,11 @@ Wire F-02's `generateFlashcards()` service behind a parent-triggered "Generuj fi
 
 After this plan lands and the user runs `npm run dev` against a local Supabase with `OPENAI_API_KEY` set:
 
-- An authenticated parent with a child profile visits `/dashboard` and sees a second card below the child-profile card titled "Generuj fiszki", showing the level that will be used (e.g. *"Poziom: Sylaby"* or *"Poziom: Litery (najprostszy start)"* if the child's level is `NULL`) and a primary button "Generuj 8 fiszek".
+- An authenticated parent with a child profile visits `/dashboard` and sees a second card below the child-profile card titled "Generuj fiszki", showing the level that will be used (e.g. _"Poziom: Sylaby"_ or _"Poziom: Litery (najprostszy start)"_ if the child's level is `NULL`) and a primary button "Generuj 8 fiszek".
 - Clicking the button disables it, shows an inline spinner and "Generuję fiszki... (do 10s)", and issues `POST /api/flashcards/generate` (JSON body `{}`, JSON response).
 - On success (≤10s), the button re-enables, the spinner clears, and 8 freshly-generated draft cards appear in a read-only list under the button — each showing `front_text`, optional `hint_text`, the `level` badge, and a static "oczekuje na akceptację" indicator. No accept/reject buttons (S-03 owns those).
 - On failure (timeout, missing API key, OpenAI quota error, DB error), the button re-enables and a Polish-language error banner renders above the button via `<ServerError>`. The parent can immediately try again.
-- A parent with **no child profile** sees the generation card with the button disabled and a hint: *"Najpierw utwórz profil dziecka powyżej, aby wygenerować fiszki."*
+- A parent with **no child profile** sees the generation card with the button disabled and a hint: _"Najpierw utwórz profil dziecka powyżej, aby wygenerować fiszki."_
 - An unauthenticated request to `POST /api/flashcards/generate` returns `401` JSON `{ ok: false, error: "Musisz być zalogowany." }` (the endpoint does not redirect — it is JSON-only).
 - A second click while a generation is in flight is blocked client-side (button disabled) and any prior in-flight `fetch()` is cancelled via `AbortController` before a new one starts. Server-side has no rate limit.
 - Triggering generation while previous drafts are still pending acceptance **stacks**: a new `flashcard_generations` row is inserted and 8 new `flashcards` rows appear. Old drafts are left untouched (S-03's territory).
@@ -42,7 +42,7 @@ After this plan lands and the user runs `npm run dev` against a local Supabase w
 
 - **No schema changes.** F-01 + F-02 shipped everything needed. No new migrations.
 - **No new service function or generation behavior changes.** `generateFlashcards()` from F-02 is reused for all LLM/DB work. The only allowed service-file change is exporting stable error contract constants/codes so the API route can map failures without brittle inline literals.
-- **No accept/reject UI, no draft filtering, no draft-list page.** That is S-03 (`batch-flashcard-acceptance`). S-02's draft list is intentionally read-only and renders only the *just-generated* batch — not all historical drafts.
+- **No accept/reject UI, no draft filtering, no draft-list page.** That is S-03 (`batch-flashcard-acceptance`). S-02's draft list is intentionally read-only and renders only the _just-generated_ batch — not all historical drafts.
 - **No level-override form.** Per Q5, the generation button takes no level input; the API uses the child's stored `current_level`. The 5-option radio group from S-01 stays as the only level-setting UI.
 - **No server-side concurrency lock or rate limit.** Per Q8, client-side button disable + `AbortController` is enough at PRD's scale (`users: small`, `qps: low`). A second tab can still issue a parallel generation — acceptable per Q7 "allow stack".
 - **No background-job / queue / streaming.** One-shot synchronous request inside the worker's 30s response window. The 9.5s timeout is enforced by F-02's `AbortSignal.timeout(9_500)`.
@@ -64,9 +64,9 @@ The React island is a small standalone component — not a child of `ChildProfil
 ## Critical Implementation Details
 
 - **JSON endpoint returns 401 (not 303 redirect) on no user.** Form endpoints redirect because the browser handles redirects; `fetch()` follows them silently and the React island would never see an error. The endpoint returns `Response.json({ ok: false, error: "Musisz być zalogowany." }, { status: 401 })` so the island can render a banner and the parent can re-authenticate manually.
-- **Service failures are mapped through a shared error contract (constants/codes), not inline string literals.** Export stable error contract values from `src/lib/services/flashcard-generation.ts` (or a sibling `flashcard-generation-errors.ts`) and use them in both throw-sites and API mapping. Required mappings: missing API key → `500` + *"Generator fiszek nie jest skonfigurowany. Skontaktuj się z administratorem."*; timeout → `504` + *"Generowanie fiszek przekroczyło 10 sekund. Spróbuj ponownie."*; upstream generation failure → `503` + *"Nie udało się wygenerować fiszek. Spróbuj ponownie."*; unknown/dynamic errors (e.g. Supabase DB messages) → `500` + message fallback.
+- **Service failures are mapped through a shared error contract (constants/codes), not inline string literals.** Export stable error contract values from `src/lib/services/flashcard-generation.ts` (or a sibling `flashcard-generation-errors.ts`) and use them in both throw-sites and API mapping. Required mappings: missing API key → `500` + _"Generator fiszek nie jest skonfigurowany. Skontaktuj się z administratorem."_; timeout → `504` + _"Generowanie fiszek przekroczyło 10 sekund. Spróbuj ponownie."_; upstream generation failure → `503` + _"Nie udało się wygenerować fiszek. Spróbuj ponownie."_; unknown/dynamic errors (e.g. Supabase DB messages) → `500` + message fallback.
 - **`AbortController` on the client must cancel BEFORE issuing a new request.** The pattern: keep an `abortRef = useRef<AbortController | null>(null)`; on click, `abortRef.current?.abort()`, then `abortRef.current = new AbortController()`, then `fetch(..., { signal: abortRef.current.signal })`. Without the prior `.abort()`, the React state from a stale resolved request can clobber a fresh one.
-- **The level shown in the generation card UI must match the level sent to the LLM.** When `childLevel === null`, the card displays *"Poziom: Litery (najprostszy start)"* AND the server resolves to `'letters'`. Diverging the two is a confusing UX regression — keep them in sync via a single `resolveDisplayLevel()` helper exported from `src/lib/reading-level-form.ts` (or co-located in the new DTO module) and use it on both sides.
+- **The level shown in the generation card UI must match the level sent to the LLM.** When `childLevel === null`, the card displays _"Poziom: Litery (najprostszy start)"_ AND the server resolves to `'letters'`. Diverging the two is a confusing UX regression — keep them in sync via a single `resolveDisplayLevel()` helper exported from `src/lib/reading-level-form.ts` (or co-located in the new DTO module) and use it on both sides.
 
 ---
 
@@ -229,14 +229,14 @@ Build two small React components — `<FlashcardGenerationCard>` (the island) an
 #### Manual Verification
 
 - Sign in as a test parent and visit `/dashboard`. Confirm the page renders two stacked cards: the existing "Profil dziecka" card on top and the new "Generuj fiszki" card below.
-- With `current_level = NULL` ("Nie wiem"): the generation card shows *"Poziom: Litery (najprostszy start)"*. Click "Generuj 8 fiszek". Confirm the button enters the pending state ("Generuję fiszki... (do 10s)" with spinner), and within 10s the 8 cards appear in the list below the button — all with the "Litery" badge and "oczekuje na akceptację" badge.
+- With `current_level = NULL` ("Nie wiem"): the generation card shows _"Poziom: Litery (najprostszy start)"_. Click "Generuj 8 fiszek". Confirm the button enters the pending state ("Generuję fiszki... (do 10s)" with spinner), and within 10s the 8 cards appear in the list below the button — all with the "Litery" badge and "oczekuje na akceptację" badge.
 - Change the level to `syllables` via the profile form, refresh, and re-trigger generation. Confirm the new batch appears below the previous one's location (the state replaces; the first batch is gone from the UI but its rows remain in Supabase per Q7 stacking).
 - Sign out, then send `fetch("/api/flashcards/generate", { method: "POST" })` from devtools. Confirm the response is `401` JSON and (when re-running while still on `/dashboard` after sign-out) the error banner renders "Musisz być zalogowany.".
-- Visit `/dashboard` as a freshly-signed-up parent with no child profile yet. Confirm the generation card renders with the button disabled and the hint *"Najpierw utwórz profil dziecka powyżej, aby wygenerować fiszki."*. Create a child profile via the existing form, refresh, and confirm the generation card now shows the active button.
+- Visit `/dashboard` as a freshly-signed-up parent with no child profile yet. Confirm the generation card renders with the button disabled and the hint _"Najpierw utwórz profil dziecka powyżej, aby wygenerować fiszki."_. Create a child profile via the existing form, refresh, and confirm the generation card now shows the active button.
 - Double-click the "Generuj 8 fiszek" button as fast as possible during a generation. Confirm only one fetch is in flight at a time (Network tab shows a single pending request; the second click is no-op while the button is disabled).
 - Set `current_level` to `simple_sentences`, click Generate, and immediately (within ~3s) navigate back to `/auth/signin` then return to `/dashboard`. Confirm the prior in-flight request was aborted (no spurious state update on remount; no error banner; the page renders cleanly).
 - Mobile width (≤375px): both cards stack vertically inside the layout, the list of 8 cards scrolls within the viewport without horizontal overflow, and the primary button stays full-width.
-- Temporarily set `OPENAI_API_KEY` in `.dev.vars` to an invalid string (e.g. `sk-INVALID`), restart `npm run dev`, click Generate. Confirm the error banner renders *"Nie udało się wygenerować fiszek. Spróbuj ponownie."* (the service's "Flashcard generation failed..." string mapped to Polish).
+- Temporarily set `OPENAI_API_KEY` in `.dev.vars` to an invalid string (e.g. `sk-INVALID`), restart `npm run dev`, click Generate. Confirm the error banner renders _"Nie udało się wygenerować fiszek. Spróbuj ponownie."_ (the service's "Flashcard generation failed..." string mapped to Polish).
 
 **Implementation Note**: After Phase 2 automated checks pass and the end-to-end flow (sign in → land on dashboard → set level → generate → see 8 drafts listed) feels right, pause for final confirmation before marking S-02 complete.
 
@@ -260,7 +260,7 @@ Not applicable — no test runner.
 4. Visit `/dashboard`. Confirm two cards render: profile (top) and generation (bottom).
 5. Click "Generuj 8 fiszek". Confirm the button enters pending state with the "do 10s" copy and the spinner, and within ~10s the 8 cards appear in a list below with `front_text`, optional `hint_text`, a "Sylaby" level badge, and the "oczekuje na akceptację" badge on each.
 6. Confirm in Supabase Studio that a new `flashcard_generations` row exists with `requested_level = 'syllables'` and 8 linked `flashcards` rows have `status = 'draft'`.
-7. Change the level to "Nie wiem" via the profile form and re-submit. Refresh `/dashboard`. Click Generate again. Confirm the level hint shows *"Litery (najprostszy start)"* and the 8 cards all have the "Litery" badge.
+7. Change the level to "Nie wiem" via the profile form and re-submit. Refresh `/dashboard`. Click Generate again. Confirm the level hint shows _"Litery (najprostszy start)"_ and the 8 cards all have the "Litery" badge.
 8. Sign in as a different parent who has no child profile. Confirm the generation card's button is disabled and the hint to create a profile first is visible.
 9. While signed in, run `await fetch("/api/flashcards/generate", { method: "POST" }).then(r => r.json())` in devtools. Confirm the response shape matches `GenerateFlashcardsSuccessResponse` (or `{ ok: false, error: ... }` for failures).
 
@@ -329,7 +329,7 @@ Not applicable — no test runner.
 
 - [x] 2.6 `/dashboard` renders two stacked cards (profile on top, generation below) for a signed-in parent — b5e2b0b
 - [x] 2.7 Clicking "Generuj 8 fiszek" with `current_level = 'syllables'` shows pending state with "do 10s" copy and renders 8 cards within 10s — b5e2b0b
-- [x] 2.8 With `current_level = NULL`, the level hint shows *"Litery (najprostszy start)"* and generated cards all have the "Litery" badge — b5e2b0b
+- [x] 2.8 With `current_level = NULL`, the level hint shows _"Litery (najprostszy start)"_ and generated cards all have the "Litery" badge — b5e2b0b
 - [x] 2.9 Parent with no child profile sees a disabled button and the "Najpierw utwórz profil dziecka..." hint — b5e2b0b
 - [x] 2.10 Double-click during pending is blocked client-side (single network request in flight) — b5e2b0b
 - [x] 2.11 In-flight request is cancelled cleanly when the user navigates away (no console error, no spurious state update) — b5e2b0b

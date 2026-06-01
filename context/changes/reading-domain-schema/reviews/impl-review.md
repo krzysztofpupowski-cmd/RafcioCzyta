@@ -1,4 +1,5 @@
 <!-- IMPL-REVIEW-REPORT -->
+
 # Implementation Review: Reading-Domain Schema (F-01)
 
 - **Plan**: `context/changes/reading-domain-schema/plan.md`
@@ -13,14 +14,14 @@ The shell tool was unresponsive during this review, so the automated success-cri
 
 ## Verdicts
 
-| Dimension | Verdict |
-|-----------|---------|
-| Plan Adherence | PASS |
-| Scope Discipline | WARNING |
-| Safety & Quality | PASS |
-| Architecture | PASS |
-| Pattern Consistency | PASS |
-| Success Criteria | PASS (re-verification not run; see F2) |
+| Dimension           | Verdict                                |
+| ------------------- | -------------------------------------- |
+| Plan Adherence      | PASS                                   |
+| Scope Discipline    | WARNING                                |
+| Safety & Quality    | PASS                                   |
+| Architecture        | PASS                                   |
+| Pattern Consistency | PASS                                   |
+| Success Criteria    | PASS (re-verification not run; see F2) |
 
 ## What was checked and explicitly NOT flagged
 

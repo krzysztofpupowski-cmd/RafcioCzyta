@@ -66,12 +66,12 @@ gh repo view
 
 Required for CI build + Cloudflare deploy (see deployment-plan Phase 4):
 
-| Secret                  | Source                                                                      |
-| ----------------------- | --------------------------------------------------------------------------- |
+| Secret                  | Source                                                                                                             |
+| ----------------------- | ------------------------------------------------------------------------------------------------------------------ |
 | `CLOUDFLARE_API_TOKEN`  | **Edit Cloudflare Workers** template (must include **Workers KV Storage** write; error `10023` = missing KV scope) |
-| `CLOUDFLARE_ACCOUNT_ID` | Workers & Pages → Overview → Account ID (sidebar)                           |
-| `SUPABASE_URL`          | Supabase project → Settings → API → Project URL                             |
-| `SUPABASE_KEY`          | Supabase → anon/public key (same as `.dev.vars`)                            |
+| `CLOUDFLARE_ACCOUNT_ID` | Workers & Pages → Overview → Account ID (sidebar)                                                                  |
+| `SUPABASE_URL`          | Supabase project → Settings → API → Project URL                                                                    |
+| `SUPABASE_KEY`          | Supabase → anon/public key (same as `.dev.vars`)                                                                   |
 
 Set each secret (prompts for value; input is hidden):
 

@@ -4,7 +4,7 @@
 
 ## What & Why
 
-Wire F-02's `generateFlashcards()` service behind a parent-triggered "Generuj fiszki" button on `/dashboard`. This is the slice where US-01 (*"parent picks level, app generates flashcards"*) finally becomes user-visible — every preceding slice (F-01 schema, F-02 LLM provider, S-01 child profile) has been invisible plumbing.
+Wire F-02's `generateFlashcards()` service behind a parent-triggered "Generuj fiszki" button on `/dashboard`. This is the slice where US-01 (_"parent picks level, app generates flashcards"_) finally becomes user-visible — every preceding slice (F-01 schema, F-02 LLM provider, S-01 child profile) has been invisible plumbing.
 
 ## Starting Point
 
@@ -16,16 +16,16 @@ A parent with a child profile visits `/dashboard`, sees a new "Generuj fiszki" c
 
 ## Key Decisions Made
 
-| Decision | Choice | Why (1 sentence) | Source |
-| --- | --- | --- | --- |
-| Post-generation UX | Minimal read-only list of just-generated drafts on `/dashboard` | Parent sees concrete output without S-02 stepping on S-03's accept/reject territory | Plan |
-| UI placement | Second card below the existing child-profile card on `/dashboard` | Single-page flow, no extra route, mobile-friendly stacking already works | Plan |
-| API contract style | JSON `fetch()` endpoint (`POST /api/flashcards/generate`) | A 9-second LLM call inside a form-encoded redirect would give zero pending-state UX | Plan |
-| Pending UX | Disabled button + spinner + "Generuję fiszki... (do 10s)" | Reuses the auth-form pattern, sets the 10s expectation, fits the after-hours budget | Plan |
-| Level source | Always use the child's stored `current_level` (no override form) | Single source of truth, the profile is the level; matches PRD's framing | Plan |
-| NULL-level resolution | API route resolves `current_level = NULL` → `'letters'` (per F-02 plan boundary) | FR-002's "Nie wiem" keeps working end-to-end; F-02 explicitly punted this to S-02 | Plan |
-| Stale-drafts policy | Allow stacking — new generation creates new rows; old drafts left untouched | Simplest implementation; S-03 will sort it out with the acceptance UI | Plan |
-| Concurrency | Client-side button disable + `AbortController`; no server-side rate limit | Sufficient at PRD scale (small users, low qps); avoids new schema for a lock | Plan |
+| Decision              | Choice                                                                           | Why (1 sentence)                                                                    | Source |
+| --------------------- | -------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------- | ------ |
+| Post-generation UX    | Minimal read-only list of just-generated drafts on `/dashboard`                  | Parent sees concrete output without S-02 stepping on S-03's accept/reject territory | Plan   |
+| UI placement          | Second card below the existing child-profile card on `/dashboard`                | Single-page flow, no extra route, mobile-friendly stacking already works            | Plan   |
+| API contract style    | JSON `fetch()` endpoint (`POST /api/flashcards/generate`)                        | A 9-second LLM call inside a form-encoded redirect would give zero pending-state UX | Plan   |
+| Pending UX            | Disabled button + spinner + "Generuję fiszki... (do 10s)"                        | Reuses the auth-form pattern, sets the 10s expectation, fits the after-hours budget | Plan   |
+| Level source          | Always use the child's stored `current_level` (no override form)                 | Single source of truth, the profile is the level; matches PRD's framing             | Plan   |
+| NULL-level resolution | API route resolves `current_level = NULL` → `'letters'` (per F-02 plan boundary) | FR-002's "Nie wiem" keeps working end-to-end; F-02 explicitly punted this to S-02   | Plan   |
+| Stale-drafts policy   | Allow stacking — new generation creates new rows; old drafts left untouched      | Simplest implementation; S-03 will sort it out with the acceptance UI               | Plan   |
+| Concurrency           | Client-side button disable + `AbortController`; no server-side rate limit        | Sufficient at PRD scale (small users, low qps); avoids new schema for a lock        | Plan   |
 
 ## Scope
 
@@ -66,10 +66,10 @@ Two new components, one new API route, one new DTO module, one Astro page diff. 
 
 ## Phases at a Glance
 
-| Phase | What it delivers | Key risk |
-| --- | --- | --- |
-| 1. Backend — JSON API route + DTO layer | `POST /api/flashcards/generate` returning JSON; DTO mapper isolating `Flashcard` from the React boundary | Service-error → Polish-copy mapping is string-match-brittle; if F-02's service changes its error strings the mapping silently breaks |
-| 2. Frontend — generation card + drafts list on `/dashboard` | React island with pending/error UX + `AbortController`; read-only drafts list; dashboard wrapper diff | `useFormStatus()` is form-only — the new button needs an explicit `pending` prop, not a copy-paste of `SubmitButton`; mobile layout must keep the 8-card list scrollable inside the cosmic card |
+| Phase                                                       | What it delivers                                                                                         | Key risk                                                                                                                                                                                        |
+| ----------------------------------------------------------- | -------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1. Backend — JSON API route + DTO layer                     | `POST /api/flashcards/generate` returning JSON; DTO mapper isolating `Flashcard` from the React boundary | Service-error → Polish-copy mapping is string-match-brittle; if F-02's service changes its error strings the mapping silently breaks                                                            |
+| 2. Frontend — generation card + drafts list on `/dashboard` | React island with pending/error UX + `AbortController`; read-only drafts list; dashboard wrapper diff    | `useFormStatus()` is form-only — the new button needs an explicit `pending` prop, not a copy-paste of `SubmitButton`; mobile layout must keep the 8-card list scrollable inside the cosmic card |
 
 **Prerequisites:** F-01 (`reading-domain-schema`, done), F-02 (`llm-flashcard-provider`, done), S-01 (`parent-auth-and-reading-level`, done). All three prerequisites already merged per `context/foundation/roadmap.md`.
 **Estimated effort:** ~1–2 after-hours sessions across the two phases (Phase 1 ≈ 1 file each for DTO and endpoint; Phase 2 ≈ 2 components plus the small `/dashboard` wrapper diff).
@@ -78,7 +78,7 @@ Two new components, one new API route, one new DTO module, one Astro page diff. 
 
 - **Service-error string matching is brittle.** The API route pattern-matches F-02's English `Error.message` strings to map to Polish copy. If F-02 changes those strings without notifying S-02, the user gets generic fallback copy instead of the targeted message — caught only by manual smoke tests. Mitigation: keep the mapping centralized in the API route file and document the three exact strings in a constant.
 - **No server-side concurrency guard.** A determined parent with two tabs can produce two generation rows in parallel. Per Q7 (stacking allowed) this is acceptable, but it means the draft list could grow unboundedly between S-02 and S-03 ships. Mitigation: S-03 must handle a non-empty draft backlog gracefully — flag this for the S-03 plan.
-- **The NULL-level UX hint is the only signal that "Litery" was picked.** Parents who picked "Nie wiem" see a small one-liner in the generation card. If they miss it, the generated cards may seem unexpectedly easy. Mitigation: the hint copy *"Litery (najprostszy start)"* is explicit and matches the FR-002 wording.
+- **The NULL-level UX hint is the only signal that "Litery" was picked.** Parents who picked "Nie wiem" see a small one-liner in the generation card. If they miss it, the generated cards may seem unexpectedly easy. Mitigation: the hint copy _"Litery (najprostszy start)"_ is explicit and matches the FR-002 wording.
 
 ## Success Criteria (Summary)
 

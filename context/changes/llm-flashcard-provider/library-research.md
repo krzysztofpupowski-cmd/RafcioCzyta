@@ -10,13 +10,13 @@
 
 ### Stack constraints
 
-| Constraint | Source |
-|------------|--------|
-| TypeScript, Astro 6 SSR API routes | `tech-stack.md` |
-| Deploy: Cloudflare Workers (`@astrojs/cloudflare`, `nodejs_compat`) | `wrangler.jsonc` |
-| Zod for API validation | `AGENTS.md` |
-| AI not in starter — wire provider after bootstrap | `tech-stack.md` |
-| Secrets server-only (`astro:env` / Wrangler, like `SUPABASE_*`) | `astro.config.mjs` |
+| Constraint                                                          | Source             |
+| ------------------------------------------------------------------- | ------------------ |
+| TypeScript, Astro 6 SSR API routes                                  | `tech-stack.md`    |
+| Deploy: Cloudflare Workers (`@astrojs/cloudflare`, `nodejs_compat`) | `wrangler.jsonc`   |
+| Zod for API validation                                              | `AGENTS.md`        |
+| AI not in starter — wire provider after bootstrap                   | `tech-stack.md`    |
+| Secrets server-only (`astro:env` / Wrangler, like `SUPABASE_*`)     | `astro.config.mjs` |
 
 Favors **fetch-based, edge-safe SDKs** and **JSON Schema / Zod structured output**, invoked only from server routes.
 
@@ -41,13 +41,13 @@ z.object({
 
 ### 1. Vercel AI SDK — `ai` + `@ai-sdk/*` (strong default)
 
-| Package | Role |
-|---------|------|
-| `ai` | `generateText` / `streamText` with `Output.object()` / `Output.array()` |
-| `@ai-sdk/openai` | OpenAI models |
-| `@ai-sdk/anthropic` | Claude |
-| `@ai-sdk/google` | Gemini |
-| `workers-ai-provider` | Cloudflare Workers AI binding |
+| Package               | Role                                                                    |
+| --------------------- | ----------------------------------------------------------------------- |
+| `ai`                  | `generateText` / `streamText` with `Output.object()` / `Output.array()` |
+| `@ai-sdk/openai`      | OpenAI models                                                           |
+| `@ai-sdk/anthropic`   | Claude                                                                  |
+| `@ai-sdk/google`      | Gemini                                                                  |
+| `workers-ai-provider` | Cloudflare Workers AI binding                                           |
 
 **Why it fits F-02**
 
@@ -69,11 +69,11 @@ z.object({
 
 All document **Cloudflare Workers** as supported (fetch-based; no Node-only `httpAgent`).
 
-| Library | npm | Structured output | Docs |
-|---------|-----|-------------------|------|
-| OpenAI | `openai` | `response_format: { type: "json_schema", ... }` | [openai-node](https://github.com/openai/openai-node) |
-| Anthropic | `@anthropic-ai/sdk` | `messages.parse()` + `zodOutputFormat()` / `jsonSchemaOutputFormat()` | [TS SDK](https://platform.claude.com/docs/en/api/sdks/typescript), [structured outputs](https://platform.claude.com/docs/en/build-with-claude/structured-outputs) |
-| Google Gemini | `@google/genai` | `responseFormat` + Zod (`zod-to-json-schema`) | [Structured output](https://ai.google.dev/gemini-api/docs/structured-output) |
+| Library       | npm                 | Structured output                                                     | Docs                                                                                                                                                              |
+| ------------- | ------------------- | --------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| OpenAI        | `openai`            | `response_format: { type: "json_schema", ... }`                       | [openai-node](https://github.com/openai/openai-node)                                                                                                              |
+| Anthropic     | `@anthropic-ai/sdk` | `messages.parse()` + `zodOutputFormat()` / `jsonSchemaOutputFormat()` | [TS SDK](https://platform.claude.com/docs/en/api/sdks/typescript), [structured outputs](https://platform.claude.com/docs/en/build-with-claude/structured-outputs) |
+| Google Gemini | `@google/genai`     | `responseFormat` + Zod (`zod-to-json-schema`)                         | [Structured output](https://ai.google.dev/gemini-api/docs/structured-output)                                                                                      |
 
 **When to pick:** Provider already chosen (Open Roadmap Q #2). Smallest dependency surface; you own retry/timeout for &lt;10 s.
 
@@ -102,10 +102,10 @@ Single HTTP API over many models (OpenAI-compatible), typed client, `responseFor
 
 ### 4. Cloudflare Workers AI (platform-native)
 
-| Approach | API / package |
-|----------|----------------|
-| Low-level | `env.AI.run(model, { messages, response_format })` |
-| AI SDK | `workers-ai-provider` + `generateText` / structured `Output` |
+| Approach  | API / package                                                |
+| --------- | ------------------------------------------------------------ |
+| Low-level | `env.AI.run(model, { messages, response_format })`           |
+| AI SDK    | `workers-ai-provider` + `generateText` / structured `Output` |
 
 **Why it fits**
 
@@ -131,12 +131,12 @@ Routes to OpenAI / Anthropic / Workers AI / OpenRouter with observability and ca
 
 ## Shortlist for this stack
 
-| Priority | Choice | Best for |
-|----------|--------|----------|
-| **A** | `ai` + one `@ai-sdk/*` | Default: structured batch, provider switch, Cloudflare docs |
-| **B** | `@openrouter/sdk` | Unblock F-02 before final vendor (Q #2) |
-| **C** | `openai` / `@anthropic-ai/sdk` / `@google/genai` | Single vendor, minimal deps after Q #2 |
-| **D** | `workers-ai-provider` / `env.AI` | Lowest ops cost; validate Polish quality + latency |
+| Priority | Choice                                           | Best for                                                    |
+| -------- | ------------------------------------------------ | ----------------------------------------------------------- |
+| **A**    | `ai` + one `@ai-sdk/*`                           | Default: structured batch, provider switch, Cloudflare docs |
+| **B**    | `@openrouter/sdk`                                | Unblock F-02 before final vendor (Q #2)                     |
+| **C**    | `openai` / `@anthropic-ai/sdk` / `@google/genai` | Single vendor, minimal deps after Q #2                      |
+| **D**    | `workers-ai-provider` / `env.AI`                 | Lowest ops cost; validate Polish quality + latency          |
 
 **Poor fit for F-02 core path:** browser-only SDKs; heavy LangChain for one structured call; Supabase Studio OpenAI hook (local dev only).
 

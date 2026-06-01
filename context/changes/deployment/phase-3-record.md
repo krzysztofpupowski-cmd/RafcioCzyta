@@ -13,17 +13,17 @@ verified_user: krzysztof.pupowski@gmail.com
 
 Production auth round-trip verified: signed-in user sees dashboard with email and protected-page message (matches [dashboard.astro](../../../src/pages/dashboard.astro)).
 
-| Check | Status |
-|-------|--------|
+| Check                                           | Status                                       |
+| ----------------------------------------------- | -------------------------------------------- |
 | Supabase Site URL + Redirect URLs (workers.dev) | ✅ (inferred — dashboard loads with session) |
-| Signin → `/dashboard` (no redirect to signin) | ✅ |
-| Session cookie round-trip on `*.workers.dev` | ✅ |
+| Signin → `/dashboard` (no redirect to signin)   | ✅                                           |
+| Session cookie round-trip on `*.workers.dev`    | ✅                                           |
 
 ## Production URLs (reference)
 
-| Field | Value |
-|-------|--------|
-| **Site URL** | `https://rafcio-czyta.krzysztof-pupowski.workers.dev` |
+| Field             | Value                                                    |
+| ----------------- | -------------------------------------------------------- |
+| **Site URL**      | `https://rafcio-czyta.krzysztof-pupowski.workers.dev`    |
 | **Redirect URLs** | `https://rafcio-czyta.krzysztof-pupowski.workers.dev/**` |
 
 ## Local `config.toml` (unchanged)

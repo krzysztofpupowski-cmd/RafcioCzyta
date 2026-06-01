@@ -1,10 +1,10 @@
 ## Roadmap decision
 
-| Field | Value |
-|-------|-------|
-| Roadmap ID | Q-SRS |
-| Owner | user |
-| Status | blocked |
+| Field      | Value   |
+| ---------- | ------- |
+| Roadmap ID | Q-SRS   |
+| Owner      | user    |
+| Status     | blocked |
 
 ## Question
 

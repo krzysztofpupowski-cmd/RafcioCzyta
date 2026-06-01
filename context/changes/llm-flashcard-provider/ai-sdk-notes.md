@@ -18,7 +18,7 @@ npm install @ai-sdk/openai   # and/or @ai-sdk/anthropic @ai-sdk/google
 Providers read API keys from env by default (`OPENAI_API_KEY`, `ANTHROPIC_API_KEY`, etc.). Custom instances work for Wrangler / `astro:env`:
 
 ```typescript
-import { createOpenAI } from '@ai-sdk/openai';
+import { createOpenAI } from "@ai-sdk/openai";
 
 const openai = createOpenAI({
   apiKey: process.env.OPENAI_API_KEY, // or import from astro:env/server
@@ -28,9 +28,9 @@ const openai = createOpenAI({
 Registry pattern if you want one service module and multiple vendors:
 
 ```typescript
-import { anthropic } from '@ai-sdk/anthropic';
-import { createOpenAI } from '@ai-sdk/openai';
-import { createProviderRegistry } from 'ai';
+import { anthropic } from "@ai-sdk/anthropic";
+import { createOpenAI } from "@ai-sdk/openai";
+import { createProviderRegistry } from "ai";
 
 export const registry = createProviderRegistry({
   anthropic,
@@ -52,7 +52,7 @@ z.object({
     z.object({
       front_text: z.string(),
       hint_text: z.string().nullable(),
-      level: z.enum(['letters', 'syllables', 'words', 'simple_sentences']),
+      level: z.enum(["letters", "syllables", "words", "simple_sentences"]),
     }),
   ),
 });
@@ -63,22 +63,22 @@ z.object({
 Single call, one Zod object, fits Astro API + service layer:
 
 ```typescript
-import { generateObject } from 'ai';
-import { openai } from '@ai-sdk/openai';
-import { z } from 'zod';
+import { generateObject } from "ai";
+import { openai } from "@ai-sdk/openai";
+import { z } from "zod";
 
 const flashcardBatchSchema = z.object({
   cards: z.array(
     z.object({
       front_text: z.string(),
       hint_text: z.string().nullable(),
-      level: z.enum(['letters', 'syllables', 'words', 'simple_sentences']),
+      level: z.enum(["letters", "syllables", "words", "simple_sentences"]),
     }),
   ),
 });
 
 const { object } = await generateObject({
-  model: openai('gpt-4o-mini'), // fast model for <10s NFR
+  model: openai("gpt-4o-mini"), // fast model for <10s NFR
   schema: flashcardBatchSchema,
   prompt: buildPrompt(childReadingLevel), // S-02: level guardrails in prompt + validation
 });
@@ -91,20 +91,20 @@ const { object } = await generateObject({
 When you want the model to return a **top-level array** (no `cards` wrapper):
 
 ```typescript
-import { generateObject } from 'ai';
-import { z } from 'zod';
+import { generateObject } from "ai";
+import { z } from "zod";
 
 const cardSchema = z.object({
   front_text: z.string(),
   hint_text: z.string().nullable(),
-  level: z.enum(['letters', 'syllables', 'words', 'simple_sentences']),
+  level: z.enum(["letters", "syllables", "words", "simple_sentences"]),
 });
 
 const { object: cards } = await generateObject({
-  model: openai('gpt-4o-mini'),
-  output: 'array',
+  model: openai("gpt-4o-mini"),
+  output: "array",
   schema: cardSchema,
-  prompt: 'Generate 8 Polish reading flashcards for level: words. ...',
+  prompt: "Generate 8 Polish reading flashcards for level: words. ...",
 });
 ```
 
@@ -113,10 +113,10 @@ const { object: cards } = await generateObject({
 Same schema validation via `output`:
 
 ```typescript
-import { generateText, Output } from 'ai';
+import { generateText, Output } from "ai";
 
 const { output } = await generateText({
-  model: openai('gpt-4o-mini'),
+  model: openai("gpt-4o-mini"),
   output: Output.object({ schema: flashcardBatchSchema }),
   prompt: buildPrompt(childReadingLevel),
 });
@@ -145,7 +145,7 @@ Enforce the roadmap NFR on the **server** call (F-02 service, invoked from S-02 
 
 ```typescript
 const result = await generateObject({
-  model: openai('gpt-4o-mini'),
+  model: openai("gpt-4o-mini"),
   schema: flashcardBatchSchema,
   prompt: buildPrompt(childReadingLevel),
   abortSignal: AbortSignal.timeout(9_500), // leave margin before 10s UX limit
@@ -159,9 +159,9 @@ Same pattern exists for `generateText` ([settings / abortSignal](https://ai-sdk.
 
 ## How this maps to S-02 in the repo
 
-| Layer | Responsibility | AI SDK usage |
-|--------|----------------|--------------|
-| **F-02** `llm-flashcard-provider` | Provider + `generateObject` + Zod + prompt with reading level | `src/lib/services/flashcard-generation.ts` |
+| Layer                              | Responsibility                                                   | AI SDK usage                                                  |
+| ---------------------------------- | ---------------------------------------------------------------- | ------------------------------------------------------------- |
+| **F-02** `llm-flashcard-provider`  | Provider + `generateObject` + Zod + prompt with reading level    | `src/lib/services/flashcard-generation.ts`                    |
 | **S-02** `ai-flashcard-generation` | `POST` API, auth, child level from DB, persist drafts, parent UI | Call service only from `src/pages/api/*`, `prerender = false` |
 
 S-02 outcome (FR-003): parent generates a batch matched to **selected reading level** — pass `child.current_level` into the prompt and **re-validate** `level` on each card against allowed enum + PRD guardrail (“not above child level”) in TypeScript, not only in the prompt.

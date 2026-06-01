@@ -11,7 +11,7 @@ Land the first Supabase migration for RafcioCzyta: tables that hold a child prof
 - Auth flow uses `@supabase/ssr` with cookie sessions; `App.Locals.user` is the only typed entity in `src/env.d.ts:1`.
 - There is no `src/types.ts` and no `src/db/` folder — both are introduced by this slice (AGENTS.md "Project Structure" prescribes `src/types.ts` for shared types).
 - Stack and platform are settled (`context/foundation/tech-stack.md`, `context/foundation/infrastructure.md`). Both Q-LLM (F-02) and Q-SRS (F-03) remain **open**: F-01 deliberately avoids picking either.
-- PRD Business Logic states *"only material at the child's level AND accepted by parent reaches practice."* This invariant is enforced **at the application layer** in F-01 (per Round 3 decision) — schema permits it but does not enforce it via triggers; downstream slices (S-03, S-04) must respect it.
+- PRD Business Logic states _"only material at the child's level AND accepted by parent reaches practice."_ This invariant is enforced **at the application layer** in F-01 (per Round 3 decision) — schema permits it but does not enforce it via triggers; downstream slices (S-03, S-04) must respect it.
 
 ## Desired End State
 
@@ -27,7 +27,7 @@ After this plan lands and `npx supabase db reset --local` runs cleanly:
 
 - AGENTS.md hard rule: new tables require migrations in `supabase/migrations/` named `YYYYMMDDHHmmss_short_description.sql`, **with RLS and per-operation policies**. F-01 follows this exactly.
 - Path alias `@/*` → `./src/*` is already wired (`tsconfig.json`), so `import type { Child } from "@/types"` will work without further config.
-- `src/lib/supabase.ts:5` returns `null` when env vars are missing — typed bindings must remain importable even when no client can be constructed; we only import *types*, not values, from the generated file.
+- `src/lib/supabase.ts:5` returns `null` when env vars are missing — typed bindings must remain importable even when no client can be constructed; we only import _types_, not values, from the generated file.
 - The Supabase CLI is already a devDependency (`package.json:52`, `"supabase": "^2.23.4"`), so `npx supabase gen types typescript --local` works without an install step.
 - Cascade chain from `auth.users.id` → `children` → all dependent rows ensures Supabase account deletion cleans up everything without orphaned data.
 
@@ -189,7 +189,7 @@ Generate `src/db/database.types.ts` from the local Supabase schema, then hand-au
 
 ### Unit Tests:
 
-No automated unit tests in this slice — the codebase has no test runner configured (AGENTS.md "Build, Test, and Development": *"No automated test runner is configured; verify with lint, build, and manual checks."*). Phase 1's SQL-shaped invariants are exercised by `npx supabase db reset --local`; Phase 2's TypeScript-shaped invariants are exercised by `npm run build`. Adding a test runner is out of scope.
+No automated unit tests in this slice — the codebase has no test runner configured (AGENTS.md "Build, Test, and Development": _"No automated test runner is configured; verify with lint, build, and manual checks."_). Phase 1's SQL-shaped invariants are exercised by `npx supabase db reset --local`; Phase 2's TypeScript-shaped invariants are exercised by `npm run build`. Adding a test runner is out of scope.
 
 ### Integration Tests:
 

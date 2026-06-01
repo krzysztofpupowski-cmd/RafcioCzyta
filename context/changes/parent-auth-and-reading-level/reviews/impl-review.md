@@ -1,4 +1,5 @@
 <!-- IMPL-REVIEW-REPORT -->
+
 # Implementation Review: Parent Auth & Reading Level (S-01)
 
 - **Plan**: context/changes/parent-auth-and-reading-level/plan.md
@@ -9,14 +10,14 @@
 
 ## Verdicts
 
-| Dimension | Verdict |
-|-----------|---------|
-| Plan Adherence | WARNING |
-| Scope Discipline | PASS |
-| Safety & Quality | WARNING |
-| Architecture | WARNING |
+| Dimension           | Verdict |
+| ------------------- | ------- |
+| Plan Adherence      | WARNING |
+| Scope Discipline    | PASS    |
+| Safety & Quality    | WARNING |
+| Architecture        | WARNING |
 | Pattern Consistency | WARNING |
-| Success Criteria | PASS |
+| Success Criteria    | PASS    |
 
 ## Findings
 
@@ -122,7 +123,7 @@ Applied while re-running automated checks after triage:
 
 ## Triage summary
 
-| Outcome | Findings |
-|---------|----------|
-| Fixed | F1, F2, F3, F4, F6, F8 |
-| Skipped | F5, F7 |
+| Outcome | Findings               |
+| ------- | ---------------------- |
+| Fixed   | F1, F2, F3, F4, F6, F8 |
+| Skipped | F5, F7                 |

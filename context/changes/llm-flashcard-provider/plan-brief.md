@@ -19,24 +19,26 @@ F-01 is complete: `flashcard_generations` and `flashcards` tables exist with the
 
 ## Key Decisions Made
 
-| Decision | Choice | Why (1 sentence) | Source |
-|---|---|---|---|
-| LLM provider | OpenAI `gpt-4o-mini` via `@ai-sdk/openai` | Best Polish quality, structured-output path well-tested on Cloudflare Workers | Plan |
-| Service boundary | Service generates AND persists | Keeps S-02 API route thin; one function call gives auth route everything it needs | Plan |
-| null current_level handling | API route maps `null → 'letters'` before calling service | Service always receives `StoredReadingLevel` — cleaner signature; research.md recommendation | Research |
-| Post-validation guardrail | TypeScript filters cards exceeding `requestedLevel` after `generateObject` | PRD business rule "not above child level" must be enforced in code, not only in prompt | Research / Plan |
-| Audit columns | Populate `model` and `prompt_version` | Zero extra cost; enables quality traceability from day one | Plan |
-| Batch size | 8 cards per call | Enough review variety without risking the 10 s NFR | Plan |
-| Env secret pattern | `astro:env/server` import (not `process.env`) | Matches established codebase pattern; `process.env` is not populated on workerd | Research |
+| Decision                    | Choice                                                                     | Why (1 sentence)                                                                             | Source          |
+| --------------------------- | -------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------- | --------------- |
+| LLM provider                | OpenAI `gpt-4o-mini` via `@ai-sdk/openai`                                  | Best Polish quality, structured-output path well-tested on Cloudflare Workers                | Plan            |
+| Service boundary            | Service generates AND persists                                             | Keeps S-02 API route thin; one function call gives auth route everything it needs            | Plan            |
+| null current_level handling | API route maps `null → 'letters'` before calling service                   | Service always receives `StoredReadingLevel` — cleaner signature; research.md recommendation | Research        |
+| Post-validation guardrail   | TypeScript filters cards exceeding `requestedLevel` after `generateObject` | PRD business rule "not above child level" must be enforced in code, not only in prompt       | Research / Plan |
+| Audit columns               | Populate `model` and `prompt_version`                                      | Zero extra cost; enables quality traceability from day one                                   | Plan            |
+| Batch size                  | 8 cards per call                                                           | Enough review variety without risking the 10 s NFR                                           | Plan            |
+| Env secret pattern          | `astro:env/server` import (not `process.env`)                              | Matches established codebase pattern; `process.env` is not populated on workerd              | Research        |
 
 ## Scope
 
 **In scope:**
+
 - `npm install ai @ai-sdk/openai`
 - `OPENAI_API_KEY` declared in `astro.config.mjs` env.schema + `.env.example`
 - `src/lib/services/flashcard-generation.ts` — Zod schema, level-rank guard, `generateFlashcards()` with DB persistence
 
 **Out of scope:**
+
 - API route (`src/pages/api/flashcards/generate.ts`) — S-02
 - UI / dashboard changes — S-02
 - null-level → 'letters' conversion — S-02 API route
@@ -48,10 +50,10 @@ The service file follows the `children.ts` template exactly: ESLint disable head
 
 ## Phases at a Glance
 
-| Phase | What it delivers | Key risk |
-|---|---|---|
-| 1. Packages + env secret | `ai` + `@ai-sdk/openai` installed; `OPENAI_API_KEY` declared; build stays green | None significant — secret is `optional: true` so CI passes without it |
-| 2. Flashcard generation service | `generateFlashcards()` callable, lint-clean, DB-persisting, sub-10s on workerd | `AbortSignal.timeout()` behaviour on `compatibility_date: 2026-05-08` — validate on `npm run dev`, not Node |
+| Phase                           | What it delivers                                                                | Key risk                                                                                                    |
+| ------------------------------- | ------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------- |
+| 1. Packages + env secret        | `ai` + `@ai-sdk/openai` installed; `OPENAI_API_KEY` declared; build stays green | None significant — secret is `optional: true` so CI passes without it                                       |
+| 2. Flashcard generation service | `generateFlashcards()` callable, lint-clean, DB-persisting, sub-10s on workerd  | `AbortSignal.timeout()` behaviour on `compatibility_date: 2026-05-08` — validate on `npm run dev`, not Node |
 
 **Prerequisites:** F-01 complete (done 2026-05-27). User adds real `OPENAI_API_KEY` to `.dev.vars` before Phase 2 manual verification.  
 **Estimated effort:** ~1 session across 2 phases.

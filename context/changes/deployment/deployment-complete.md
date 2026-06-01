@@ -12,23 +12,23 @@ Production MVP baseline for **rafcio-czyta** is live and verified.
 
 ## Production
 
-| Item | Value |
-|------|--------|
-| **URL** | https://rafcio-czyta.krzysztof-pupowski.workers.dev |
-| **Platform** | Cloudflare Workers (`rafcio-czyta`) |
-| **Auth** | Supabase (cookie SSR via `@supabase/ssr`) |
-| **CI/CD** | GitHub Actions — lint + build on PR; deploy on push to `main` + `workflow_dispatch` |
+| Item         | Value                                                                               |
+| ------------ | ----------------------------------------------------------------------------------- |
+| **URL**      | https://rafcio-czyta.krzysztof-pupowski.workers.dev                                 |
+| **Platform** | Cloudflare Workers (`rafcio-czyta`)                                                 |
+| **Auth**     | Supabase (cookie SSR via `@supabase/ssr`)                                           |
+| **CI/CD**    | GitHub Actions — lint + build on PR; deploy on push to `main` + `workflow_dispatch` |
 
 ## Phases
 
-| Phase | Summary |
-|-------|---------|
-| 0 | Prerequisites — Cloudflare account, Supabase, Node 22 |
-| 1 | `wrangler.jsonc`, `.dev.vars`, local smoke-test |
-| 2 | First manual deploy, KV/IMAGES bindings |
-| 3 | Supabase Site URL; production signin → `/dashboard` verified |
-| 4 | GitHub secrets, CI + `wrangler-action` deploy |
-| 5 | `wrangler tail`, rollback docs in README |
+| Phase | Summary                                                      |
+| ----- | ------------------------------------------------------------ |
+| 0     | Prerequisites — Cloudflare account, Supabase, Node 22        |
+| 1     | `wrangler.jsonc`, `.dev.vars`, local smoke-test              |
+| 2     | First manual deploy, KV/IMAGES bindings                      |
+| 3     | Supabase Site URL; production signin → `/dashboard` verified |
+| 4     | GitHub secrets, CI + `wrangler-action` deploy                |
+| 5     | `wrangler tail`, rollback docs in README                     |
 
 ## Records
 

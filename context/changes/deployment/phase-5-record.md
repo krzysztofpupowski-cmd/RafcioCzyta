@@ -16,11 +16,11 @@ production_url: https://rafcio-czyta.krzysztof-pupowski.workers.dev
 
 ## Manual checklist
 
-| Task | Status |
-|------|--------|
+| Task                                                    | Status                                         |
+| ------------------------------------------------------- | ---------------------------------------------- |
 | `npx wrangler tail rafcio-czyta` while hitting the site | ✅ (2026-05-22 — JSON request logs on GET `/`) |
-| CF dashboard → Workers → `rafcio-czyta` → Observability | optional (recommended) |
-| CF Billing → spend notifications ($1 / $5) | optional (recommended) |
+| CF dashboard → Workers → `rafcio-czyta` → Observability | optional (recommended)                         |
+| CF Billing → spend notifications ($1 / $5)              | optional (recommended)                         |
 
 ## Rollback
 

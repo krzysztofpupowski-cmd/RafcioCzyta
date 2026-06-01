@@ -18,6 +18,7 @@ Pre-commit hooks: husky + lint-staged runs `eslint --fix` on `*.{ts,tsx,astro}` 
 **Recommended shell: Git Bash.** Cursor is configured to use Git Bash as the default terminal on Windows (`terminal.integrated.defaultProfile.windows: "Git Bash"` in Cursor user settings). Git Bash supports bash heredocs (`<<'EOF'`), does not suffer from the PowerShell + conpty bridge wedging issue, and lets the agent run `npm run lint`, `npm run build`, `git`, and short scripts without manual intervention.
 
 **If the shell is PowerShell** (e.g. in a session started before the setting took effect): `<<'EOF'` heredocs are not supported. Use a PowerShell here-string written to a temp file for multi-line git commits:
+
 ```powershell
 $msg = @"
 <subject>
