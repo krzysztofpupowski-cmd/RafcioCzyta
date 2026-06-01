@@ -3,7 +3,7 @@ project: "RafcioCzyta"
 version: 1
 status: draft
 created: 2026-05-25
-updated: 2026-05-28
+updated: 2026-06-01
 prd_version: 1
 main_goal: speed
 top_blocker: time
@@ -21,7 +21,7 @@ Tradycyjna nauka czytania nie nadąża za tempem dziecka, które potrzebuje szyb
 
 ## North star
 
-**S-05: Prosty wskaźnik opanowania po ćwiczeniach** — domyka US-01 end-to-end: poziom → generacja → akceptacja partiami → ćwiczenie w gotowym SRS → widoczny postęp. To jest moment, w którym główne kryterium sukcesu PRD (*„rodzic akceptuje co najmniej 75% fiszek, dziecko ćwiczy zaakceptowany materiał”*) ma sens produktowy, nie tylko techniczny.
+**S-05: Prosty wskaźnik opanowania po ćwiczeniach** — domyka US-01 end-to-end: poziom → generacja → akceptacja partiami → ćwiczenie w gotowym SRS → widoczny postęp. To jest moment, w którym główne kryterium sukcesu PRD (*„rodzic akceptuje co najmniej 75% fiszek, dziecko ćwiczy zaakceptowany materiał"*) ma sens produktowy, nie tylko techniczny.
 
 > **Gwiazda przewodnia** — najmniejszy pełny przepływ widoczny dla rodzica, który udowadnia, że hipoteza produktu działa: materiał na właściwym poziomie, pod kontrolą rodzica, trafia do realnych ćwiczeń. Umieszczona tak wcześnie, jak pozwalają zależności; reszta roadmapy jest ważna tylko wtedy, gdy ta ścieżka dojdzie do końca.
 
@@ -30,10 +30,10 @@ Tradycyjna nauka czytania nie nadąża za tempem dziecka, które potrzebuje szyb
 | ID | Change ID | Outcome (user can …) | Prerequisites | PRD refs | Status |
 |---|---|---|---|---|---|
 | F-01 | reading-domain-schema | (foundation) schemat domeny: poziom, fiszki, status akceptacji, postęp ćwiczeń | — | Access Control, Business Logic | done |
-| F-02 | llm-flashcard-provider | (foundation) generacja fiszek przez skonfigurowanego dostawcę AI | F-01 | NFR (generacja <10 s) | blocked |
+| F-02 | llm-flashcard-provider | (foundation) generacja fiszek przez skonfigurowanego dostawcę AI | F-01 | NFR (generacja <10 s) | done |
 | F-03 | srs-adapter | (foundation) zaakceptowane fiszki synchronizują się z gotowym algorytmem powtórek | F-01 | Non-Goals (bez własnego SRS) | blocked |
-| S-01 | parent-auth-and-reading-level | zalogować się i ustawić poziom dziecka (w tym „nie wiem / najprostszy start”) | F-01 | US-01, FR-001, FR-002 | done |
-| S-02 | ai-flashcard-generation | wygenerować partię fiszek dopasowanych do wybranego poziomu | F-01, F-02, S-01 | US-01, FR-003 | blocked |
+| S-01 | parent-auth-and-reading-level | zalogować się i ustawić poziom dziecka (w tym „nie wiem / najprostszy start") | F-01 | US-01, FR-001, FR-002 | done |
+| S-02 | ai-flashcard-generation | wygenerować partię fiszek dopasowanych do wybranego poziomu | F-01, F-02, S-01 | US-01, FR-003 | ready |
 | S-03 | batch-flashcard-acceptance | zaakceptować lub odrzucić partię propozycji AI i przeglądać przygotowane oraz zaakceptowane fiszki | S-02 | US-01, FR-004, FR-005 | proposed |
 | S-04 | srs-practice-session | uruchomić prostą sesję ćwiczeń na zaakceptowanych fiszkach w gotowym SRS | S-03, F-03 | US-01, FR-006, NFR (sesja <10 min) | blocked |
 | S-05 | mastery-indicator | zobaczyć prosty wskaźnik opanowania materiału wynikający z powtórek | S-04 | US-01, FR-007 | proposed |
@@ -44,8 +44,8 @@ Navigation aid — groups items that share a Prerequisites chain. Canonical orde
 
 | Stream | Theme | Chain | Note |
 |---|---|---|---|
-| A | Konto i dane | `F-01` → `S-01` | `S-01` done (2026-05-28) — poziom i konto gotowe; Stream B czeka na F-02. |
-| B | Materiał AI | `F-02` → `S-02` → `S-03` | Dołącza do A po `S-01` (poziom jako wejście generacji). |
+| A | Konto i dane | `F-01` → `S-01` | `S-01` done (2026-05-28) — poziom i konto gotowe. |
+| B | Materiał AI | `F-02` → `S-02` → `S-03` | `F-02` done (2026-06-01) — `S-02` odblokowane i gotowe do planowania. |
 | C | Ćwiczenia i postęp | `F-03` → `S-04` → `S-05` | Dołącza do B po `S-03` (zaakceptowane fiszki); `S-05` to gwiazda przewodnia. |
 
 ## Baseline
@@ -67,7 +67,7 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **Outcome:** (foundation) tabele i polityki RLS na poziom czytania, fiszki (szkic / zaakceptowane / odrzucone), sesje ćwiczeń i zapis postępu między sesjami.
 - **Change ID:** reading-domain-schema
 - **PRD refs:** Access Control, Business Logic, FR-002, FR-004, FR-006, FR-007
-- **Unlocks:** S-01, S-02, S-03, S-04, S-05; reguła „tylko zaakceptowany materiał na poziomie dziecka trafia do ćwiczeń”
+- **Unlocks:** S-01, S-02, S-03, S-04, S-05; reguła „tylko zaakceptowany materiał na poziomie dziecka trafia do ćwiczeń"
 - **Prerequisites:** —
 - **Parallel with:** —
 - **Blockers:** —
@@ -85,10 +85,10 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **Prerequisites:** F-01
 - **Parallel with:** F-03 (po F-01)
 - **Blockers:** —
-- **Unknowns:**
-  - Który dostawca LLM (klucz API, polityka prywatności danych dziecka w promptach)? — Owner: user. Block: yes.
+- **Unknowns:** —
 - **Risk:** Jakość fiszek decyduje o 75% akceptacji — opóźnienie wyboru dostawcy blokuje cały Stream B.
-- **Status:** blocked
+- **Completed:** 2026-06-01 — `ai` + `@ai-sdk/openai` zainstalowane; `OPENAI_API_KEY` w env schema; `src/lib/services/flashcard-generation.ts` z `generateFlashcards()` (gpt-4o-mini, 8 kart, Zod, AbortSignal.timeout(9500), RLS-safe). Smoke test potwierdzony na workerd runtime. Commits: 1cc123f (p1) · e7e020c (p2) · 1a2e3fc (epilogue).
+- **Status:** done
 
 ### F-03: Adapter gotowego algorytmu powtórek
 
@@ -108,7 +108,7 @@ Foundations below assume these are present and do NOT re-scaffold them.
 
 ### S-01: Logowanie i poziom dziecka
 
-- **Outcome:** user can zalogować się na konto rodzica i ustawić poziom czytania dziecka, w tym opcję „nie wiem / najprostszy start”.
+- **Outcome:** user can zalogować się na konto rodzica i ustawić poziom czytania dziecka, w tym opcję „nie wiem / najprostszy start".
 - **Change ID:** parent-auth-and-reading-level
 - **PRD refs:** US-01, FR-001, FR-002
 - **Prerequisites:** F-01
@@ -116,7 +116,7 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **Blockers:** —
 - **Unknowns:** —
 - **Risk:** Auth jest w baseline — ryzyko to duplikacja scaffoldu zamiast podpięcia poziomu pod nowy schemat.
-- **Completed:** 2026-05-28 — `/dashboard` z formularzem profilu dziecka, `POST /api/children`, sign-in → `/dashboard`, „Nie wiem” → `current_level = NULL`. Impl-review (F1–F8 triaged) zamknięty — patrz `context/changes/parent-auth-and-reading-level/reviews/impl-review.md`.
+- **Completed:** 2026-05-28 — `/dashboard` z formularzem profilu dziecka, `POST /api/children`, sign-in → `/dashboard`, „Nie wiem" → `current_level = NULL`. Impl-review (F1–F8 triaged) zamknięty — patrz `context/changes/parent-auth-and-reading-level/reviews/impl-review.md`.
 - **Status:** done
 
 ### S-02: Generacja fiszek przez AI
@@ -129,7 +129,7 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **Blockers:** —
 - **Unknowns:** —
 - **Risk:** Przy `speed` pokusa skrócenia promptów pod NFR <10 s kosztem trafności — guardrail PRD (materiał nie powyżej poziomu) musi zostać w logice, nie tylko w prompcie.
-- **Status:** blocked
+- **Status:** ready
 
 ### S-03: Akceptacja partiami i przegląd fiszek
 
@@ -164,7 +164,7 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **Parallel with:** —
 - **Blockers:** —
 - **Unknowns:** —
-- **Risk:** Przy `speed` trzymać metrykę prostą (np. odsetek „opanowanych” fiszek w SRS), bez rozbudowy analityki.
+- **Risk:** Przy `speed` trzymać metrykę prostą (np. odsetek „opanowanych" fiszek w SRS), bez rozbudowy analityki.
 - **Status:** proposed
 
 ## Backlog Handoff
@@ -172,10 +172,10 @@ Foundations below assume these are present and do NOT re-scaffold them.
 | Roadmap ID | Change ID | Suggested issue title | GitHub | Ready for `/10x-plan` | Notes |
 |---|---|---|---|---|---|
 | F-01 | reading-domain-schema | Schemat Supabase: poziom, fiszki, postęp | [#5](https://github.com/krzysztofpupowski-cmd/RafcioCzyta/issues/5) | done | Zakończone 2026-05-27 — odblokowało Stream A (S-01 → ready) |
-| F-02 | llm-flashcard-provider | Integracja LLM do generacji fiszek | [#6](https://github.com/krzysztofpupowski-cmd/RafcioCzyta/issues/6) | no | Wymaga wyboru dostawcy AI (Open Roadmap Q #2) |
+| F-02 | llm-flashcard-provider | Integracja LLM do generacji fiszek | [#6](https://github.com/krzysztofpupowski-cmd/RafcioCzyta/issues/6) | done | Zakończone 2026-06-01 — odblokowało S-02 (→ ready) |
 | F-03 | srs-adapter | Adapter gotowego SRS | [#7](https://github.com/krzysztofpupowski-cmd/RafcioCzyta/issues/7) | no | Wymaga wyboru SRS (Open Roadmap Q #1) |
 | S-01 | parent-auth-and-reading-level | Poziom dziecka po zalogowaniu | [#8](https://github.com/krzysztofpupowski-cmd/RafcioCzyta/issues/8) | done | Zakończone 2026-05-28 — odblokowało S-02 (czeka na F-02) |
-| S-02 | ai-flashcard-generation | Generacja partii fiszek AI | [#9](https://github.com/krzysztofpupowski-cmd/RafcioCzyta/issues/9) | no | Po F-02 (S-01 gotowe) |
+| S-02 | ai-flashcard-generation | Generacja partii fiszek AI | [#9](https://github.com/krzysztofpupowski-cmd/RafcioCzyta/issues/9) | yes | Wszystkie prerequisity done — gotowe do /10x-plan |
 | S-03 | batch-flashcard-acceptance | Akceptacja partiami i lista fiszek | [#10](https://github.com/krzysztofpupowski-cmd/RafcioCzyta/issues/10) | no | Po S-02 |
 | S-04 | srs-practice-session | Sesja ćwiczeń na zaakceptowanych fiszkach | [#11](https://github.com/krzysztofpupowski-cmd/RafcioCzyta/issues/11) | no | Po F-03 + S-03 |
 | S-05 | mastery-indicator | Prosty wskaźnik opanowania | [#12](https://github.com/krzysztofpupowski-cmd/RafcioCzyta/issues/12) | no | Po S-04; gwiazda przewodnia US-01 |
@@ -205,7 +205,6 @@ Migrated from this roadmap on 2026-05-25. Filter: [`label:roadmap`](https://gith
 ## Open Roadmap Questions
 
 1. **Który gotowy algorytm / biblioteka powtórek (SRS) integrujemy w MVP?** — Owner: user. Block: F-03, S-04 (`roadmap-wide` dla ćwiczeń).
-2. **Który dostawca LLM generuje fiszki i jak traktujemy dane dziecka w promptach?** — Owner: user. Block: F-02, S-02.
 
 ## Parked
 
@@ -221,3 +220,4 @@ Migrated from this roadmap on 2026-05-25. Filter: [`label:roadmap`](https://gith
 |---|---|---|---|---|
 | F-01 | reading-domain-schema | 2026-05-27 | [#5](https://github.com/krzysztofpupowski-cmd/RafcioCzyta/issues/5) | Migracja + RLS + typy + impl-review (F1/F2/F3 fixed). Odblokowało S-01. Folder zmiany: `context/changes/reading-domain-schema/` (jeszcze nie zarchiwizowany). |
 | S-01 | parent-auth-and-reading-level | 2026-05-28 | [#8](https://github.com/krzysztofpupowski-cmd/RafcioCzyta/issues/8) | Profil dziecka na `/dashboard`, API + formularz poziomu, impl-review (6 fixed / 2 skipped). Odblokowało S-02 (czeka na F-02). Folder: `context/changes/parent-auth-and-reading-level/`. |
+| F-02 | llm-flashcard-provider | 2026-06-01 | [#6](https://github.com/krzysztofpupowski-cmd/RafcioCzyta/issues/6) | `generateFlashcards()` w `src/lib/services/flashcard-generation.ts` — gpt-4o-mini, 8 kart, Zod structured output, AbortSignal.timeout(9500), RLS-safe. Smoke test na workerd potwierdzony. Odblokowało S-02. |
