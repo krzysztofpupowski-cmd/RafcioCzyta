@@ -319,19 +319,19 @@ Not applicable — no test runner.
 
 #### Automated
 
-- [x] 2.1 `src/components/flashcards/DraftFlashcardList.tsx` and `src/components/flashcards/FlashcardGenerationCard.tsx` exist and compile
-- [x] 2.2 `src/pages/dashboard.astro` imports `FlashcardGenerationCard` and hydrates it via `client:load`
-- [x] 2.3 `npx astro sync` exits 0
-- [x] 2.4 `npm run lint` passes with no new warnings
-- [x] 2.5 `npm run build` passes
+- [x] 2.1 `src/components/flashcards/DraftFlashcardList.tsx` and `src/components/flashcards/FlashcardGenerationCard.tsx` exist and compile — b5e2b0b
+- [x] 2.2 `src/pages/dashboard.astro` imports `FlashcardGenerationCard` and hydrates it via `client:load` — b5e2b0b
+- [x] 2.3 `npx astro sync` exits 0 — b5e2b0b
+- [x] 2.4 `npm run lint` passes with no new warnings — b5e2b0b
+- [x] 2.5 `npm run build` passes — b5e2b0b
 
 #### Manual
 
-- [x] 2.6 `/dashboard` renders two stacked cards (profile on top, generation below) for a signed-in parent
-- [x] 2.7 Clicking "Generuj 8 fiszek" with `current_level = 'syllables'` shows pending state with "do 10s" copy and renders 8 cards within 10s
-- [x] 2.8 With `current_level = NULL`, the level hint shows *"Litery (najprostszy start)"* and generated cards all have the "Litery" badge
-- [x] 2.9 Parent with no child profile sees a disabled button and the "Najpierw utwórz profil dziecka..." hint
-- [x] 2.10 Double-click during pending is blocked client-side (single network request in flight)
-- [x] 2.11 In-flight request is cancelled cleanly when the user navigates away (no console error, no spurious state update)
-- [x] 2.12 Mobile width (≤375px) stacks both cards and the draft list with no horizontal overflow
-- [x] 2.13 Invalid `OPENAI_API_KEY` triggers the Polish "Nie udało się wygenerować fiszek..." error banner
+- [x] 2.6 `/dashboard` renders two stacked cards (profile on top, generation below) for a signed-in parent — b5e2b0b
+- [x] 2.7 Clicking "Generuj 8 fiszek" with `current_level = 'syllables'` shows pending state with "do 10s" copy and renders 8 cards within 10s — b5e2b0b
+- [x] 2.8 With `current_level = NULL`, the level hint shows *"Litery (najprostszy start)"* and generated cards all have the "Litery" badge — b5e2b0b
+- [x] 2.9 Parent with no child profile sees a disabled button and the "Najpierw utwórz profil dziecka..." hint — b5e2b0b
+- [x] 2.10 Double-click during pending is blocked client-side (single network request in flight) — b5e2b0b
+- [x] 2.11 In-flight request is cancelled cleanly when the user navigates away (no console error, no spurious state update) — b5e2b0b
+- [x] 2.12 Mobile width (≤375px) stacks both cards and the draft list with no horizontal overflow — b5e2b0b
+- [x] 2.13 Invalid `OPENAI_API_KEY` triggers the Polish "Nie udało się wygenerować fiszek..." error banner — b5e2b0b
