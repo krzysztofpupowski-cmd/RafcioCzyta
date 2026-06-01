@@ -49,7 +49,7 @@ export async function generateFlashcards(
   input: { childId: string; requestedLevel: StoredReadingLevel },
 ): Promise<{ generation: FlashcardGeneration; cards: Flashcard[] }> {
   if (!OPENAI_API_KEY) {
-    throw new Error("OpenAI API key is not configured.");
+    throw new Error(FLASHCARD_ERROR_MISSING_API_KEY);
   }
 
   const openaiProvider = createOpenAI({ apiKey: OPENAI_API_KEY });
@@ -65,9 +65,9 @@ export async function generateFlashcards(
     batchOutput = result.output;
   } catch (err) {
     if (err instanceof Error && (err.name === "AbortError" || err.name === "TimeoutError")) {
-      throw new Error("Flashcard generation timed out. Please try again.");
+      throw new Error(FLASHCARD_ERROR_TIMEOUT);
     }
-    throw new Error("Flashcard generation failed. Please try again later.");
+    throw new Error(FLASHCARD_ERROR_GENERATION_FAILED);
   }
 
   const filtered = batchOutput.cards.filter(

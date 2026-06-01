@@ -43,9 +43,14 @@ export const POST: APIRoute = async (context) => {
   let child: Awaited<ReturnType<typeof getMyChild>>;
   try {
     child = await getMyChild(supabase, user.id);
-  } catch (err) {
-    const message = err instanceof Error ? err.message : "Błąd bazy danych.";
-    return Response.json({ ok: false, error: message } satisfies GenerateFlashcardsErrorResponse, { status: 500 });
+  } catch {
+    return Response.json(
+      {
+        ok: false,
+        error: "Nie udało się pobrać profilu dziecka. Spróbuj ponownie.",
+      } satisfies GenerateFlashcardsErrorResponse,
+      { status: 500 },
+    );
   }
 
   if (!child) {
@@ -116,6 +121,12 @@ export const POST: APIRoute = async (context) => {
       );
     }
 
-    return Response.json({ ok: false, error: err.message } satisfies GenerateFlashcardsErrorResponse, { status: 500 });
+    return Response.json(
+      {
+        ok: false,
+        error: "Wystąpił błąd serwera. Spróbuj ponownie.",
+      } satisfies GenerateFlashcardsErrorResponse,
+      { status: 500 },
+    );
   }
 };
