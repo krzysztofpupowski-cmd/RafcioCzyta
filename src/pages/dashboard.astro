@@ -1,6 +1,7 @@
 ---
 import Layout from "@/layouts/Layout.astro";
 import ChildProfileForm from "@/components/child/ChildProfileForm";
+import FlashcardGenerationCard from "@/components/flashcards/FlashcardGenerationCard";
 import { createClient } from "@/lib/supabase";
 import { getMyChild } from "@/lib/services/children";
 
@@ -14,6 +15,7 @@ const supabase = createClient(Astro.request.headers, Astro.cookies);
 
 let childDisplayName = "";
 let childLevel: string | null = null;
+let childExists = false;
 let fetchError: string | null = null;
 
 if (!supabase) {
@@ -27,6 +29,7 @@ if (!supabase) {
       childDisplayName = child.display_name;
       // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
       childLevel = child.current_level;
+      childExists = true;
     }
   } catch (err) {
     fetchError = err instanceof Error ? err.message : "Nie udało się pobrać profilu dziecka";
@@ -37,33 +40,37 @@ const serverError = Astro.url.searchParams.get("error") ?? fetchError;
 ---
 
 <Layout title="Profil dziecka">
-  <div class="bg-cosmic flex min-h-screen items-center justify-center p-4">
-    <div class="w-full max-w-md rounded-2xl border border-white/10 bg-white/10 p-8 text-white backdrop-blur-xl">
-      <div class="mb-6 flex items-center justify-between">
-        <div>
-          <h1 class="bg-gradient-to-r from-blue-200 to-purple-200 bg-clip-text text-2xl font-bold text-transparent">
-            Profil dziecka
-          </h1>
-          <p class="mt-1 text-sm text-blue-100/60">
-            Zalogowany jako <span class="font-medium text-white/80">{userEmail}</span>
-          </p>
+  <div class="bg-cosmic flex min-h-screen items-start justify-center p-4 sm:items-center">
+    <div class="flex w-full max-w-md flex-col gap-6">
+      <div class="w-full rounded-2xl border border-white/10 bg-white/10 p-8 text-white backdrop-blur-xl">
+        <div class="mb-6 flex items-center justify-between">
+          <div>
+            <h1 class="bg-gradient-to-r from-blue-200 to-purple-200 bg-clip-text text-2xl font-bold text-transparent">
+              Profil dziecka
+            </h1>
+            <p class="mt-1 text-sm text-blue-100/60">
+              Zalogowany jako <span class="font-medium text-white/80">{userEmail}</span>
+            </p>
+          </div>
+          <form method="POST" action="/api/auth/signout">
+            <button
+              type="submit"
+              class="rounded-lg border border-white/20 bg-white/10 px-3 py-1.5 text-xs transition-colors hover:bg-white/20"
+            >
+              Wyloguj
+            </button>
+          </form>
         </div>
-        <form method="POST" action="/api/auth/signout">
-          <button
-            type="submit"
-            class="rounded-lg border border-white/20 bg-white/10 px-3 py-1.5 text-xs transition-colors hover:bg-white/20"
-          >
-            Wyloguj
-          </button>
-        </form>
+
+        <ChildProfileForm
+          initialDisplayName={childDisplayName}
+          initialLevel={childLevel}
+          serverError={serverError}
+          client:load
+        />
       </div>
 
-      <ChildProfileForm
-        initialDisplayName={childDisplayName}
-        initialLevel={childLevel}
-        serverError={serverError}
-        client:load
-      />
+      <FlashcardGenerationCard childExists={childExists} childLevel={childLevel} client:load />
     </div>
   </div>
 </Layout>

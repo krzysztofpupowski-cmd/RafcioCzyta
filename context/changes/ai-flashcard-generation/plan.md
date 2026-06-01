@@ -299,39 +299,39 @@ Not applicable — no test runner.
 
 #### Automated
 
-- [x] 1.1 `src/lib/dto/flashcards.ts` and `src/pages/api/flashcards/generate.ts` both exist
-- [x] 1.2 `src/pages/api/flashcards/generate.ts` exports `const prerender = false;` and `const POST`
-- [x] 1.3 `npx astro sync` exits 0
-- [x] 1.4 `npm run lint` passes with no new warnings
-- [x] 1.5 `npm run build` passes
+- [x] 1.1 `src/lib/dto/flashcards.ts` and `src/pages/api/flashcards/generate.ts` both exist — 2d8bb02
+- [x] 1.2 `src/pages/api/flashcards/generate.ts` exports `const prerender = false;` and `const POST` — 2d8bb02
+- [x] 1.3 `npx astro sync` exits 0 — 2d8bb02
+- [x] 1.4 `npm run lint` passes with no new warnings — 2d8bb02
+- [x] 1.5 `npm run build` passes — 2d8bb02
 
 #### Manual
 
-- [x] 1.6 `POST /api/flashcards/generate` as signed-in parent with `current_level = 'syllables'` returns `200` with 8 cards, all `level ≤ 'syllables'`
-- [x] 1.7 New `flashcard_generations` row visible in Studio with `requested_level = 'syllables'`; 8 linked `flashcards` rows have `status = 'draft'`
-- [x] 1.8 With `current_level = NULL`, the response has `requestedLevel: "letters"` and all cards have `level = "letters"`
-- [x] 1.9 Unauthenticated `POST /api/flashcards/generate` returns `401` JSON `{ ok: false, error: "Musisz być zalogowany." }`
-- [x] 1.10 Parent with no child profile gets `400` JSON `{ ok: false, error: "Najpierw utwórz profil dziecka, aby generować fiszki." }`
-- [x] 1.11 Missing `OPENAI_API_KEY` returns `500` with the Polish "Generator fiszek nie jest skonfigurowany..." message
-- [x] 1.12 Two parallel requests both return `200` (no rate limit); Studio shows 2 generation rows + 16 draft cards
+- [x] 1.6 `POST /api/flashcards/generate` as signed-in parent with `current_level = 'syllables'` returns `200` with 8 cards, all `level ≤ 'syllables'` — 2d8bb02
+- [x] 1.7 New `flashcard_generations` row visible in Studio with `requested_level = 'syllables'`; 8 linked `flashcards` rows have `status = 'draft'` — 2d8bb02
+- [x] 1.8 With `current_level = NULL`, the response has `requestedLevel: "letters"` and all cards have `level = "letters"` — 2d8bb02
+- [x] 1.9 Unauthenticated `POST /api/flashcards/generate` returns `401` JSON `{ ok: false, error: "Musisz być zalogowany." }` — 2d8bb02
+- [x] 1.10 Parent with no child profile gets `400` JSON `{ ok: false, error: "Najpierw utwórz profil dziecka, aby generować fiszki." }` — 2d8bb02
+- [x] 1.11 Missing `OPENAI_API_KEY` returns `500` with the Polish "Generator fiszek nie jest skonfigurowany..." message — 2d8bb02
+- [x] 1.12 Two parallel requests both return `200` (no rate limit); Studio shows 2 generation rows + 16 draft cards — 2d8bb02
 
 ### Phase 2: Frontend — generation card + drafts list on /dashboard
 
 #### Automated
 
-- [ ] 2.1 `src/components/flashcards/DraftFlashcardList.tsx` and `src/components/flashcards/FlashcardGenerationCard.tsx` exist and compile
-- [ ] 2.2 `src/pages/dashboard.astro` imports `FlashcardGenerationCard` and hydrates it via `client:load`
-- [ ] 2.3 `npx astro sync` exits 0
-- [ ] 2.4 `npm run lint` passes with no new warnings
-- [ ] 2.5 `npm run build` passes
+- [x] 2.1 `src/components/flashcards/DraftFlashcardList.tsx` and `src/components/flashcards/FlashcardGenerationCard.tsx` exist and compile
+- [x] 2.2 `src/pages/dashboard.astro` imports `FlashcardGenerationCard` and hydrates it via `client:load`
+- [x] 2.3 `npx astro sync` exits 0
+- [x] 2.4 `npm run lint` passes with no new warnings
+- [x] 2.5 `npm run build` passes
 
 #### Manual
 
-- [ ] 2.6 `/dashboard` renders two stacked cards (profile on top, generation below) for a signed-in parent
-- [ ] 2.7 Clicking "Generuj 8 fiszek" with `current_level = 'syllables'` shows pending state with "do 10s" copy and renders 8 cards within 10s
-- [ ] 2.8 With `current_level = NULL`, the level hint shows *"Litery (najprostszy start)"* and generated cards all have the "Litery" badge
-- [ ] 2.9 Parent with no child profile sees a disabled button and the "Najpierw utwórz profil dziecka..." hint
-- [ ] 2.10 Double-click during pending is blocked client-side (single network request in flight)
-- [ ] 2.11 In-flight request is cancelled cleanly when the user navigates away (no console error, no spurious state update)
-- [ ] 2.12 Mobile width (≤375px) stacks both cards and the draft list with no horizontal overflow
-- [ ] 2.13 Invalid `OPENAI_API_KEY` triggers the Polish "Nie udało się wygenerować fiszek..." error banner
+- [x] 2.6 `/dashboard` renders two stacked cards (profile on top, generation below) for a signed-in parent
+- [x] 2.7 Clicking "Generuj 8 fiszek" with `current_level = 'syllables'` shows pending state with "do 10s" copy and renders 8 cards within 10s
+- [x] 2.8 With `current_level = NULL`, the level hint shows *"Litery (najprostszy start)"* and generated cards all have the "Litery" badge
+- [x] 2.9 Parent with no child profile sees a disabled button and the "Najpierw utwórz profil dziecka..." hint
+- [x] 2.10 Double-click during pending is blocked client-side (single network request in flight)
+- [x] 2.11 In-flight request is cancelled cleanly when the user navigates away (no console error, no spurious state update)
+- [x] 2.12 Mobile width (≤375px) stacks both cards and the draft list with no horizontal overflow
+- [x] 2.13 Invalid `OPENAI_API_KEY` triggers the Polish "Nie udało się wygenerować fiszek..." error banner
