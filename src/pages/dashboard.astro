@@ -48,8 +48,9 @@ if (!supabase) {
       initialDraftBatches = await listDraftBatches(supabase, childId);
       initialAcceptedCards = await listAcceptedFlashcards(supabase, childId);
     } catch (err) {
-      flashcardFetchError =
-        err instanceof Error ? err.message : "Nie udało się pobrać listy fiszek. Spróbuj odświeżyć stronę.";
+      // eslint-disable-next-line no-console -- server-side diagnostic only; user sees generic copy below
+      console.error("Failed to fetch flashcard lists", err);
+      flashcardFetchError = "Nie udało się pobrać listy fiszek. Spróbuj odświeżyć stronę.";
     }
   }
 }

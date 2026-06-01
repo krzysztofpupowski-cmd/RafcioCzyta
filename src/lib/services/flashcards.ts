@@ -1,5 +1,9 @@
-// database.types.ts is excluded from ESLint's project service; all Database-derived
-// types are error-typed here. Type safety is enforced by callers and Supabase RLS.
+// database.types.ts is excluded from ESLint's project service (eslint.config.js); every
+// type derived from Database (Child, ReadingLevel, etc.) is treated as an error type by
+// @typescript-eslint here, so the unsafe-* and no-redundant-type-constituents rules are
+// disabled file-wide. The Supabase JS client is typed against Database (see supabase.ts)
+// so query results carry the right shape at the TS layer; the disables only hide the
+// ESLint-side noise. See context/foundation/lessons.md L-001.
 /* eslint-disable @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unnecessary-condition */
 
 import type { AppSupabase } from "./children";

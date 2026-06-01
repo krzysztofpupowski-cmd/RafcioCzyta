@@ -1,3 +1,4 @@
+import { useState } from "react";
 import type { DraftBatchDTO } from "@/lib/dto/flashcards";
 import { STORED_LEVEL_LABELS } from "@/lib/reading-level-form";
 
@@ -17,6 +18,7 @@ function formatBatchDate(iso: string): string {
 }
 
 export function DraftBatchPanel({ batch, pending, onAccept, onReject }: Props) {
+  const [confirmReject, setConfirmReject] = useState(false);
   const levelLabel = STORED_LEVEL_LABELS[batch.requestedLevel];
   const dateLabel = formatBatchDate(batch.createdAt);
 
@@ -33,7 +35,7 @@ export function DraftBatchPanel({ batch, pending, onAccept, onReject }: Props) {
         <div className="flex flex-wrap gap-2">
           <button
             type="button"
-            disabled={pending}
+            disabled={pending || confirmReject}
             onClick={() => {
               onAccept(batch.generationId);
             }}
@@ -42,17 +44,44 @@ export function DraftBatchPanel({ batch, pending, onAccept, onReject }: Props) {
           >
             Akceptuj partię
           </button>
-          <button
-            type="button"
-            disabled={pending}
-            onClick={() => {
-              onReject(batch.generationId);
-            }}
-            aria-label={`Odrzuć partię fiszek z ${dateLabel}`}
-            className="rounded-lg border border-red-400/30 bg-red-900/20 px-3 py-1.5 text-xs font-semibold text-red-200 transition-colors hover:bg-red-900/40 disabled:cursor-not-allowed disabled:opacity-60"
-          >
-            Odrzuć partię
-          </button>
+          {confirmReject ? (
+            <>
+              <button
+                type="button"
+                disabled={pending}
+                onClick={() => {
+                  setConfirmReject(false);
+                  onReject(batch.generationId);
+                }}
+                aria-label={`Potwierdź odrzucenie partii fiszek z ${dateLabel}`}
+                className="rounded-lg bg-red-600 px-3 py-1.5 text-xs font-semibold text-white transition-colors hover:bg-red-500 disabled:cursor-not-allowed disabled:opacity-60"
+              >
+                Potwierdź odrzucenie
+              </button>
+              <button
+                type="button"
+                disabled={pending}
+                onClick={() => {
+                  setConfirmReject(false);
+                }}
+                className="rounded-lg border border-white/20 bg-white/10 px-3 py-1.5 text-xs font-semibold text-white transition-colors hover:bg-white/20 disabled:cursor-not-allowed disabled:opacity-60"
+              >
+                Anuluj
+              </button>
+            </>
+          ) : (
+            <button
+              type="button"
+              disabled={pending}
+              onClick={() => {
+                setConfirmReject(true);
+              }}
+              aria-label={`Odrzuć partię fiszek z ${dateLabel}`}
+              className="rounded-lg border border-red-400/30 bg-red-900/20 px-3 py-1.5 text-xs font-semibold text-red-200 transition-colors hover:bg-red-900/40 disabled:cursor-not-allowed disabled:opacity-60"
+            >
+              Odrzuć partię
+            </button>
+          )}
         </div>
       </div>
 

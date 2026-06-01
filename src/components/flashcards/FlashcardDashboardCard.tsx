@@ -102,6 +102,8 @@ export default function FlashcardDashboardCard({
       if (data.ok) {
         setDraftBatches((prev) => prev.filter((b) => b.generationId !== generationId));
         setAcceptedCards((prev) => [...data.cards, ...prev]);
+      } else if (res.status === 404) {
+        setDraftBatches((prev) => prev.filter((b) => b.generationId !== generationId));
       } else {
         setError(data.error);
       }
@@ -126,6 +128,8 @@ export default function FlashcardDashboardCard({
       });
       const data = (await res.json()) as RejectBatchResponse;
       if (data.ok) {
+        setDraftBatches((prev) => prev.filter((b) => b.generationId !== generationId));
+      } else if (res.status === 404) {
         setDraftBatches((prev) => prev.filter((b) => b.generationId !== generationId));
       } else {
         setError(data.error);
