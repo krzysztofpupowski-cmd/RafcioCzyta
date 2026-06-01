@@ -212,25 +212,25 @@ No new DB migrations required. F-01 tables and enums are fully in place. `prompt
 
 #### Automated
 
-- [x] 1.1 `npm install ai @ai-sdk/openai` exits 0 and both packages appear in `package.json` dependencies
-- [x] 1.2 `npm run build` passes with no new errors
-- [x] 1.3 `npm run lint` passes
+- [x] 1.1 `npm install ai @ai-sdk/openai` exits 0 and both packages appear in `package.json` dependencies — 1cc123f
+- [x] 1.2 `npm run build` passes with no new errors — 1cc123f
+- [x] 1.3 `npm run lint` passes — 1cc123f
 
 #### Manual
 
-- [x] 1.4 `.dev.vars` contains a real `OPENAI_API_KEY` value
+- [x] 1.4 `.dev.vars` contains a real `OPENAI_API_KEY` value — 1cc123f
 
 ### Phase 2: Flashcard Generation Service
 
 #### Automated
 
-- [ ] 2.1 `npm run lint` passes with no new errors on `src/lib/services/flashcard-generation.ts`
-- [ ] 2.2 `npm run build` passes
+- [x] 2.1 `npm run lint` passes with no new errors on `src/lib/services/flashcard-generation.ts`
+- [x] 2.2 `npm run build` passes
 
 #### Manual
 
-- [ ] 2.3 `generateFlashcards` returns within 10 s on `npm run dev` (workerd runtime)
-- [ ] 2.4 All returned cards have `level ≤ requestedLevel`
-- [ ] 2.5 `flashcard_generations` row visible in Supabase Studio with `model = 'openai:gpt-4o-mini'`
-- [ ] 2.6 Linked `flashcards` rows visible with `status = 'draft'`
-- [ ] 2.7 `AbortSignal.timeout` verified on workerd runtime
+- [x] 2.3 `generateFlashcards` returns within 10 s on `npm run dev` (workerd runtime)
+- [x] 2.4 All returned cards have `level ≤ requestedLevel`
+- [x] 2.5 `flashcard_generations` row visible in Supabase Studio with `model = 'openai:gpt-4o-mini'`
+- [x] 2.6 Linked `flashcards` rows visible with `status = 'draft'`
+- [x] 2.7 `AbortSignal.timeout` verified on workerd runtime
