@@ -330,17 +330,17 @@ No migration required. Existing draft rows from S-02 are immediately visible onc
 
 #### Automated
 
-- [x] 1.1 Backend files exist (`flashcards.ts` service, DTO extensions, `accept.ts`, `reject.ts`; API routes export `prerender = false`)
-- [x] 1.2 `npx astro sync` exits 0
-- [x] 1.3 `npm run lint` exits 0
-- [x] 1.4 `npm run build` exits 0
+- [x] 1.1 Backend files exist (`flashcards.ts` service, DTO extensions, `accept.ts`, `reject.ts`; API routes export `prerender = false`) — db9d2b5
+- [x] 1.2 `npx astro sync` exits 0 — db9d2b5
+- [x] 1.3 `npm run lint` exits 0 — db9d2b5
+- [x] 1.4 `npm run build` exits 0 — db9d2b5
 
 #### Manual
 
-- [x] 1.5 Accept endpoint transitions draft batch to accepted (200 + DB verified)
-- [x] 1.6 Reject endpoint transitions draft batch to rejected (200 + DB verified)
-- [x] 1.7 Repeat accept on same generationId returns 404 Polish error
-- [x] 1.8 Unauthenticated and invalid-body requests return 401/400
+- [x] 1.5 Accept endpoint transitions draft batch to accepted (200 + DB verified) — db9d2b5
+- [x] 1.6 Reject endpoint transitions draft batch to rejected (200 + DB verified) — db9d2b5
+- [x] 1.7 Repeat accept on same generationId returns 404 Polish error — db9d2b5
+- [x] 1.8 Unauthenticated and invalid-body requests return 401/400 — db9d2b5
 
 ### Phase 2: Frontend — tabbed review UI + SSR hydration
 

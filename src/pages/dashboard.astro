@@ -1,9 +1,11 @@
 ---
 import Layout from "@/layouts/Layout.astro";
 import ChildProfileForm from "@/components/child/ChildProfileForm";
-import FlashcardGenerationCard from "@/components/flashcards/FlashcardGenerationCard";
+import FlashcardDashboardCard from "@/components/flashcards/FlashcardDashboardCard";
 import { createClient } from "@/lib/supabase";
 import { getMyChild } from "@/lib/services/children";
+import { listDraftBatches, listAcceptedFlashcards } from "@/lib/services/flashcards";
+import type { DraftBatchDTO, AcceptedFlashcardDTO } from "@/lib/dto/flashcards";
 
 // Middleware (PROTECTED_ROUTES) guarantees this is non-null, but narrow defensively.
 if (!Astro.locals.user) {
@@ -16,7 +18,11 @@ const supabase = createClient(Astro.request.headers, Astro.cookies);
 let childDisplayName = "";
 let childLevel: string | null = null;
 let childExists = false;
+let childId = "";
 let fetchError: string | null = null;
+let initialDraftBatches: DraftBatchDTO[] = [];
+let initialAcceptedCards: AcceptedFlashcardDTO[] = [];
+let flashcardFetchError: string | null = null;
 
 if (!supabase) {
   fetchError = "Supabase nie jest skonfigurowany";
@@ -29,10 +35,22 @@ if (!supabase) {
       childDisplayName = child.display_name;
       // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
       childLevel = child.current_level;
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
+      childId = child.id;
       childExists = true;
     }
   } catch (err) {
     fetchError = err instanceof Error ? err.message : "Nie udało się pobrać profilu dziecka";
+  }
+
+  if (childExists && childId) {
+    try {
+      initialDraftBatches = await listDraftBatches(supabase, childId);
+      initialAcceptedCards = await listAcceptedFlashcards(supabase, childId);
+    } catch (err) {
+      flashcardFetchError =
+        err instanceof Error ? err.message : "Nie udało się pobrać listy fiszek. Spróbuj odświeżyć stronę.";
+    }
   }
 }
 
@@ -70,7 +88,14 @@ const serverError = Astro.url.searchParams.get("error") ?? fetchError;
         />
       </div>
 
-      <FlashcardGenerationCard childExists={childExists} childLevel={childLevel} client:load />
+      <FlashcardDashboardCard
+        childExists={childExists}
+        childLevel={childLevel}
+        initialDraftBatches={initialDraftBatches}
+        initialAcceptedCards={initialAcceptedCards}
+        initialError={flashcardFetchError}
+        client:load
+      />
     </div>
   </div>
 </Layout>
