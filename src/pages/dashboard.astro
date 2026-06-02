@@ -7,11 +7,9 @@ import { getMyChild } from "@/lib/services/children";
 import { listDraftBatches, listAcceptedFlashcards } from "@/lib/services/flashcards";
 import type { DraftBatchDTO, AcceptedFlashcardDTO } from "@/lib/dto/flashcards";
 
-// Middleware (PROTECTED_ROUTES) guarantees this is non-null, but narrow defensively.
-if (!Astro.locals.user) {
-  return Astro.redirect("/auth/signin");
-}
-const { id: userId, email: userEmail } = Astro.locals.user;
+// Middleware (PROTECTED_ROUTES) guarantees a user; avoid frontmatter `return` (breaks Vite dep scan).
+const authUser = Astro.locals.user;
+const { id: userId, email: userEmail } = authUser!;
 
 const supabase = createClient(Astro.request.headers, Astro.cookies);
 
@@ -59,6 +57,8 @@ const serverError = Astro.url.searchParams.get("error") ?? fetchError;
 ---
 
 <Layout title="Profil dziecka">
+  {!authUser && <meta http-equiv="refresh" content={`0;url=/auth/signin`} />}
+  {authUser && (
   <div class="bg-cosmic flex min-h-screen items-start justify-center p-4 sm:items-center">
     <div class="flex w-full max-w-md flex-col gap-6">
       <div class="w-full rounded-2xl border border-white/10 bg-white/10 p-8 text-white backdrop-blur-xl">
@@ -85,7 +85,7 @@ const serverError = Astro.url.searchParams.get("error") ?? fetchError;
           initialDisplayName={childDisplayName}
           initialLevel={childLevel}
           serverError={serverError}
-          client:load
+          client:only="react"
         />
       </div>
 
@@ -95,8 +95,9 @@ const serverError = Astro.url.searchParams.get("error") ?? fetchError;
         initialDraftBatches={initialDraftBatches}
         initialAcceptedCards={initialAcceptedCards}
         initialError={flashcardFetchError}
-        client:load
+        client:only="react"
       />
     </div>
   </div>
+  )}
 </Layout>
