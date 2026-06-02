@@ -334,11 +334,11 @@ Expose practice on `/dashboard`: SSR due count, CTA, in-page session flow (revea
 
 #### Automated
 
-- [x] 2.1 `npm run lint` passes
-- [x] 2.2 `npm run build` passes
+- [x] 2.1 `npm run lint` passes — 6af9f85
+- [x] 2.2 `npm run build` passes — 6af9f85
 
 #### Manual
 
-- [x] 2.3 Full dashboard practice flow on mobile viewport
-- [x] 2.4 Mid-session Zakończ and empty-due / no-level UX verified
-- [x] 2.5 Flashcard generate/accept tabs still work after practice
+- [x] 2.3 Full dashboard practice flow on mobile viewport — 6af9f85
+- [x] 2.4 Mid-session Zakończ and empty-due / no-level UX verified — 6af9f85
+- [x] 2.5 Flashcard generate/accept tabs still work after practice — 6af9f85
