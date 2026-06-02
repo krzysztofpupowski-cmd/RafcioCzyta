@@ -21,9 +21,9 @@ Tradycyjna nauka czytania nie nadąża za tempem dziecka, które potrzebuje szyb
 
 ## North star
 
-**S-05: Prosty wskaźnik opanowania po ćwiczeniach** — domyka US-01 end-to-end: poziom → generacja → akceptacja partiami → ćwiczenie w gotowym SRS → widoczny postęp. To jest moment, w którym główne kryterium sukcesu PRD (_„rodzic akceptuje co najmniej 75% fiszek, dziecko ćwiczy zaakceptowany materiał"_) ma sens produktowy, nie tylko techniczny.
+**Achieved (2026-06-02): S-05 — Prosty wskaźnik opanowania po ćwiczeniach** — domknął US-01 end-to-end: poziom → generacja → akceptacja partiami → ćwiczenie w gotowym SRS → widoczny postęp (`MasteryIndicatorCard`, live FSRS retrievability ≥90%). Główne kryterium sukcesu PRD (_„rodzic akceptuje co najmniej 75% fiszek, dziecko ćwiczy zaakceptowany materiał"_) ma teraz pełną ścieżkę produktową na `/dashboard`.
 
-> **Gwiazda przewodnia** — najmniejszy pełny przepływ widoczny dla rodzica, który udowadnia, że hipoteza produktu działa: materiał na właściwym poziomie, pod kontrolą rodzica, trafia do realnych ćwiczeń. Umieszczona tak wcześnie, jak pozwalają zależności; reszta roadmapy jest ważna tylko wtedy, gdy ta ścieżka dojdzie do końca.
+> **Gwiazda przewodnia** — najmniejszy pełny przepływ widoczny dla rodzica; **zrealizowany** w S-05. Kolejna praca: post-MVP z PRD §Non-Goals / Parked (nie nowe slice’y w tej tabeli).
 
 ## At a glance
 
@@ -36,7 +36,7 @@ Tradycyjna nauka czytania nie nadąża za tempem dziecka, które potrzebuje szyb
 | S-02 | ai-flashcard-generation       | wygenerować partię fiszek dopasowanych do wybranego poziomu                                        | F-01, F-02, S-01 | US-01, FR-003                      | done     |
 | S-03 | batch-flashcard-acceptance    | zaakceptować lub odrzucić partię propozycji AI i przeglądać przygotowane oraz zaakceptowane fiszki | S-02             | US-01, FR-004, FR-005              | done     |
 | S-04 | srs-practice-session          | uruchomić prostą sesję ćwiczeń na zaakceptowanych fiszkach w gotowym SRS                           | S-03, F-03       | US-01, FR-006, NFR (sesja <10 min) | done     |
-| S-05 | mastery-indicator             | zobaczyć prosty wskaźnik opanowania materiału wynikający z powtórek                                | S-04             | US-01, FR-007                      | proposed |
+| S-05 | mastery-indicator             | zobaczyć prosty wskaźnik opanowania materiału wynikający z powtórek                                | S-04             | US-01, FR-007                      | done     |
 
 ## Streams
 
@@ -46,7 +46,7 @@ Navigation aid — groups items that share a Prerequisites chain. Canonical orde
 | ------ | ------------------ | ------------------------ | -------------------------------------------------------------------------------------------- |
 | A      | Konto i dane       | `F-01` → `S-01`          | `S-01` done (2026-05-28) — poziom i konto gotowe.                                            |
 | B      | Materiał AI        | `F-02` → `S-02` → `S-03` | `S-03` done (2026-06-01) — akceptacja partiami live; Stream B kompletny. |
-| C      | Ćwiczenia i postęp | `F-03` → `S-04` → `S-05` | `S-04` done (2026-06-02) — sesja ćwiczeń na `/dashboard` (API + `PracticeSessionCard`); `S-05` ready for `/10x-plan`; gwiazda przewodnia po S-05. |
+| C      | Ćwiczenia i postęp | `F-03` → `S-04` → `S-05` | `S-05` done (2026-06-02) — wskaźnik opanowania na `/dashboard` (`GET /api/mastery/summary` + `MasteryIndicatorCard`); Stream C i gwiazda przewodnia US-01 kompletne. |
 
 ## Baseline
 
@@ -55,7 +55,7 @@ Foundations below assume these are present and do NOT re-scaffold them.
 
 - **Frontend:** present — per tech-stack.md: Astro 6 SSR + React 19 + Tailwind 4
 - **Backend / API:** present — per tech-stack.md: Astro API routes (`src/pages/api/`)
-- **Data:** partial — Supabase client + migracja F-01 (`children`, fiszki, postęp); S-01 profil dziecka; S-02 generacja draftów; S-03 akceptacja/odrzucenie partii + listy na `/dashboard`; F-03 `ts-fsrs` adapter (`srs_state`, `next_review_at`) + per-card SRS init on accept; S-04 `practice_sessions` / `practice_attempts` writes + due-queue practice on `/dashboard`
+- **Data:** partial — Supabase client + migracja F-01 (`children`, fiszki, postęp); S-01 profil dziecka; S-02 generacja draftów; S-03 akceptacja/odrzucenie partii + listy na `/dashboard`; F-03 `ts-fsrs` adapter (`srs_state`, `next_review_at`) + per-card SRS init on accept; S-04 `practice_sessions` / `practice_attempts` writes + due-queue practice on `/dashboard`; S-05 live mastery summary (retrievability ≥90% at `current_level`) + client refetch po ćwiczeniu/akceptacji
 - **Auth:** present — Supabase cookie auth; sign-in ląduje na `/dashboard` z formularzem poziomu dziecka (S-01)
 - **Deploy / infra:** present — per tech-stack.md: Cloudflare Workers + `.github/workflows/ci.yml`
 - **Observability:** partial — `wrangler.jsonc` observability; brak Sentry/otel w aplikacji
@@ -168,7 +168,8 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **Blockers:** —
 - **Unknowns:** —
 - **Risk:** Przy `speed` trzymać metrykę prostą (np. odsetek „opanowanych" fiszek w SRS), bez rozbudowy analityki.
-- **Status:** proposed
+- **Completed:** 2026-06-02 — `getMasterySummary()` + `GET /api/mastery/summary`; `MasteryIndicatorCard` na `/dashboard` (SSR + refetch via `rc-practice-complete` / `rc-flashcards-accepted`). Impl-review NEEDS ATTENTION (F1–F3 skipped) — patrz `context/changes/mastery-indicator/reviews/impl-review.md`. Commits: 3566573 (p1) · aeeeb5c (p2) · b65c13e (epilogue).
+- **Status:** done
 
 ## Backlog Handoff
 
@@ -181,7 +182,7 @@ Foundations below assume these are present and do NOT re-scaffold them.
 | S-02       | ai-flashcard-generation       | Generacja partii fiszek AI                | [#9](https://github.com/krzysztofpupowski-cmd/RafcioCzyta/issues/9)   | done                  | Zakończone 2026-06-01 — odblokowało S-03                    |
 | S-03       | batch-flashcard-acceptance    | Akceptacja partiami i lista fiszek        | [#10](https://github.com/krzysztofpupowski-cmd/RafcioCzyta/issues/10) | done                  | Zakończone 2026-06-01 — odblokowało S-04 (czeka na F-03)     |
 | S-04       | srs-practice-session          | Sesja ćwiczeń na zaakceptowanych fiszkach | [#11](https://github.com/krzysztofpupowski-cmd/RafcioCzyta/issues/11) | done                  | Zakończone 2026-06-02 — odblokowało S-05 (→ ready)            |
-| S-05       | mastery-indicator             | Prosty wskaźnik opanowania                | [#12](https://github.com/krzysztofpupowski-cmd/RafcioCzyta/issues/12) | yes                   | S-04 done (2026-06-02) — gotowy do `/10x-plan mastery-indicator`; gwiazda przewodnia US-01 |
+| S-05       | mastery-indicator             | Prosty wskaźnik opanowania                | [#12](https://github.com/krzysztofpupowski-cmd/RafcioCzyta/issues/12) | done                  | Zakończone 2026-06-02 — domknięcie US-01 / FR-007; gwiazda przewodnia osiągnięta |
 
 ## GitHub Issues
 
@@ -211,8 +212,7 @@ _(Brak otwartych pytań — Q-SRS domknięte 2026-06-02: biblioteka **`ts-fsrs`*
 
 ## Active Tasks
 
-- [ ] **S-05 / mastery-indicator** — [#12](https://github.com/krzysztofpupowski-cmd/RafcioCzyta/issues/12)  
-  Next action: uruchomić `/10x-plan mastery-indicator`.
+_(Brak aktywnych slice’ów roadmapy — łańcuch F-01 → S-05 zakończony 2026-06-02. Następny krok: wybrać post-MVP z PRD §Forward lub sekcji Parked poniżej.)_
 
 ## Parked
 
@@ -233,3 +233,4 @@ _(Brak otwartych pytań — Q-SRS domknięte 2026-06-02: biblioteka **`ts-fsrs`*
 | S-03 | batch-flashcard-acceptance    | 2026-06-01 | [#10](https://github.com/krzysztofpupowski-cmd/RafcioCzyta/issues/10) | Accept/reject API, `FlashcardDashboardCard` tabbed review, SSR hydration, impl-review (4 fixed / 5 skipped). Odblokowało S-04 (czeka na F-03). Folder: `context/changes/batch-flashcard-acceptance/`. |
 | F-03 | srs-adapter                   | 2026-06-02 | [#7](https://github.com/krzysztofpupowski-cmd/RafcioCzyta/issues/7) | `ts-fsrs` adapter, migracja SRS columns, per-card init on accept + backfill. Impl-review (F1 fixed). Odblokowało S-04. Folder: `context/changes/srs-adapter/`. |
 | S-04 | srs-practice-session          | 2026-06-02 | [#11](https://github.com/krzysztofpupowski-cmd/RafcioCzyta/issues/11) | Practice API + `PracticeSessionCard` (due queue, 10-card cap, FSRS ratings). Impl-review (1 fixed / 3 accepted MVP / 3 skipped). Odblokowało S-05. Folder: `context/changes/srs-practice-session/`. |
+| S-05 | mastery-indicator             | 2026-06-02 | [#12](https://github.com/krzysztofpupowski-cmd/RafcioCzyta/issues/12) | `GET /api/mastery/summary` + `MasteryIndicatorCard` (live FSRS ≥90%, cross-island refetch). Impl-review NEEDS ATTENTION (3 skipped). Gwiazda przewodnia US-01. Folder: `context/changes/mastery-indicator/`. |
