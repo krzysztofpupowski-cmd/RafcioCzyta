@@ -319,12 +319,12 @@ Accept batch size is ~8 cards (F-02 default). Per-card UPDATE loop is negligible
 
 #### Automated
 
-- [x] 3.1 `acceptBatch` calls `initSrsState`; `backfillAcceptedCardsWithoutSrs` exported
-- [x] 3.2 `npx astro sync` exits 0
-- [x] 3.3 `npm run lint` exits 0
-- [x] 3.4 `npm run build` exits 0
+- [x] 3.1 `acceptBatch` calls `initSrsState`; `backfillAcceptedCardsWithoutSrs` exported — a00a2df
+- [x] 3.2 `npx astro sync` exits 0 — a00a2df
+- [x] 3.3 `npm run lint` exits 0 — a00a2df
+- [x] 3.4 `npm run build` exits 0 — a00a2df
 
 #### Manual
 
-- [x] 3.5 Accept batch writes per-card `srs_state` and `next_review_at` in Studio
-- [x] 3.6 Backfill populates pre-F-03 accepted cards; repeat accept still returns 404
+- [x] 3.5 Accept batch writes per-card `srs_state` and `next_review_at` in Studio — a00a2df
+- [x] 3.6 Backfill populates pre-F-03 accepted cards; repeat accept still returns 404 — a00a2df
