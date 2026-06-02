@@ -3,7 +3,7 @@ project: "RafcioCzyta"
 version: 1
 status: draft
 created: 2026-05-25
-updated: 2026-06-01
+updated: 2026-06-02
 prd_version: 1
 main_goal: speed
 top_blocker: time
@@ -207,6 +207,11 @@ Migrated from this roadmap on 2026-05-25. Filter: [`label:roadmap`](https://gith
 ## Open Roadmap Questions
 
 1. **Który gotowy algorytm / biblioteka powtórek (SRS) integrujemy w MVP?** — Owner: user. Block: F-03, S-04 (`roadmap-wide` dla ćwiczeń).
+
+## Active Tasks
+
+- [ ] **F-03 / srs-adapter** — [#7](https://github.com/krzysztofpupowski-cmd/RafcioCzyta/issues/7)  
+  Next action: uruchomić `/10x-plan srs-adapter` po decyzji o bibliotece/API SRS.
 
 ## Parked
 
