@@ -291,29 +291,29 @@ Accept batch size is ~8 cards (F-02 default). Per-card UPDATE loop is negligible
 
 #### Automated
 
-- [x] 1.1 Migration file exists at `supabase/migrations/20260602120000_flashcard_srs_state.sql`
-- [x] 1.2 `npm run lint` exits 0
-- [x] 1.3 `npm run build` exits 0
+- [x] 1.1 Migration file exists at `supabase/migrations/20260602120000_flashcard_srs_state.sql` — 1fd6c10
+- [x] 1.2 `npm run lint` exits 0 — 1fd6c10
+- [x] 1.3 `npm run build` exits 0 — 1fd6c10
 
 #### Manual
 
-- [x] 1.4 `npx supabase db reset --local` applies migration; `\d public.flashcards` shows new columns and index
-- [x] 1.5 `database.types.ts` regenerated with `srs_state` and `next_review_at` on flashcards Row
+- [x] 1.4 `npx supabase db reset --local` applies migration; `\d public.flashcards` shows new columns and index — 1fd6c10
+- [x] 1.5 `database.types.ts` regenerated with `srs_state` and `next_review_at` on flashcards Row — 1fd6c10
 
 ### Phase 2: Adapter layer — ts-fsrs, schemas, service
 
 #### Automated
 
-- [ ] 2.1 `ts-fsrs` in `package.json`; `src/lib/schemas/srs.ts` and `src/lib/services/srs-adapter.ts` exist
-- [ ] 2.2 `npx astro sync` exits 0
-- [ ] 2.3 `npm run lint` exits 0
-- [ ] 2.4 `npm run build` exits 0
+- [x] 2.1 `ts-fsrs` in `package.json`; `src/lib/schemas/srs.ts` and `src/lib/services/srs-adapter.ts` exist
+- [x] 2.2 `npx astro sync` exits 0
+- [x] 2.3 `npm run lint` exits 0
+- [x] 2.4 `npm run build` exits 0
 
 #### Manual
 
-- [ ] 2.5 `initSrsState()` produces New card with reps 0 and due ≈ now
-- [ ] 2.6 `applyReview` maps Good → correct, Again → incorrect
-- [ ] 2.7 Round-trip `fromStored(toStored(card))` preserves schedulable state
+- [x] 2.5 `initSrsState()` produces New card with reps 0 and due ≈ now
+- [x] 2.6 `applyReview` maps Good → correct, Again → incorrect
+- [x] 2.7 Round-trip `fromStored(toStored(card))` preserves schedulable state
 
 ### Phase 3: Accept integration & eager backfill
 
