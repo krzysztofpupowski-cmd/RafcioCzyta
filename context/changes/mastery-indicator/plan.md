@@ -285,14 +285,14 @@ No migration. Existing `mastery_score` column remains denormalized for future SQ
 
 #### Automated
 
-- [x] 2.1 Linting passes: `npm run lint`
-- [x] 2.2 Type checking / build passes: `npm run build`
+- [x] 2.1 Linting passes: `npm run lint` — aeeeb5c
+- [x] 2.2 Type checking / build passes: `npm run build` — aeeeb5c
 
 #### Manual
 
-- [x] 2.3 `/dashboard` shows mastery card in all guided states (no profile, no level, no cards, zero mastered, normal)
-- [x] 2.4 Mobile layout: fourth card readable without horizontal scroll (PRD mobile NFR)
-- [x] 2.5 Accept a batch → mastery card updates to „0 z N” without manual page reload
-- [x] 2.6 Complete a practice session → mastery numbers update without manual page reload
-- [x] 2.7 Disclaimer copy present; indicator does not expose per-card scores or SRS internals
-- [x] 2.8 No regressions in profile, flashcard, or practice cards
+- [x] 2.3 `/dashboard` shows mastery card in all guided states (no profile, no level, no cards, zero mastered, normal) — aeeeb5c
+- [x] 2.4 Mobile layout: fourth card readable without horizontal scroll (PRD mobile NFR) — aeeeb5c
+- [x] 2.5 Accept a batch → mastery card updates to „0 z N” without manual page reload — aeeeb5c
+- [x] 2.6 Complete a practice session → mastery numbers update without manual page reload — aeeeb5c
+- [x] 2.7 Disclaimer copy present; indicator does not expose per-card scores or SRS internals — aeeeb5c
+- [x] 2.8 No regressions in profile, flashcard, or practice cards — aeeeb5c
