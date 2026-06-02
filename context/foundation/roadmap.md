@@ -35,7 +35,7 @@ Tradycyjna nauka czytania nie nadąża za tempem dziecka, które potrzebuje szyb
 | S-01 | parent-auth-and-reading-level | zalogować się i ustawić poziom dziecka (w tym „nie wiem / najprostszy start")                      | F-01             | US-01, FR-001, FR-002              | done     |
 | S-02 | ai-flashcard-generation       | wygenerować partię fiszek dopasowanych do wybranego poziomu                                        | F-01, F-02, S-01 | US-01, FR-003                      | done     |
 | S-03 | batch-flashcard-acceptance    | zaakceptować lub odrzucić partię propozycji AI i przeglądać przygotowane oraz zaakceptowane fiszki | S-02             | US-01, FR-004, FR-005              | done     |
-| S-04 | srs-practice-session          | uruchomić prostą sesję ćwiczeń na zaakceptowanych fiszkach w gotowym SRS                           | S-03, F-03       | US-01, FR-006, NFR (sesja <10 min) | proposed |
+| S-04 | srs-practice-session          | uruchomić prostą sesję ćwiczeń na zaakceptowanych fiszkach w gotowym SRS                           | S-03, F-03       | US-01, FR-006, NFR (sesja <10 min) | done     |
 | S-05 | mastery-indicator             | zobaczyć prosty wskaźnik opanowania materiału wynikający z powtórek                                | S-04             | US-01, FR-007                      | proposed |
 
 ## Streams
@@ -46,7 +46,7 @@ Navigation aid — groups items that share a Prerequisites chain. Canonical orde
 | ------ | ------------------ | ------------------------ | -------------------------------------------------------------------------------------------- |
 | A      | Konto i dane       | `F-01` → `S-01`          | `S-01` done (2026-05-28) — poziom i konto gotowe.                                            |
 | B      | Materiał AI        | `F-02` → `S-02` → `S-03` | `S-03` done (2026-06-01) — akceptacja partiami live; Stream B kompletny. |
-| C      | Ćwiczenia i postęp | `F-03` → `S-04` → `S-05` | `F-03` done (2026-06-02) — `ts-fsrs` adapter + accept init; `S-04` ready for `/10x-plan`; `S-05` to gwiazda przewodnia. |
+| C      | Ćwiczenia i postęp | `F-03` → `S-04` → `S-05` | `S-04` done (2026-06-02) — sesja ćwiczeń na `/dashboard` (API + `PracticeSessionCard`); `S-05` ready for `/10x-plan`; gwiazda przewodnia po S-05. |
 
 ## Baseline
 
@@ -55,7 +55,7 @@ Foundations below assume these are present and do NOT re-scaffold them.
 
 - **Frontend:** present — per tech-stack.md: Astro 6 SSR + React 19 + Tailwind 4
 - **Backend / API:** present — per tech-stack.md: Astro API routes (`src/pages/api/`)
-- **Data:** partial — Supabase client + migracja F-01 (`children`, fiszki, postęp); S-01 profil dziecka; S-02 generacja draftów; S-03 akceptacja/odrzucenie partii + listy na `/dashboard`; F-03 `ts-fsrs` adapter (`srs_state`, `next_review_at`) + per-card SRS init on accept
+- **Data:** partial — Supabase client + migracja F-01 (`children`, fiszki, postęp); S-01 profil dziecka; S-02 generacja draftów; S-03 akceptacja/odrzucenie partii + listy na `/dashboard`; F-03 `ts-fsrs` adapter (`srs_state`, `next_review_at`) + per-card SRS init on accept; S-04 `practice_sessions` / `practice_attempts` writes + due-queue practice on `/dashboard`
 - **Auth:** present — Supabase cookie auth; sign-in ląduje na `/dashboard` z formularzem poziomu dziecka (S-01)
 - **Deploy / infra:** present — per tech-stack.md: Cloudflare Workers + `.github/workflows/ci.yml`
 - **Observability:** partial — `wrangler.jsonc` observability; brak Sentry/otel w aplikacji
@@ -155,7 +155,8 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **Blockers:** —
 - **Unknowns:** —
 - **Risk:** Główne ryzyko techniczne MVP (sukces FR-006) — przy `time` nie rozszerzać sesji poza prosty tryb.
-- **Status:** proposed
+- **Completed:** 2026-06-02 — `practice-session.ts` + `POST /api/practice/{start,review,end}`; `PracticeSessionCard` na `/dashboard` (SSR due count, cap 10, FSRS ratings, hint reveal). Impl-review NEEDS ATTENTION (F5 fixed; F1–F3 accepted MVP; F4/F7/F8 skipped) — patrz `context/changes/srs-practice-session/reviews/impl-review.md`. Commits: 94d40d9 (p1) · 6af9f85 (p2) · 13b0756 (epilogue).
+- **Status:** done
 
 ### S-05: Wskaźnik opanowania materiału
 
@@ -179,8 +180,8 @@ Foundations below assume these are present and do NOT re-scaffold them.
 | S-01       | parent-auth-and-reading-level | Poziom dziecka po zalogowaniu             | [#8](https://github.com/krzysztofpupowski-cmd/RafcioCzyta/issues/8)   | done                  | Zakończone 2026-05-28 — odblokowało S-02 (czeka na F-02)    |
 | S-02       | ai-flashcard-generation       | Generacja partii fiszek AI                | [#9](https://github.com/krzysztofpupowski-cmd/RafcioCzyta/issues/9)   | done                  | Zakończone 2026-06-01 — odblokowało S-03                    |
 | S-03       | batch-flashcard-acceptance    | Akceptacja partiami i lista fiszek        | [#10](https://github.com/krzysztofpupowski-cmd/RafcioCzyta/issues/10) | done                  | Zakończone 2026-06-01 — odblokowało S-04 (czeka na F-03)     |
-| S-04       | srs-practice-session          | Sesja ćwiczeń na zaakceptowanych fiszkach | [#11](https://github.com/krzysztofpupowski-cmd/RafcioCzyta/issues/11) | yes                   | F-03 done (2026-06-02) — gotowy do `/10x-plan srs-practice-session` |
-| S-05       | mastery-indicator             | Prosty wskaźnik opanowania                | [#12](https://github.com/krzysztofpupowski-cmd/RafcioCzyta/issues/12) | no                    | Po S-04; gwiazda przewodnia US-01                           |
+| S-04       | srs-practice-session          | Sesja ćwiczeń na zaakceptowanych fiszkach | [#11](https://github.com/krzysztofpupowski-cmd/RafcioCzyta/issues/11) | done                  | Zakończone 2026-06-02 — odblokowało S-05 (→ ready)            |
+| S-05       | mastery-indicator             | Prosty wskaźnik opanowania                | [#12](https://github.com/krzysztofpupowski-cmd/RafcioCzyta/issues/12) | yes                   | S-04 done (2026-06-02) — gotowy do `/10x-plan mastery-indicator`; gwiazda przewodnia US-01 |
 
 ## GitHub Issues
 
@@ -210,8 +211,8 @@ _(Brak otwartych pytań — Q-SRS domknięte 2026-06-02: biblioteka **`ts-fsrs`*
 
 ## Active Tasks
 
-- [ ] **S-04 / srs-practice-session** — [#11](https://github.com/krzysztofpupowski-cmd/RafcioCzyta/issues/11)  
-  Next action: uruchomić `/10x-plan srs-practice-session`.
+- [ ] **S-05 / mastery-indicator** — [#12](https://github.com/krzysztofpupowski-cmd/RafcioCzyta/issues/12)  
+  Next action: uruchomić `/10x-plan mastery-indicator`.
 
 ## Parked
 
@@ -231,3 +232,4 @@ _(Brak otwartych pytań — Q-SRS domknięte 2026-06-02: biblioteka **`ts-fsrs`*
 | S-02 | ai-flashcard-generation       | 2026-06-01 | [#9](https://github.com/krzysztofpupowski-cmd/RafcioCzyta/issues/9) | `POST /api/flashcards/generate` + DTO layer, `FlashcardGenerationCard` + `DraftFlashcardList` islands na `/dashboard`. Odblokowało S-03.                                                                     |
 | S-03 | batch-flashcard-acceptance    | 2026-06-01 | [#10](https://github.com/krzysztofpupowski-cmd/RafcioCzyta/issues/10) | Accept/reject API, `FlashcardDashboardCard` tabbed review, SSR hydration, impl-review (4 fixed / 5 skipped). Odblokowało S-04 (czeka na F-03). Folder: `context/changes/batch-flashcard-acceptance/`. |
 | F-03 | srs-adapter                   | 2026-06-02 | [#7](https://github.com/krzysztofpupowski-cmd/RafcioCzyta/issues/7) | `ts-fsrs` adapter, migracja SRS columns, per-card init on accept + backfill. Impl-review (F1 fixed). Odblokowało S-04. Folder: `context/changes/srs-adapter/`. |
+| S-04 | srs-practice-session          | 2026-06-02 | [#11](https://github.com/krzysztofpupowski-cmd/RafcioCzyta/issues/11) | Practice API + `PracticeSessionCard` (due queue, 10-card cap, FSRS ratings). Impl-review (1 fixed / 3 accepted MVP / 3 skipped). Odblokowało S-05. Folder: `context/changes/srs-practice-session/`. |

@@ -304,6 +304,11 @@ Expose practice on `/dashboard`: SSR due count, CTA, in-page session flow (revea
 - No migration. Use existing F-01 + F-03 columns.
 - Cards accepted before F-03 should already be backfilled; if `srs_state` is null on an accepted card, `recordPracticeReview` should surface `PRACTICE_ERROR_INVALID_SRS_STATE` — parent can re-accept or run backfill manually (out of slice scope).
 
+## Implementation review addendum (2026-06-02)
+
+- **Session queue (impl-review F1):** Server does not persist or enforce the 10-card queue from `start`; client owns queue IDs per plan L111. Accepted at MVP — crafted `POST /review` could update any accepted child card while a session is open.
+- **SSR infrastructure (impl-review F6):** `astro.config.mjs` Vite pre-bundle plugin and auth pages `client:only="react"` were added to support `PracticeSessionCard` `client:load` on Cloudflare; documented here, not in original phase list.
+
 ## References
 
 - PRD FR-006: `context/foundation/prd.md`

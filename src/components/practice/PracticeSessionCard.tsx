@@ -140,13 +140,20 @@ export default function PracticeSessionCard({ childExists, childLevel, initialDu
 
       const nextIndex = cardIndex + 1;
       if (nextIndex >= cards.length) {
-        await endSession(sessionId);
+        let endWarning: string | null = null;
+        try {
+          await endSession(sessionId);
+        } catch {
+          endWarning =
+            "Powtórki zapisane. Nie udało się zamknąć sesji — odśwież stronę później.";
+        }
         setDueCount((prev) => Math.max(0, prev - nextReviewed));
         setPhase("complete");
         setSessionId(null);
         setCards([]);
         setCardIndex(0);
         setHintRevealed(false);
+        if (endWarning) setError(endWarning);
       } else {
         setCardIndex(nextIndex);
         setHintRevealed(false);
