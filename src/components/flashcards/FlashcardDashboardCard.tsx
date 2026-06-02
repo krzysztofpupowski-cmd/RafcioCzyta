@@ -22,6 +22,12 @@ interface Props {
 
 type ActiveTab = "prepared" | "accepted";
 
+function dispatchFlashcardsAccepted(): void {
+  if (typeof window !== "undefined") {
+    window.dispatchEvent(new CustomEvent("rc-flashcards-accepted"));
+  }
+}
+
 export default function FlashcardDashboardCard({
   childExists,
   childLevel,
@@ -102,6 +108,7 @@ export default function FlashcardDashboardCard({
       if (data.ok) {
         setDraftBatches((prev) => prev.filter((b) => b.generationId !== generationId));
         setAcceptedCards((prev) => [...data.cards, ...prev]);
+        dispatchFlashcardsAccepted();
       } else if (res.status === 404) {
         setDraftBatches((prev) => prev.filter((b) => b.generationId !== generationId));
       } else {

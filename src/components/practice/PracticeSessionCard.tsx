@@ -22,6 +22,12 @@ interface Props {
 
 type SessionPhase = "idle" | "empty" | "active" | "complete";
 
+function dispatchPracticeComplete(): void {
+  if (typeof window !== "undefined") {
+    window.dispatchEvent(new CustomEvent("rc-practice-complete"));
+  }
+}
+
 const RATING_OPTIONS: { rating: ReviewRating; label: string; className: string }[] = [
   { rating: Rating.Again, label: "Jeszcze raz", className: "bg-red-600/90 hover:bg-red-500" },
   { rating: Rating.Hard, label: "Trudne", className: "bg-orange-600/90 hover:bg-orange-500" },
@@ -144,11 +150,11 @@ export default function PracticeSessionCard({ childExists, childLevel, initialDu
         try {
           await endSession(sessionId);
         } catch {
-          endWarning =
-            "Powtórki zapisane. Nie udało się zamknąć sesji — odśwież stronę później.";
+          endWarning = "Powtórki zapisane. Nie udało się zamknąć sesji — odśwież stronę później.";
         }
         setDueCount((prev) => Math.max(0, prev - nextReviewed));
         setPhase("complete");
+        dispatchPracticeComplete();
         setSessionId(null);
         setCards([]);
         setCardIndex(0);
@@ -175,6 +181,7 @@ export default function PracticeSessionCard({ childExists, childLevel, initialDu
       await endSession(sessionId);
       if (reviewedInSession > 0) {
         setDueCount((prev) => Math.max(0, prev - reviewedInSession));
+        dispatchPracticeComplete();
       }
       resetToIdle();
     } catch (err) {

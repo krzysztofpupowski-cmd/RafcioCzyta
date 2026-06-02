@@ -3,11 +3,14 @@ import Layout from "@/layouts/Layout.astro";
 import ChildProfileForm from "@/components/child/ChildProfileForm";
 import FlashcardDashboardCard from "@/components/flashcards/FlashcardDashboardCard";
 import PracticeSessionCard from "@/components/practice/PracticeSessionCard";
+import MasteryIndicatorCard from "@/components/mastery/MasteryIndicatorCard";
 import { createClient } from "@/lib/supabase";
 import { getMyChild } from "@/lib/services/children";
 import { listDraftBatches, listAcceptedFlashcards } from "@/lib/services/flashcards";
 import { countDueCards } from "@/lib/services/practice-session";
+import { getMasterySummary } from "@/lib/services/mastery-indicator";
 import type { DraftBatchDTO, AcceptedFlashcardDTO } from "@/lib/dto/flashcards";
+import type { MasterySummaryDTO } from "@/lib/dto/mastery";
 
 // Middleware (PROTECTED_ROUTES) guarantees a user; avoid frontmatter `return` (breaks Vite dep scan).
 const authUser = Astro.locals.user;
@@ -25,6 +28,8 @@ let initialDraftBatches: DraftBatchDTO[] = [];
 let initialAcceptedCards: AcceptedFlashcardDTO[] = [];
 let flashcardFetchError: string | null = null;
 let practiceDueCount = 0;
+let initialMasterySummary: MasterySummaryDTO | null = null;
+let masteryFetchError: string | null = null;
 
 if (!supabase) {
   fetchError = "Supabase nie jest skonfigurowany";
@@ -61,6 +66,14 @@ if (!supabase) {
       } catch (err) {
         // eslint-disable-next-line no-console -- server-side diagnostic only
         console.error("Failed to count due practice cards", err);
+      }
+
+      try {
+        initialMasterySummary = await getMasterySummary(supabase, { childId, level: childLevel });
+      } catch (err) {
+        // eslint-disable-next-line no-console -- server-side diagnostic only
+        console.error("Failed to fetch mastery summary", err);
+        masteryFetchError = "Nie udało się pobrać postępu w opanowaniu. Spróbuj odświeżyć stronę.";
       }
     }
   }
@@ -117,6 +130,14 @@ const serverError = Astro.url.searchParams.get("error") ?? fetchError;
             childLevel={childLevel}
             initialDueCount={childLevel ? practiceDueCount : 0}
             initialError={flashcardFetchError}
+            client:load
+          />
+
+          <MasteryIndicatorCard
+            childExists={childExists}
+            childLevel={childLevel}
+            initialSummary={initialMasterySummary}
+            initialError={masteryFetchError}
             client:load
           />
         </div>

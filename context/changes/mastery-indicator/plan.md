@@ -271,28 +271,28 @@ No migration. Existing `mastery_score` column remains denormalized for future SQ
 
 #### Automated
 
-- [x] 1.1 Linting passes: `npm run lint`
-- [x] 1.2 Type checking / build passes: `npm run build`
-- [x] 1.3 Astro env sync: `npx astro sync`
+- [x] 1.1 Linting passes: `npm run lint` — 3566573
+- [x] 1.2 Type checking / build passes: `npm run build` — 3566573
+- [x] 1.3 Astro env sync: `npx astro sync` — 3566573
 
 #### Manual
 
-- [x] 1.4 With session cookie, `GET /api/mastery/summary` returns `{ ok: true, summary }` when child + level exist
-- [x] 1.5 Returns 401 unauthenticated, 400 when level is null
-- [x] 1.6 After practice reviews, repeated GET shows increased `masteredCount` when ratings yield retrievability ≥ 90
+- [x] 1.4 With session cookie, `GET /api/mastery/summary` returns `{ ok: true, summary }` when child + level exist — 3566573
+- [x] 1.5 Returns 401 unauthenticated, 400 when level is null — 3566573
+- [x] 1.6 After practice reviews, repeated GET shows increased `masteredCount` when ratings yield retrievability ≥ 90 — 3566573
 
 ### Phase 2: Dashboard UI — MasteryIndicatorCard + practice refresh
 
 #### Automated
 
-- [ ] 2.1 Linting passes: `npm run lint`
-- [ ] 2.2 Type checking / build passes: `npm run build`
+- [x] 2.1 Linting passes: `npm run lint`
+- [x] 2.2 Type checking / build passes: `npm run build`
 
 #### Manual
 
-- [ ] 2.3 `/dashboard` shows mastery card in all guided states (no profile, no level, no cards, zero mastered, normal)
-- [ ] 2.4 Mobile layout: fourth card readable without horizontal scroll (PRD mobile NFR)
-- [ ] 2.5 Accept a batch → mastery card updates to „0 z N” without manual page reload
-- [ ] 2.6 Complete a practice session → mastery numbers update without manual page reload
-- [ ] 2.7 Disclaimer copy present; indicator does not expose per-card scores or SRS internals
-- [ ] 2.8 No regressions in profile, flashcard, or practice cards
+- [x] 2.3 `/dashboard` shows mastery card in all guided states (no profile, no level, no cards, zero mastered, normal)
+- [x] 2.4 Mobile layout: fourth card readable without horizontal scroll (PRD mobile NFR)
+- [x] 2.5 Accept a batch → mastery card updates to „0 z N” without manual page reload
+- [x] 2.6 Complete a practice session → mastery numbers update without manual page reload
+- [x] 2.7 Disclaimer copy present; indicator does not expose per-card scores or SRS internals
+- [x] 2.8 No regressions in profile, flashcard, or practice cards
