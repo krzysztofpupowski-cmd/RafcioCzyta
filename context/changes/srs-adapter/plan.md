@@ -304,27 +304,27 @@ Accept batch size is ~8 cards (F-02 default). Per-card UPDATE loop is negligible
 
 #### Automated
 
-- [x] 2.1 `ts-fsrs` in `package.json`; `src/lib/schemas/srs.ts` and `src/lib/services/srs-adapter.ts` exist
-- [x] 2.2 `npx astro sync` exits 0
-- [x] 2.3 `npm run lint` exits 0
-- [x] 2.4 `npm run build` exits 0
+- [x] 2.1 `ts-fsrs` in `package.json`; `src/lib/schemas/srs.ts` and `src/lib/services/srs-adapter.ts` exist — 677d269
+- [x] 2.2 `npx astro sync` exits 0 — 677d269
+- [x] 2.3 `npm run lint` exits 0 — 677d269
+- [x] 2.4 `npm run build` exits 0 — 677d269
 
 #### Manual
 
-- [x] 2.5 `initSrsState()` produces New card with reps 0 and due ≈ now
-- [x] 2.6 `applyReview` maps Good → correct, Again → incorrect
-- [x] 2.7 Round-trip `fromStored(toStored(card))` preserves schedulable state
+- [x] 2.5 `initSrsState()` produces New card with reps 0 and due ≈ now — 677d269
+- [x] 2.6 `applyReview` maps Good → correct, Again → incorrect — 677d269
+- [x] 2.7 Round-trip `fromStored(toStored(card))` preserves schedulable state — 677d269
 
 ### Phase 3: Accept integration & eager backfill
 
 #### Automated
 
-- [ ] 3.1 `acceptBatch` calls `initSrsState`; `backfillAcceptedCardsWithoutSrs` exported
-- [ ] 3.2 `npx astro sync` exits 0
-- [ ] 3.3 `npm run lint` exits 0
-- [ ] 3.4 `npm run build` exits 0
+- [x] 3.1 `acceptBatch` calls `initSrsState`; `backfillAcceptedCardsWithoutSrs` exported
+- [x] 3.2 `npx astro sync` exits 0
+- [x] 3.3 `npm run lint` exits 0
+- [x] 3.4 `npm run build` exits 0
 
 #### Manual
 
-- [ ] 3.5 Accept batch writes per-card `srs_state` and `next_review_at` in Studio
-- [ ] 3.6 Backfill populates pre-F-03 accepted cards; repeat accept still returns 404
+- [x] 3.5 Accept batch writes per-card `srs_state` and `next_review_at` in Studio
+- [x] 3.6 Backfill populates pre-F-03 accepted cards; repeat accept still returns 404

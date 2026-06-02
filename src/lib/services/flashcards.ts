@@ -15,6 +15,7 @@ import {
   type DraftBatchDTO,
 } from "@/lib/dto/flashcards";
 import type { StoredReadingLevel } from "@/lib/reading-level-form";
+import { initSrsState } from "@/lib/services/srs-adapter";
 
 export const FLASHCARD_ERROR_BATCH_EMPTY = "FLASHCARD_ERROR_BATCH_EMPTY";
 
@@ -84,26 +85,98 @@ export async function acceptBatch(
   supabase: AppSupabase,
   input: { childId: string; generationId: string },
 ): Promise<{ updatedCount: number; cards: AcceptedFlashcardDTO[] }> {
-  const { data, error } = await supabase
+  const { data: draftCards, error: selectError } = await supabase
     .from("flashcards")
-    .update({ status: "accepted" })
+    .select("*")
     .eq("generation_id", input.generationId)
     .eq("child_id", input.childId)
-    .eq("status", "draft")
-    .select();
+    .eq("status", "draft");
 
-  if (error) {
-    throw new Error(error.message);
+  if (selectError) {
+    throw new Error(selectError.message);
   }
 
-  if (!data || data.length === 0) {
+  if (!draftCards || draftCards.length === 0) {
     throw new Error(FLASHCARD_ERROR_BATCH_EMPTY);
   }
 
+  const updatedCards: Flashcard[] = [];
+
+  for (const card of draftCards) {
+    const { stored, nextReviewAt, reps_count, last_reviewed_at, mastery_score } = initSrsState();
+
+    const { data, error } = await supabase
+      .from("flashcards")
+      .update({
+        status: "accepted",
+        srs_state: stored,
+        next_review_at: nextReviewAt.toISOString(),
+        reps_count,
+        last_reviewed_at,
+        mastery_score,
+      })
+      .eq("id", card.id)
+      .eq("child_id", input.childId)
+      .select()
+      .single();
+
+    if (error) {
+      throw new Error(error.message);
+    }
+
+    updatedCards.push(data as Flashcard);
+  }
+
   return {
-    updatedCount: data.length,
-    cards: data.map(toAcceptedFlashcardDTO),
+    updatedCount: updatedCards.length,
+    cards: updatedCards.map(toAcceptedFlashcardDTO),
   };
+}
+
+export async function backfillAcceptedCardsWithoutSrs(
+  supabase: AppSupabase,
+  childId: string,
+): Promise<{ updatedCount: number }> {
+  const { data: acceptedWithoutSrs, error: selectError } = await supabase
+    .from("flashcards")
+    .select("*")
+    .eq("child_id", childId)
+    .eq("status", "accepted")
+    .is("srs_state", null);
+
+  if (selectError) {
+    throw new Error(selectError.message);
+  }
+
+  if (!acceptedWithoutSrs || acceptedWithoutSrs.length === 0) {
+    return { updatedCount: 0 };
+  }
+
+  let updatedCount = 0;
+
+  for (const card of acceptedWithoutSrs) {
+    const { stored, nextReviewAt, reps_count, last_reviewed_at, mastery_score } = initSrsState();
+
+    const { error } = await supabase
+      .from("flashcards")
+      .update({
+        srs_state: stored,
+        next_review_at: nextReviewAt.toISOString(),
+        reps_count,
+        last_reviewed_at,
+        mastery_score,
+      })
+      .eq("id", card.id)
+      .eq("child_id", childId);
+
+    if (error) {
+      throw new Error(error.message);
+    }
+
+    updatedCount += 1;
+  }
+
+  return { updatedCount };
 }
 
 export async function rejectBatch(
