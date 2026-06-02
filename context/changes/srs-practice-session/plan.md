@@ -321,24 +321,24 @@ Expose practice on `/dashboard`: SSR due count, CTA, in-page session flow (revea
 
 #### Automated
 
-- [x] 1.1 `npx astro sync` completes without errors
-- [x] 1.2 `npm run lint` passes
-- [x] 1.3 `npm run build` passes
+- [x] 1.1 `npx astro sync` completes without errors — 94d40d9
+- [x] 1.2 `npm run lint` passes — 94d40d9
+- [x] 1.3 `npm run build` passes — 94d40d9
 
 #### Manual
 
-- [x] 1.4 Start/review/end API verified against Supabase (session + attempts + SRS columns)
-- [x] 1.5 Zero due and null level error paths verified
+- [x] 1.4 Start/review/end API verified against Supabase (session + attempts + SRS columns) — 94d40d9
+- [x] 1.5 Zero due and null level error paths verified — 94d40d9
 
 ### Phase 2: Dashboard integration — SSR + practice island
 
 #### Automated
 
-- [ ] 2.1 `npm run lint` passes
-- [ ] 2.2 `npm run build` passes
+- [x] 2.1 `npm run lint` passes
+- [x] 2.2 `npm run build` passes
 
 #### Manual
 
-- [ ] 2.3 Full dashboard practice flow on mobile viewport
-- [ ] 2.4 Mid-session Zakończ and empty-due / no-level UX verified
-- [ ] 2.5 Flashcard generate/accept tabs still work after practice
+- [x] 2.3 Full dashboard practice flow on mobile viewport
+- [x] 2.4 Mid-session Zakończ and empty-due / no-level UX verified
+- [x] 2.5 Flashcard generate/accept tabs still work after practice

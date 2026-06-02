@@ -2,14 +2,17 @@
 import Layout from "@/layouts/Layout.astro";
 import ChildProfileForm from "@/components/child/ChildProfileForm";
 import FlashcardDashboardCard from "@/components/flashcards/FlashcardDashboardCard";
+import PracticeSessionCard from "@/components/practice/PracticeSessionCard";
 import { createClient } from "@/lib/supabase";
 import { getMyChild } from "@/lib/services/children";
 import { listDraftBatches, listAcceptedFlashcards } from "@/lib/services/flashcards";
+import { countDueCards } from "@/lib/services/practice-session";
 import type { DraftBatchDTO, AcceptedFlashcardDTO } from "@/lib/dto/flashcards";
 
 // Middleware (PROTECTED_ROUTES) guarantees a user; avoid frontmatter `return` (breaks Vite dep scan).
 const authUser = Astro.locals.user;
-const { id: userId, email: userEmail } = authUser!;
+const userId = authUser?.id ?? "";
+const userEmail = authUser?.email ?? "";
 
 const supabase = createClient(Astro.request.headers, Astro.cookies);
 
@@ -21,6 +24,7 @@ let fetchError: string | null = null;
 let initialDraftBatches: DraftBatchDTO[] = [];
 let initialAcceptedCards: AcceptedFlashcardDTO[] = [];
 let flashcardFetchError: string | null = null;
+let practiceDueCount = 0;
 
 if (!supabase) {
   fetchError = "Supabase nie jest skonfigurowany";
@@ -50,6 +54,15 @@ if (!supabase) {
       console.error("Failed to fetch flashcard lists", err);
       flashcardFetchError = "Nie udało się pobrać listy fiszek. Spróbuj odświeżyć stronę.";
     }
+
+    if (childLevel) {
+      try {
+        practiceDueCount = await countDueCards(supabase, { childId, level: childLevel });
+      } catch (err) {
+        // eslint-disable-next-line no-console -- server-side diagnostic only
+        console.error("Failed to count due practice cards", err);
+      }
+    }
   }
 }
 
@@ -58,46 +71,56 @@ const serverError = Astro.url.searchParams.get("error") ?? fetchError;
 
 <Layout title="Profil dziecka">
   {!authUser && <meta http-equiv="refresh" content={`0;url=/auth/signin`} />}
-  {authUser && (
-  <div class="bg-cosmic flex min-h-screen items-start justify-center p-4 sm:items-center">
-    <div class="flex w-full max-w-md flex-col gap-6">
-      <div class="w-full rounded-2xl border border-white/10 bg-white/10 p-8 text-white backdrop-blur-xl">
-        <div class="mb-6 flex items-center justify-between">
-          <div>
-            <h1 class="bg-gradient-to-r from-blue-200 to-purple-200 bg-clip-text text-2xl font-bold text-transparent">
-              Profil dziecka
-            </h1>
-            <p class="mt-1 text-sm text-blue-100/60">
-              Zalogowany jako <span class="font-medium text-white/80">{userEmail}</span>
-            </p>
+  {
+    authUser && (
+      <div class="bg-cosmic flex min-h-screen items-start justify-center p-4 sm:items-center">
+        <div class="flex w-full max-w-md flex-col gap-6">
+          <div class="w-full rounded-2xl border border-white/10 bg-white/10 p-8 text-white backdrop-blur-xl">
+            <div class="mb-6 flex items-center justify-between">
+              <div>
+                <h1 class="bg-gradient-to-r from-blue-200 to-purple-200 bg-clip-text text-2xl font-bold text-transparent">
+                  Profil dziecka
+                </h1>
+                <p class="mt-1 text-sm text-blue-100/60">
+                  Zalogowany jako <span class="font-medium text-white/80">{userEmail}</span>
+                </p>
+              </div>
+              <form method="POST" action="/api/auth/signout">
+                <button
+                  type="submit"
+                  class="rounded-lg border border-white/20 bg-white/10 px-3 py-1.5 text-xs transition-colors hover:bg-white/20"
+                >
+                  Wyloguj
+                </button>
+              </form>
+            </div>
+
+            <ChildProfileForm
+              initialDisplayName={childDisplayName}
+              initialLevel={childLevel}
+              serverError={serverError}
+              client:only="react"
+            />
           </div>
-          <form method="POST" action="/api/auth/signout">
-            <button
-              type="submit"
-              class="rounded-lg border border-white/20 bg-white/10 px-3 py-1.5 text-xs transition-colors hover:bg-white/20"
-            >
-              Wyloguj
-            </button>
-          </form>
+
+          <FlashcardDashboardCard
+            childExists={childExists}
+            childLevel={childLevel}
+            initialDraftBatches={initialDraftBatches}
+            initialAcceptedCards={initialAcceptedCards}
+            initialError={flashcardFetchError}
+            client:only="react"
+          />
+
+          <PracticeSessionCard
+            childExists={childExists}
+            childLevel={childLevel}
+            initialDueCount={childLevel ? practiceDueCount : 0}
+            initialError={flashcardFetchError}
+            client:load
+          />
         </div>
-
-        <ChildProfileForm
-          initialDisplayName={childDisplayName}
-          initialLevel={childLevel}
-          serverError={serverError}
-          client:only="react"
-        />
       </div>
-
-      <FlashcardDashboardCard
-        childExists={childExists}
-        childLevel={childLevel}
-        initialDraftBatches={initialDraftBatches}
-        initialAcceptedCards={initialAcceptedCards}
-        initialError={flashcardFetchError}
-        client:only="react"
-      />
-    </div>
-  </div>
-  )}
+    )
+  }
 </Layout>
