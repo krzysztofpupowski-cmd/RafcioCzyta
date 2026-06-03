@@ -72,7 +72,7 @@ describe("unauthenticated protected APIs", () => {
 });
 
 describe("sign-in smoke", () => {
-  it("postAuthSignin sets session cookies for Parent A", async (ctx) => {
+  it("postAuthSignin sets session cookies for Parent A", async () => {
     const env = requireTestEnv();
     const form = new FormData();
     form.set("email", env.TEST_PARENT_A_EMAIL);
@@ -89,10 +89,7 @@ describe("sign-in smoke", () => {
     const response = await postAuthSignin(context);
     const location = response.headers.get("Location") ?? "";
 
-    if (location.includes("error=")) {
-      ctx.skip(true);
-    }
-
+    expect(location, "sign-in failed — check TEST_PARENT_A_* credentials and test project").not.toContain("error=");
     expect(response.status).toBeGreaterThanOrEqual(300);
     expect(response.status).toBeLessThan(400);
     expect(location).toMatch(/\/dashboard$/);

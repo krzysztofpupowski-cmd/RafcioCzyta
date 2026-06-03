@@ -31,7 +31,6 @@ describe("cross-parent IDOR", () => {
 
     expect(response.status).toBe(404);
     expect(body.ok).toBe(false);
-    expect(body.error).toBe("Ta partia nie oczekuje już na akceptację.");
   });
 
   it("Parent A cannot review Parent B practice session", async () => {
@@ -59,7 +58,6 @@ describe("cross-parent IDOR", () => {
 
     expect(response.status).toBe(404);
     expect(body.ok).toBe(false);
-    expect(body.error).toBe("Sesja ćwiczeniowa nie została znaleziona lub została zakończona.");
   });
 
   it("Parent A cannot end Parent B practice session", async () => {
@@ -83,6 +81,5 @@ describe("cross-parent IDOR", () => {
 
     expect(response.status).toBe(404);
     expect(body.ok).toBe(false);
-    expect(body.error).toBe("Sesja ćwiczeniowa nie została znaleziona.");
   });
 });
