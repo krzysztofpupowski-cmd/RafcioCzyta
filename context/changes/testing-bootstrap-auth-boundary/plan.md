@@ -365,25 +365,25 @@ No production schema migration. Test project seed is idempotent only if README d
 
 #### Automated
 
-- [x] 2.1 `npm test` — middleware and unauthenticated API matrix pass
-- [x] 2.2 `npm run lint` passes
-- [x] 2.3 `npm run build` passes
+- [x] 2.1 `npm test` — middleware and unauthenticated API matrix pass — c9e0ab7
+- [x] 2.2 `npm run lint` passes — c9e0ab7
+- [x] 2.3 `npm run build` passes — c9e0ab7
 
 #### Manual
 
-- [x] 2.4 Logged-out `/dashboard` still redirects to sign-in in browser
+- [x] 2.4 Logged-out `/dashboard` still redirects to sign-in in browser — c9e0ab7
 
 ### Phase 3: Hosted Fixtures & Risk #1 (Authorization)
 
 #### Automated
 
-- [ ] 3.1 `npm test` — RLS smoke and cross-parent IDOR tests pass
-- [ ] 3.2 `npm run lint` passes
-- [ ] 3.3 `npm run build` passes
+- [x] 3.1 `npm test` — RLS smoke and cross-parent IDOR tests pass
+- [x] 3.2 `npm run lint` passes
+- [x] 3.3 `npm run build` passes
 
 #### Manual
 
-- [ ] 3.4 `seed.sql` applied to test project; Table Editor IDs match `.env.test`
+- [x] 3.4 `seed.sql` applied to test project; Table Editor IDs match `.env.test`
 
 ### Phase 4: Cookbook & Test-Plan Sync
 
