@@ -67,7 +67,7 @@ orchestrator updates Status as artifacts appear on disk.
 
 | # | Phase name | Goal (one line) | Risks covered | Test types | Status | Change folder |
 |---|------------|-----------------|---------------|------------|--------|---------------|
-| 1 | Bootstrap + auth boundary | Install Vitest and prove authn/authz on protected parent APIs | #1, #2 | unit + integration | change opened | context/changes/testing-bootstrap-auth-boundary/ |
+| 1 | Bootstrap + auth boundary | Install Vitest and prove authn/authz on protected parent APIs | #1, #2 | unit + integration | shipped | context/changes/testing-bootstrap-auth-boundary/ |
 | 2 | Deck generation & acceptance gates | Level guard, generate timeout/errors, accept/reject state machine | #3, #4, #5, #6 | unit + integration (stub LLM) | not started | — |
 | 3 | Practice + mastery signal | SRS updates and mastery reflect completed practice | #7 | integration | not started | — |
 | 4 | CI quality gates | Wire `npm test` into local workflow and CI on PR | cross-cutting | gates | not started | — |
@@ -81,7 +81,7 @@ plus the MCP/tools actually exposed in the current session.
 
 | Layer | Tool | Version | Notes |
 |-------|------|---------|-------|
-| unit + integration | Vitest | TBD in Phase 1 | none yet — see §3 Phase 1; Astro SSR + API route testing via Vitest |
+| unit + integration | Vitest | ^3.2.4 | `vitest.config.ts` aliases `@/`, `astro:env/server`, `astro:middleware`; integration hits hosted Supabase test project |
 | API mocking | vi.mock / MSW | TBD | Stub OpenAI edge in Phase 2; never mock internal service modules |
 | e2e | Playwright | optional | defer unless integration cannot catch auth cookie + route crossing |
 | accessibility | axe-core | optional | not in initial rollout — dashboard a11y covered by ESLint jsx-a11y today |
@@ -117,19 +117,147 @@ the relevant rollout phase ships; before that, the sub-section reads
 
 ### 6.1 Adding a unit test
 
-TBD — see §3 Phase 1 for validation and auth-helper unit patterns.
+Use unit tests when the signal is **pure logic or middleware guards** — no hosted Supabase, no sign-in.
+
+**Where:** `tests/**/*.test.ts` (Vitest picks up via `vitest.config.ts`).
+
+**Prerequisites:** `tests/setup.ts` loads `.env.test` into `process.env`. Astro virtual modules resolve through stubs (`tests/stubs/astro-env-server.ts`, `tests/stubs/astro-middleware.ts`) — do not import production code before setup runs.
+
+**Pattern — env contract smoke** (`tests/smoke/env.test.ts`):
+
+```ts
+import { describe, expect, it } from "vitest";
+import { requireTestEnv } from "../helpers/env";
+
+describe("test environment", () => {
+  it("requireTestEnv() returns all required keys when .env.test is configured", () => {
+    const env = requireTestEnv();
+    expect(env.SUPABASE_URL).toMatch(/^https:\/\//);
+    // assert shape of other keys — use primitive matchers, not Database-derived types (L-001)
+  });
+});
+```
+
+**Pattern — middleware without HTTP server** (`tests/middleware/protected-routes.test.ts`):
+
+1. Import the handler (`onRequest` from `@/middleware`) or extracted guard.
+2. Build context with `createApiContext({ pathname })` from `tests/helpers/api-context.ts` — defaults `locals.user = null`.
+3. Pass a `vi.fn()` as `next`; assert redirect status + `Location`, or that `next` was called.
+
+**When to skip unit:** If the risk requires RLS, cookies, or `getMyChild` against real rows — use §6.2 integration instead.
 
 ### 6.2 Adding an integration test
 
-TBD — see §3 Phase 1 for protected API + ownership integration pattern.
+Use integration tests when the signal needs **real Supabase** (RLS, auth cookies, ownership scoping). Tests call extracted handlers in `src/lib/api-handlers/` — not a running Astro preview server.
+
+**Prerequisites:**
+
+1. Dedicated hosted Supabase test project (never production).
+2. `.env.test` copied from `.env.test.example`; `requireTestEnv()` fails fast if any key is missing.
+3. Migrations + `tests/fixtures/seed.sql` applied manually — see `tests/fixtures/README.md`.
+
+**Pattern — authenticated handler call:**
+
+```ts
+import { describe, expect, it } from "vitest";
+import { postSomeHandler } from "@/lib/api-handlers/some-post";
+import { createApiContext } from "../helpers/api-context";
+import { signInAs } from "../helpers/auth-session";
+
+describe("some feature", () => {
+  it("Parent A sees only own data", async () => {
+    const { cookies, headers, user } = await signInAs("A");
+
+    const context = createApiContext({
+      method: "POST",
+      pathname: "/api/some/route",
+      headers: {
+        "Content-Type": "application/json",
+        Cookie: headers.get("Cookie") ?? "",
+      },
+      body: JSON.stringify({ /* valid body for Parent A */ }),
+      cookies,
+      locals: { user },
+    });
+
+    const response = await postSomeHandler(context);
+    expect(response.status).toBe(200);
+  });
+});
+```
+
+**Pattern — RLS smoke** (`tests/integration/authz-rls-smoke.test.ts`): after `signInAs("A")`, build Supabase client with `createClient(headers, cookies)` (anon key — RLS applies). Query another parent's row by known UUID from `.env.test`; expect `data: null`, not a service mock.
+
+**Handler extraction rule:** Logic lives in `src/lib/api-handlers/<route>.ts`; `src/pages/api/*` re-exports only. New routes tested in Phase 2+ should follow the same split before adding tests.
+
+**Do not:** mock `@/lib/services/*` or bypass RLS with the service-role key.
 
 ### 6.3 Adding an e2e test
 
-TBD — see §3 Phase 1 (likely deferred; integration preferred for auth boundary).
+**Deferred** for auth boundary — Vitest integration with `signInAs` + handler calls proved risks #1 and #2 without Playwright.
+
+Revisit e2e when a flow needs **browser cookie plumbing** or **SSR page hydration** that handler tests cannot approximate (e.g. full dashboard navigation after sign-in). Prefer `cursor-ide-browser` MCP or Playwright only after integration coverage is insufficient (§1 cost × signal).
 
 ### 6.4 Adding a test for a new API endpoint
 
-TBD — see §3 Phase 1 for unauthenticated 401 and cross-parent IDOR pattern.
+Every new parent-scoped API should get **at least two cases** copied from the representative matrix shipped in `testing-bootstrap-auth-boundary`:
+
+| Case | Setup | Assert |
+|------|-------|--------|
+| Unauthenticated | `createApiContext({ ..., locals: { user: null } })` — omit cookies | JSON routes → **401** + `{ ok: false, error: string }`; form POST routes that redirect today → **303** + `Location: .../auth/signin` |
+| Cross-parent IDOR (if route accepts child-scoped IDs) | `signInAs("A")` + Parent B UUID from `.env.test` | **404** + stable Polish `error` string (assert message text, not internal constants) |
+
+**Template — unauthenticated** (add beside peers in `tests/integration/authn-protected-apis.test.ts` or a new file):
+
+```ts
+it("postFoo returns 401 JSON when logged out", async () => {
+  const context = createApiContext({
+    method: "POST",
+    pathname: "/api/foo",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ /* minimal valid shape */ }),
+  });
+
+  const response = await postFooHandler(context);
+  const body = (await response.json()) as { ok: boolean; error?: string };
+
+  expect(response.status).toBe(401);
+  expect(body.ok).toBe(false);
+  expect(body.error).toBeTruthy();
+});
+```
+
+**Template — cross-parent IDOR** (add to `tests/integration/authz-cross-parent.test.ts` or sibling):
+
+```ts
+it("Parent A cannot mutate Parent B resource via postFoo", async () => {
+  const env = requireTestEnv();
+  const { cookies, headers, user } = await signInAs("A");
+
+  const context = createApiContext({
+    method: "POST",
+    pathname: "/api/foo",
+    headers: {
+      "Content-Type": "application/json",
+      Cookie: headers.get("Cookie") ?? "",
+    },
+    body: JSON.stringify({ resourceId: env.TEST_PARENT_B_<RESOURCE>_ID }),
+    cookies,
+    locals: { user },
+  });
+
+  const response = await postFooHandler(context);
+  const body = (await response.json()) as { ok: boolean; error?: string };
+
+  expect(response.status).toBe(404);
+  expect(body.ok).toBe(false);
+  expect(body.error).toBe("<exact Polish message from handler>");
+});
+```
+
+If the new endpoint introduces a new IDOR vector, add the UUID to `tests/fixtures/seed.sql`, document it in `tests/fixtures/README.md` and `.env.test.example`, and extend `REQUIRED_KEYS` in `tests/helpers/env.ts`.
+
+**Reference matrix (Phase 1):** `postChildren` (303), `postGenerateFlashcards` / `getMasterySummary` / `postPracticeReview` (401), `postAcceptFlashcards` + practice handlers (cross-parent 404).
 
 ### 6.5 Adding a test for deck generation / acceptance
 
@@ -137,7 +265,7 @@ TBD — see §3 Phase 2 for level-guard and accept/reject state-machine patterns
 
 ### 6.6 Per-rollout-phase notes
 
-_(Empty — fills in as phases ship.)_
+- **Phase 1 — Bootstrap + auth boundary** (shipped 2026-06-03): `context/changes/testing-bootstrap-auth-boundary/`. Vitest + `.env.test` fail-fast; handler extraction for seven representative routes; integration against hosted test project with two-parent seed. Representative unauthenticated matrix: one 303 route (`POST /api/children`), three 401 JSON routes (generate, mastery summary, practice review). Cross-parent IDOR: accept `generationId`, practice `review`/`end` `sessionId`; RLS smoke on `children`. CI test job intentionally deferred to rollout Phase 4 (§3 row 4).
 
 ## 7. What We Deliberately Don't Test
 

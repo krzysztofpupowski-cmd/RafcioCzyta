@@ -389,9 +389,9 @@ No production schema migration. Test project seed is idempotent only if README d
 
 #### Automated
 
-- [ ] 4.1 `npm test` still passes
-- [ ] 4.2 `npm run lint` passes
+- [x] 4.1 `npm test` still passes
+- [x] 4.2 `npm run lint` passes
 
 #### Manual
 
-- [ ] 4.3 test-plan §6.2 / §6.4 readable as standalone cookbook for next endpoint
+- [x] 4.3 test-plan §6.2 / §6.4 readable as standalone cookbook for next endpoint
