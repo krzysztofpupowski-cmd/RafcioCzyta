@@ -365,13 +365,13 @@ No production schema migration. Test project seed is idempotent only if README d
 
 #### Automated
 
-- [ ] 2.1 `npm test` — middleware and unauthenticated API matrix pass
-- [ ] 2.2 `npm run lint` passes
-- [ ] 2.3 `npm run build` passes
+- [x] 2.1 `npm test` — middleware and unauthenticated API matrix pass
+- [x] 2.2 `npm run lint` passes
+- [x] 2.3 `npm run build` passes
 
 #### Manual
 
-- [ ] 2.4 Logged-out `/dashboard` still redirects to sign-in in browser
+- [x] 2.4 Logged-out `/dashboard` still redirects to sign-in in browser
 
 ### Phase 3: Hosted Fixtures & Risk #1 (Authorization)
 
