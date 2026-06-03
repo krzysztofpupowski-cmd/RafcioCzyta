@@ -353,13 +353,13 @@ No production schema migration. Test project seed is idempotent only if README d
 
 #### Automated
 
-- [x] 1.1 `npm test` runs Vitest and fails fast with clear message when `.env.test` is absent
-- [x] 1.2 `npm run lint` passes
-- [x] 1.3 `npm run build` passes
+- [x] 1.1 `npm test` runs Vitest and fails fast with clear message when `.env.test` is absent — 1aaf7ef
+- [x] 1.2 `npm run lint` passes — 1aaf7ef
+- [x] 1.3 `npm run build` passes — 1aaf7ef
 
 #### Manual
 
-- [x] 1.4 `.env.test` populated from example — smoke suite passes locally
+- [x] 1.4 `.env.test` populated from example — smoke suite passes locally — 1aaf7ef
 
 ### Phase 2: Handler Extraction & Risk #2 (Authentication)
 
