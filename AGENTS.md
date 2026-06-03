@@ -30,10 +30,9 @@ Run on Node.js v22.14.0 (@.nvmrc):
 - `npm run preview` — preview production build
 - `npm run lint` / `npm run lint:fix` — ESLint (type-checked; @eslint.config.js)
 - `npm run format` — Prettier (Astro + Tailwind plugins)
+- `npm test` / `npm run test:watch` — Vitest (`tests/**/*.test.ts`). Integration suites need `.env.test` copied from @.env.test.example against a **dedicated hosted Supabase test project** (not production). Missing vars fail fast via `requireTestEnv()` in @tests/helpers/env.ts.
 
 Local Supabase: `npx supabase start` (Docker). Deploy: `npx wrangler deploy`.
-
-No automated test runner is configured; verify with lint, build, and manual checks.
 
 ## Coding Style
 
