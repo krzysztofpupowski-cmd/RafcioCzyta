@@ -377,13 +377,13 @@ No production schema migration. Test project seed is idempotent only if README d
 
 #### Automated
 
-- [x] 3.1 `npm test` — RLS smoke and cross-parent IDOR tests pass
-- [x] 3.2 `npm run lint` passes
-- [x] 3.3 `npm run build` passes
+- [x] 3.1 `npm test` — RLS smoke and cross-parent IDOR tests pass — 3cfe4a2
+- [x] 3.2 `npm run lint` passes — 3cfe4a2
+- [x] 3.3 `npm run build` passes — 3cfe4a2
 
 #### Manual
 
-- [x] 3.4 `seed.sql` applied to test project; Table Editor IDs match `.env.test`
+- [x] 3.4 `seed.sql` applied to test project; Table Editor IDs match `.env.test` — 3cfe4a2
 
 ### Phase 4: Cookbook & Test-Plan Sync
 
