@@ -1,0 +1,15 @@
+{
+  "version": 1,
+  "hooks": {
+    "afterFileEdit": [
+      {
+        "command": "node .cursor/hooks/lint-after-edit.mjs",
+        "timeout": 120
+      },
+      {
+        "command": "node .cursor/hooks/typecheck-after-edit.mjs",
+        "timeout": 60
+      }
+    ]
+  }
+}

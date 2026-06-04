@@ -1,4 +1,4 @@
-import { createEmptyCard, fsrs, Rating, type Card } from "ts-fsrs";
+import { createEmptyCard, fsrs, Rating, type Card, type Grade } from "ts-fsrs";
 
 import { type StoredSrsState } from "@/lib/schemas/srs";
 
@@ -58,7 +58,7 @@ export function previewReview(card: Card, now = new Date()) {
   return scheduler.repeat(card, now);
 }
 
-export function ratingToPracticeOutcome(rating: Rating): "correct" | "incorrect" {
+export function ratingToPracticeOutcome(rating: Grade): "correct" | "incorrect" {
   return rating <= Rating.Hard ? "incorrect" : "correct";
 }
 
@@ -66,7 +66,7 @@ export function masteryScoreFromCard(card: Card, now = new Date()): number {
   return Math.round(scheduler.get_retrievability(card, now, false) * 100);
 }
 
-export function applyReview(card: Card, rating: Rating, now = new Date()) {
+export function applyReview(card: Card, rating: Grade, now = new Date()) {
   const { card: nextCard } = scheduler.next(card, now, rating);
 
   return {

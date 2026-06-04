@@ -82,5 +82,5 @@ export function createApiContext(options: CreateApiContextOptions = {}): APICont
     callAction: () => {
       throw new Error("callAction is not available in test context");
     },
-  } as APIContext;
+  } as unknown as APIContext;
 }

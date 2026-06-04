@@ -28,6 +28,7 @@ const SERVER_OPTIMIZE_DEPS = [
 function optimizeServerDeps() {
   return {
     name: "optimize-server-deps",
+    /** @param {string} name */
     configEnvironment(name) {
       if (name !== "client") {
         return { optimizeDeps: { include: SERVER_OPTIMIZE_DEPS } };
