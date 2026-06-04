@@ -351,7 +351,7 @@ Phase 2 adds ~10 integration tests against hosted Supabase. Keep them serial wit
 
 #### Manual
 
-- [ ] 1.4 Local `/dashboard` generate still works after `filterCardsByLevel` extraction
+- [x] 1.4 Local `/dashboard` generate still works after `filterCardsByLevel` extraction — 3677a31
 
 ### Phase 2: Generate Handler Error Matrix
 
@@ -369,7 +369,7 @@ Phase 2 adds ~10 integration tests against hosted Supabase. Keep them serial wit
 
 #### Automated
 
-- [x] 3.1 `npm test` — all seven `flashcards-state-machine.test.ts` cases pass
+- [x] 3.1 `npm test` — all seven `flashcards-state-machine.test.ts` cases pass — 7f19da9
 - [x] 3.2 `npm run lint` passes (Phase 3 files clean; pre-existing warnings in other files unchanged) — 625e006
 - [x] 3.3 `npm run build` passes — 625e006
 
@@ -383,10 +383,10 @@ Phase 2 adds ~10 integration tests against hosted Supabase. Keep them serial wit
 
 #### Automated
 
-- [x] 4.1 `npm test` still passes
-- [x] 4.2 `npm run lint` passes
+- [x] 4.1 `npm test` still passes — 7f19da9
+- [x] 4.2 `npm run lint` passes — 7f19da9
 
 #### Manual
 
-- [ ] 4.3 §6.5 readable standalone — Phase 3 contributor can copy the stub + state-machine patterns without re-reading the full plan
-- [ ] 4.4 `change.md` set to `status: ready_for_implement` with updated date
+- [x] 4.3 §6.5 readable standalone — Phase 3 contributor can copy the stub + state-machine patterns without re-reading the full plan — 7f19da9
+- [x] 4.4 `change.md` set to `status: ready_for_implement` with updated date — 7f19da9
