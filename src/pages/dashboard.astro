@@ -35,14 +35,12 @@ if (!supabase) {
   fetchError = "Supabase nie jest skonfigurowany";
 } else {
   try {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const child = await getMyChild(supabase, userId);
     if (child) {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
       childDisplayName = child.display_name;
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
+
       childLevel = child.current_level;
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
+
       childId = child.id;
       childExists = true;
     }

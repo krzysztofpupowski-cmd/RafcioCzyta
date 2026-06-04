@@ -4,7 +4,7 @@
 // disabled file-wide. The Supabase JS client is typed against Database (see supabase.ts)
 // so query results carry the right shape at the TS layer; the disables only hide the
 // ESLint-side noise. See context/foundation/lessons.md L-001.
-/* eslint-disable @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unnecessary-condition */
+/* eslint-disable @typescript-eslint/no-unnecessary-condition */
 
 import type { MasterySummaryDTO } from "@/lib/dto/mastery";
 import type { StoredReadingLevel } from "@/lib/reading-level-form";

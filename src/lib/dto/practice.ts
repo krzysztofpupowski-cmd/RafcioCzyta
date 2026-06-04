@@ -1,6 +1,5 @@
 // database.types.ts is excluded from ESLint's project service; all Database-derived
 // types are error-typed here. Type safety is enforced by callers and Supabase RLS.
-/* eslint-disable @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access */
 
 import type { Flashcard } from "@/types";
 import type { StoredReadingLevel } from "@/lib/reading-level-form";
@@ -56,6 +55,6 @@ export function toPracticeCardDTO(card: Flashcard): PracticeCardDTO {
     id: card.id,
     front_text: card.front_text,
     hint_text: card.hint_text,
-    level: card.level as StoredReadingLevel,
+    level: card.level,
   };
 }

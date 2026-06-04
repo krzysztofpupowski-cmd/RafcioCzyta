@@ -1,6 +1,5 @@
 // database.types.ts is excluded from ESLint's project service; all Database-derived
 // types are error-typed here. Type safety is enforced by callers and Supabase RLS.
-/* eslint-disable @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access */
 
 import type { APIContext } from "astro";
 
@@ -61,7 +60,7 @@ export async function postGenerateFlashcards(context: APIContext): Promise<Respo
     );
   }
 
-  const requestedLevel: StoredReadingLevel = (child.current_level as StoredReadingLevel | null) ?? "letters";
+  const requestedLevel: StoredReadingLevel = child.current_level ?? "letters";
 
   try {
     const { generation, cards } = await generateFlashcards(supabase, {

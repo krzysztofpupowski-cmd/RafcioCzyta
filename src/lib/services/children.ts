@@ -4,11 +4,9 @@
 // disabled file-wide. The Supabase JS client is typed against Database (see supabase.ts)
 // so query results carry the right shape at the TS layer; the disables only hide the
 // ESLint-side noise. See context/foundation/lessons.md L-001.
-/* eslint-disable @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-return */
 
 import type { SupabaseClient } from "@supabase/supabase-js";
 
-import type { Child } from "@/types";
 import type { Database } from "@/db/database.types";
 import type { StoredReadingLevel } from "@/lib/reading-level-form";
 
@@ -51,7 +49,7 @@ export async function upsertMyChild(
       throw new Error(error.message);
     }
 
-    return data as Child;
+    return data;
   }
 
   const { data, error } = await supabase
@@ -77,11 +75,11 @@ export async function upsertMyChild(
         throw new Error(updateError.message);
       }
 
-      return updated as Child;
+      return updated;
     }
 
     throw new Error(error.message);
   }
 
-  return data as Child;
+  return data;
 }

@@ -4,7 +4,7 @@
 // disabled file-wide. The Supabase JS client is typed against Database (see supabase.ts)
 // so query results carry the right shape at the TS layer; the disables only hide the
 // ESLint-side noise. See context/foundation/lessons.md L-001.
-/* eslint-disable @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unnecessary-condition */
+/* eslint-disable @typescript-eslint/no-unnecessary-condition */
 
 import type { AppSupabase } from "./children";
 import type { Flashcard } from "@/types";
@@ -14,7 +14,6 @@ import {
   type AcceptedFlashcardDTO,
   type DraftBatchDTO,
 } from "@/lib/dto/flashcards";
-import type { StoredReadingLevel } from "@/lib/reading-level-form";
 import { initSrsState } from "@/lib/services/srs-adapter";
 
 export const FLASHCARD_ERROR_BATCH_EMPTY = "FLASHCARD_ERROR_BATCH_EMPTY";
@@ -46,7 +45,7 @@ export async function listDraftBatches(supabase: AppSupabase, childId: string): 
     const generationId = card.generation_id;
     if (!generationId) continue;
     const existing = cardsByGeneration.get(generationId) ?? [];
-    existing.push(card as Flashcard);
+    existing.push(card);
     cardsByGeneration.set(generationId, existing);
   }
 
@@ -57,7 +56,7 @@ export async function listDraftBatches(supabase: AppSupabase, childId: string): 
 
     batches.push({
       generationId: generation.id,
-      requestedLevel: generation.requested_level as StoredReadingLevel,
+      requestedLevel: generation.requested_level,
       createdAt: generation.created_at,
       cards: cards.map(toFlashcardSummaryDTO),
     });
@@ -124,7 +123,7 @@ export async function acceptBatch(
       throw new Error(error.message);
     }
 
-    updatedCards.push(data as Flashcard);
+    updatedCards.push(data);
   }
 
   return {

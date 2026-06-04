@@ -1,6 +1,5 @@
 // database.types.ts is excluded from ESLint's project service; all Database-derived
 // types are error-typed here. Type safety is enforced by callers and Supabase RLS.
-/* eslint-disable @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access */
 
 import type { APIContext } from "astro";
 import { z } from "zod";
