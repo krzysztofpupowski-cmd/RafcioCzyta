@@ -357,13 +357,13 @@ Phase 2 adds ~10 integration tests against hosted Supabase. Keep them serial wit
 
 #### Automated
 
-- [x] 2.1 `npm test` — all five `flashcards-generate.test.ts` cases pass against the hosted test project
-- [x] 2.2 `npm run lint` passes
-- [x] 2.3 `npm run build` passes
+- [x] 2.1 `npm test` — all five `flashcards-generate.test.ts` cases pass against the hosted test project — 9ed40cc
+- [x] 2.2 `npm run lint` passes — 9ed40cc
+- [x] 2.3 `npm run build` passes — 9ed40cc
 
 #### Manual
 
-- [ ] 2.4 Manual generate from `/dashboard` with the real `OPENAI_API_KEY` still succeeds (stub does not bleed into dev)
+- [x] 2.4 Manual generate from `/dashboard` with the real `OPENAI_API_KEY` still succeeds (stub does not bleed into dev)
 
 ### Phase 3: Accept/Reject State Machine & Queue Gate
 
