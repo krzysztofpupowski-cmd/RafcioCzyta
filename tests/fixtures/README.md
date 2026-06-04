@@ -39,6 +39,7 @@ Copy `.env.test.example` → `.env.test` and set:
 - Fixed UUIDs from `seed.sql` (defaults match the example file):
 
 ```
+TEST_PARENT_A_GENERATION_ID=bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbb1
 TEST_PARENT_B_CHILD_ID=11111111-1111-4111-8111-111111111101
 TEST_PARENT_B_GENERATION_ID=22222222-2222-4222-8222-222222222201
 TEST_PARENT_B_SESSION_ID=33333333-3333-4333-8333-333333333301
@@ -48,8 +49,9 @@ These are v4-shaped on purpose — all-zero UUIDs fail `z.uuid()` in API validat
 
 ## 4. Verify
 
-- Table Editor: Parent A and B each have one `children` row; Parent B has one draft generation + flashcard and one open `practice_sessions` row.
-- Local: `npm test` — RLS smoke and cross-parent IDOR suites pass.
+- Table Editor: Parent A has one `children` row, one draft `flashcard_generations` row (`bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbb1`), and two draft `flashcards` rows alongside it.
+- Table Editor: Parent B has one `children` row, one draft generation + flashcard, and one open `practice_sessions` row.
+- Local: `npm test` — RLS smoke, cross-parent IDOR, generate error matrix, and state-machine suites pass.
 
 ## Wipe / reseed
 
