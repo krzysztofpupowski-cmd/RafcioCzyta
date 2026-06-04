@@ -1,6 +1,5 @@
 // database.types.ts is excluded from ESLint's project service; all Database-derived
 // types are error-typed here. Type safety is enforced by callers and Supabase RLS.
-/* eslint-disable @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access */
 
 export const FLASHCARD_ERROR_MISSING_API_KEY = "OpenAI API key is not configured.";
 export const FLASHCARD_ERROR_TIMEOUT = "Flashcard generation timed out. Please try again.";
@@ -26,6 +25,13 @@ const flashcardBatchSchema = z.object({
 });
 
 const LEVEL_ORDER = ["letters", "syllables", "words", "simple_sentences"] as const;
+
+export function filterCardsByLevel<T extends { level: StoredReadingLevel }>(
+  cards: T[],
+  requestedLevel: StoredReadingLevel,
+): T[] {
+  return cards.filter((card) => LEVEL_ORDER.indexOf(card.level) <= LEVEL_ORDER.indexOf(requestedLevel));
+}
 
 function buildPrompt(level: StoredReadingLevel): string {
   const levelNames: Record<StoredReadingLevel, string> = {
@@ -70,9 +76,7 @@ export async function generateFlashcards(
     throw new Error(FLASHCARD_ERROR_GENERATION_FAILED);
   }
 
-  const filtered = batchOutput.cards.filter(
-    (card) => LEVEL_ORDER.indexOf(card.level) <= LEVEL_ORDER.indexOf(input.requestedLevel),
-  );
+  const filtered = filterCardsByLevel(batchOutput.cards, input.requestedLevel);
 
   const { data: generation, error: genError } = await supabase
     .from("flashcard_generations")
@@ -107,7 +111,7 @@ export async function generateFlashcards(
   }
 
   return {
-    generation: generation as FlashcardGeneration,
-    cards: cards as Flashcard[],
+    generation: generation,
+    cards: cards,
   };
 }
