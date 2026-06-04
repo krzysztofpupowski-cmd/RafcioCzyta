@@ -345,9 +345,9 @@ Phase 2 adds ~10 integration tests against hosted Supabase. Keep them serial wit
 
 #### Automated
 
-- [x] 1.1 `npm test` runs `tests/unit/level-guard.test.ts` green
-- [x] 1.2 `npm run lint` passes
-- [x] 1.3 `npm run build` passes
+- [x] 1.1 `npm test` runs `tests/unit/level-guard.test.ts` green — 3677a31
+- [x] 1.2 `npm run lint` passes — 3677a31
+- [x] 1.3 `npm run build` passes — 3677a31
 
 #### Manual
 
@@ -357,9 +357,9 @@ Phase 2 adds ~10 integration tests against hosted Supabase. Keep them serial wit
 
 #### Automated
 
-- [ ] 2.1 `npm test` — all five `flashcards-generate.test.ts` cases pass against the hosted test project
-- [ ] 2.2 `npm run lint` passes
-- [ ] 2.3 `npm run build` passes
+- [x] 2.1 `npm test` — all five `flashcards-generate.test.ts` cases pass against the hosted test project
+- [x] 2.2 `npm run lint` passes
+- [x] 2.3 `npm run build` passes
 
 #### Manual
 
