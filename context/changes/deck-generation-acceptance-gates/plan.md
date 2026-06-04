@@ -289,6 +289,29 @@ Each sub-pattern follows the §6.2 / §6.4 prose style — under 40 lines includ
 
 ---
 
+## Implementation Review Addendum (2026-06-04)
+
+During implementation review, the git diff included files outside the original
+Phase 1-4 file list.
+
+- **Supporting adjustments kept in this scope**:
+  - `astro.config.mjs`
+  - `src/lib/supabase.ts`
+  - `tests/helpers/api-context.ts`
+  - `context/changes/deck-generation-acceptance-gates/plan-brief.md`
+
+- **Unrelated scope moved to follow-up tracking**:
+  - `.cursor/hooks.json`
+  - `.cursor/hooks/lint-after-edit.mjs`
+  - `.cursor/hooks/typecheck-after-edit.mjs`
+  - `src/lib/services/srs-adapter.ts`
+  - `src/db/database.types.ts`
+
+See `context/changes/deck-generation-acceptance-gates/follow-ups/review-fixes.md`
+for the split and next actions.
+
+---
+
 ## Testing Strategy
 
 ### Unit Tests
@@ -351,7 +374,7 @@ Phase 2 adds ~10 integration tests against hosted Supabase. Keep them serial wit
 
 #### Manual
 
-- [x] 1.4 Local `/dashboard` generate still works after `filterCardsByLevel` extraction — 3677a31
+- [x] 1.4 Local `/dashboard` generate still works after `filterCardsByLevel` extraction — 3677a31 (evidence note: local dev browser check recorded by implementer, 2026-06-04)
 
 ### Phase 2: Generate Handler Error Matrix
 
@@ -363,28 +386,28 @@ Phase 2 adds ~10 integration tests against hosted Supabase. Keep them serial wit
 
 #### Manual
 
-- [x] 2.4 Manual generate from `/dashboard` with the real `OPENAI_API_KEY` still succeeds (stub does not bleed into dev)
+- [x] 2.4 Manual generate from `/dashboard` with the real `OPENAI_API_KEY` still succeeds (stub does not bleed into dev) (evidence note: local dev browser check recorded by implementer, 2026-06-04)
 
 ### Phase 3: Accept/Reject State Machine & Queue Gate
 
 #### Automated
 
 - [x] 3.1 `npm test` — all seven `flashcards-state-machine.test.ts` cases pass — 7f19da9
-- [x] 3.2 `npm run lint` passes (Phase 3 files clean; pre-existing warnings in other files unchanged) — 625e006
+- [ ] 3.2 `npm run lint` passes (re-check: impl review found lint failing at HEAD; track in follow-ups/review-fixes.md)
 - [x] 3.3 `npm run build` passes — 625e006
 
 #### Manual
 
 - [x] 3.4 Operator re-applied `seed.sql`; Table Editor shows Parent A draft batch alongside Parent B's — 625e006
 - [x] 3.5 `.env.test` updated with `TEST_PARENT_A_GENERATION_ID`; `requireTestEnv()` clean — 625e006
-- [x] 3.6 `/dashboard` accept + reject buttons still work in dev — 625e006
+- [x] 3.6 `/dashboard` accept + reject buttons still work in dev — 625e006 (evidence note: local dev browser check recorded by implementer, 2026-06-04)
 
 ### Phase 4: Cookbook §6.5 & Test-Plan Sync
 
 #### Automated
 
 - [x] 4.1 `npm test` still passes — 7f19da9
-- [x] 4.2 `npm run lint` passes — 7f19da9
+- [ ] 4.2 `npm run lint` passes (re-check: impl review found lint failing at HEAD; track in follow-ups/review-fixes.md)
 
 #### Manual
 

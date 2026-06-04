@@ -31,7 +31,7 @@ describe("flashcards-state-machine integration", () => {
   let adversarialGenId: string | null = null;
 
   beforeAll(async () => {
-    requireTestEnv();
+    const env = requireTestEnv();
     session = await signInAs("A");
     const client = createClient(session.headers, session.cookies);
     if (!client) throw new Error("Supabase client not configured");
@@ -44,8 +44,10 @@ describe("flashcards-state-machine integration", () => {
     if (!childData) throw new Error("No child row found for Parent A — re-apply seed.sql");
     childId = childData.id;
 
-    acceptRejectGenId = crypto.randomUUID();
+    acceptRejectGenId = env.TEST_PARENT_A_GENERATION_ID;
     cleanupGenIds.push(acceptRejectGenId);
+    await supabase.from("flashcards").delete().eq("generation_id", acceptRejectGenId);
+    await supabase.from("flashcard_generations").delete().eq("id", acceptRejectGenId);
     const { error: genError } = await supabase
       .from("flashcard_generations")
       .insert({ id: acceptRejectGenId, child_id: childId, requested_level: "letters" });
@@ -129,12 +131,27 @@ describe("flashcards-state-machine integration", () => {
   });
 
   it("case 2: double accept → 404 — batch no longer awaiting acceptance", async () => {
+    const { count: beforeAcceptedCount, error: beforeCountError } = await supabase
+      .from("flashcards")
+      .select("id", { count: "exact", head: true })
+      .eq("generation_id", acceptRejectGenId)
+      .eq("status", "accepted");
+    expect(beforeCountError).toBeNull();
+
     const response = await postAcceptFlashcards(makeAcceptContext(acceptRejectGenId));
     const body = (await response.json()) as FlashcardMutationErrorResponse;
 
     expect(response.status).toBe(404);
     expect(body.ok).toBe(false);
     expect(body.error).toBe("Ta partia nie oczekuje już na akceptację.");
+
+    const { count: afterAcceptedCount, error: afterCountError } = await supabase
+      .from("flashcards")
+      .select("id", { count: "exact", head: true })
+      .eq("generation_id", acceptRejectGenId)
+      .eq("status", "accepted");
+    expect(afterCountError).toBeNull();
+    expect(afterAcceptedCount).toBe(beforeAcceptedCount);
   });
 
   it("case 3: reject happy path — fresh draft batch moved to rejected", async () => {
@@ -219,13 +236,14 @@ describe("flashcards-state-machine integration", () => {
       rejectGenId = crypto.randomUUID();
       liveGenId = crypto.randomUUID();
 
-      await supabase.from("flashcard_generations").insert([
+      const { error: insertGenerationsError } = await supabase.from("flashcard_generations").insert([
         { id: acceptGenId, child_id: childId, requested_level: "letters" },
         { id: rejectGenId, child_id: childId, requested_level: "letters" },
         { id: liveGenId, child_id: childId, requested_level: "letters" },
       ]);
+      expect(insertGenerationsError).toBeNull();
 
-      await supabase.from("flashcards").insert([
+      const { error: insertCardsError } = await supabase.from("flashcards").insert([
         {
           child_id: childId,
           generation_id: acceptGenId,
@@ -242,9 +260,17 @@ describe("flashcards-state-machine integration", () => {
         },
         { child_id: childId, generation_id: liveGenId, level: "letters", front_text: "list-live-a", status: "draft" },
       ]);
+      expect(insertCardsError).toBeNull();
 
-      await postAcceptFlashcards(makeAcceptContext(acceptGenId));
-      await postRejectFlashcards(makeRejectContext(rejectGenId));
+      const acceptResponse = await postAcceptFlashcards(makeAcceptContext(acceptGenId));
+      const acceptBody = (await acceptResponse.json()) as AcceptBatchSuccessResponse;
+      expect(acceptResponse.status).toBe(200);
+      expect(acceptBody.ok).toBe(true);
+
+      const rejectResponse = await postRejectFlashcards(makeRejectContext(rejectGenId));
+      const rejectBody = (await rejectResponse.json()) as RejectBatchSuccessResponse;
+      expect(rejectResponse.status).toBe(200);
+      expect(rejectBody.ok).toBe(true);
     });
 
     afterAll(async () => {

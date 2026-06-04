@@ -63,6 +63,14 @@ describe("flashcards-generate integration", () => {
     });
   }
 
+  async function countVisibleGenerations() {
+    const supabase = createClient(session.headers, session.cookies);
+    if (!supabase) throw new Error("Supabase client unavailable in test");
+    const { count, error } = await supabase.from("flashcard_generations").select("id", { count: "exact", head: true });
+    expect(error).toBeNull();
+    return count ?? 0;
+  }
+
   it("happy path: 200 with DTO shape and 8 draft rows persisted", async () => {
     mockGenerateTextHappy(IN_LEVEL_CARDS);
 
@@ -101,6 +109,7 @@ describe("flashcards-generate integration", () => {
 
   it("timeout: 504 with Polish error text", async () => {
     mockGenerateTextTimeout();
+    const beforeCount = await countVisibleGenerations();
 
     const response = await postGenerateFlashcards(makeContext());
     const body = (await response.json()) as GenerateFlashcardsErrorResponse;
@@ -108,10 +117,13 @@ describe("flashcards-generate integration", () => {
     expect(response.status).toBe(504);
     expect(body.ok).toBe(false);
     expect(body.error).toBe("Generowanie fiszek przekroczyło 10 sekund. Spróbuj ponownie.");
+    const afterCount = await countVisibleGenerations();
+    expect(afterCount).toBe(beforeCount);
   });
 
   it("generic failure: 503 with Polish error text", async () => {
     mockGenerateTextFailure();
+    const beforeCount = await countVisibleGenerations();
 
     const response = await postGenerateFlashcards(makeContext());
     const body = (await response.json()) as GenerateFlashcardsErrorResponse;
@@ -119,10 +131,13 @@ describe("flashcards-generate integration", () => {
     expect(response.status).toBe(503);
     expect(body.ok).toBe(false);
     expect(body.error).toBe("Nie udało się wygenerować fiszek. Spróbuj ponownie.");
+    const afterCount = await countVisibleGenerations();
+    expect(afterCount).toBe(beforeCount);
   });
 
   it("missing API key: 500 with Polish error text, LLM never called", async () => {
     const env = requireTestEnv();
+    const beforeCount = await countVisibleGenerations();
 
     vi.resetModules();
     vi.doMock("astro:env/server", () => ({
@@ -146,6 +161,8 @@ describe("flashcards-generate integration", () => {
     expect(response.status).toBe(500);
     expect(body.ok).toBe(false);
     expect(body.error).toBe("Generator fiszek nie jest skonfigurowany. Skontaktuj się z administratorem.");
+    const afterCount = await countVisibleGenerations();
+    expect(afterCount).toBe(beforeCount);
 
     vi.resetModules();
     vi.restoreAllMocks();
