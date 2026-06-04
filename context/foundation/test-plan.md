@@ -68,7 +68,7 @@ orchestrator updates Status as artifacts appear on disk.
 | # | Phase name | Goal (one line) | Risks covered | Test types | Status | Change folder |
 |---|------------|-----------------|---------------|------------|--------|---------------|
 | 1 | Bootstrap + auth boundary | Install Vitest and prove authn/authz on protected parent APIs | #1, #2 | unit + integration | shipped | context/changes/testing-bootstrap-auth-boundary/ |
-| 2 | Deck generation & acceptance gates | Level guard, generate timeout/errors, accept/reject state machine | #3, #4, #5, #6 | unit + integration (stub LLM) | not started | — |
+| 2 | Deck generation & acceptance gates | Level guard, generate timeout/errors, accept/reject state machine | #3, #4, #5, #6 | unit + integration (stub LLM) | shipped | context/changes/deck-generation-acceptance-gates/ |
 | 3 | Practice + mastery signal | SRS updates and mastery reflect completed practice | #7 | integration | not started | — |
 | 4 | CI quality gates | Wire `npm test` into local workflow and CI on PR | cross-cutting | gates | not started | — |
 
@@ -261,11 +261,79 @@ If the new endpoint introduces a new IDOR vector, add the UUID to `tests/fixture
 
 ### 6.5 Adding a test for deck generation / acceptance
 
-TBD — see §3 Phase 2 for level-guard and accept/reject state-machine patterns.
+Use when writing tests that touch flashcard generation (LLM edge) or the
+accept/reject state machine. Two canonical sub-patterns shipped by
+`context/changes/deck-generation-acceptance-gates/`.
+
+#### Sub-pattern A — Stubbing the LLM edge
+
+Place the `vi.mock` calls at the **top of the test file** (Vitest hoists
+them above imports). Import per-test behaviour from the shared helper:
+
+```ts
+// test file top — hoisted above imports by Vitest
+vi.mock("ai", () => ({
+  generateText: vi.fn(),
+  Output: { object: vi.fn(() => ({})) },
+}));
+vi.mock("@ai-sdk/openai", () => ({
+  createOpenAI: vi.fn(() => vi.fn(() => "stub-model")),
+}));
+
+// inside a test
+import { mockGenerateTextHappy, mockGenerateTextTimeout } from "../helpers/openai-mock";
+mockGenerateTextHappy([{ front_text: "A", hint_text: null, level: "letters" }]);
+const response = await postGenerateFlashcards(context);
+expect(response.status).toBe(200);
+```
+
+**Gotchas:**
+- **Timeout branch** — stub throws `Object.assign(new Error("aborted"), { name: "TimeoutError" })`. Production checks `err.name`, not the message.
+- **Missing API key** — `OPENAI_API_KEY` is captured at module load; use `vi.resetModules()` + `vi.doMock("astro:env/server", () => ({ ..., OPENAI_API_KEY: "" }))` + dynamic `await import("@/lib/api-handlers/flashcards-generate-post")` to pick up the re-mocked binding. Call `vi.resetModules()` + `vi.restoreAllMocks()` in the test teardown.
+
+Full example: `tests/integration/flashcards-generate.test.ts`.
+
+#### Sub-pattern B — Accept/reject state-machine integration
+
+Sign in once in `beforeAll`; reuse the session's Supabase client to verify
+DB state after each handler call:
+
+```ts
+const response = await postAcceptFlashcards(
+  createApiContext({
+    method: "POST",
+    pathname: "/api/flashcards/accept",
+    headers: { Cookie: session.headers.get("Cookie") ?? "" },
+    cookies: session.cookies,
+    locals: { user: session.user },
+    body: JSON.stringify({ generationId: env.TEST_PARENT_A_GENERATION_ID }),
+  })
+);
+expect(response.status).toBe(200);
+
+const { data } = await supabase
+  .from("flashcards")
+  .select("status, srs_state, next_review_at")
+  .eq("generation_id", env.TEST_PARENT_A_GENERATION_ID);
+for (const card of data ?? []) {
+  expect(card.status).toBe("accepted");
+  expect(card.srs_state).not.toBeNull();
+  expect(card.next_review_at).not.toBeNull();
+}
+```
+
+**Queue-gate adversarial trick (risk #4):** insert a `status='draft'` card
+with `next_review_at = '2000-01-01T00:00:00Z'` in-test (never in seed.sql),
+call `startPracticeSession`, and assert the returned card IDs do not include
+the adversarial row (or that `PRACTICE_ERROR_NO_DUE_CARDS` is thrown).
+Delete the adversarial row in `afterAll`.
+
+Full example: `tests/integration/flashcards-state-machine.test.ts`.
 
 ### 6.6 Per-rollout-phase notes
 
 - **Phase 1 — Bootstrap + auth boundary** (shipped 2026-06-03): `context/changes/testing-bootstrap-auth-boundary/`. Vitest + `.env.test` fail-fast; handler extraction for seven representative routes; integration against hosted test project with two-parent seed. Representative unauthenticated matrix: one 303 route (`POST /api/children`), three 401 JSON routes (generate, mastery summary, practice review). Cross-parent IDOR: accept `generationId`, practice `review`/`end` `sessionId`; RLS smoke on `children`. CI test job intentionally deferred to rollout Phase 4 (§3 row 4).
+- **Phase 2 — Deck generation & acceptance gates** (shipped 2026-06-04): `context/changes/deck-generation-acceptance-gates/`. LLM stub harness at the `ai`/`@ai-sdk/openai` boundary; level-guard unit + generate-error matrix (happy / timeout / failure / missing-key) + accept-reject state machine with adversarial draft-row exclusion (risk #4). Seed extended with a Parent A draft batch; reject handler extracted to `src/lib/api-handlers/flashcards-reject-post.ts`.
 
 ## 7. What We Deliberately Don't Test
 

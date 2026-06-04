@@ -1,7 +1,7 @@
 ---
 change_id: deck-generation-acceptance-gates
 title: Deck generation and acceptance gates
-status: implementing
+status: ready_for_implement
 created: 2026-06-04
 updated: 2026-06-04
 archived_at: null

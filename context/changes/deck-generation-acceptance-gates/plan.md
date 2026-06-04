@@ -369,22 +369,22 @@ Phase 2 adds ~10 integration tests against hosted Supabase. Keep them serial wit
 
 #### Automated
 
-- [ ] 3.1 `npm test` — all seven `flashcards-state-machine.test.ts` cases pass
-- [x] 3.2 `npm run lint` passes (Phase 3 files clean; pre-existing warnings in other files unchanged)
-- [x] 3.3 `npm run build` passes
+- [x] 3.1 `npm test` — all seven `flashcards-state-machine.test.ts` cases pass
+- [x] 3.2 `npm run lint` passes (Phase 3 files clean; pre-existing warnings in other files unchanged) — 625e006
+- [x] 3.3 `npm run build` passes — 625e006
 
 #### Manual
 
-- [x] 3.4 Operator re-applied `seed.sql`; Table Editor shows Parent A draft batch alongside Parent B's
-- [x] 3.5 `.env.test` updated with `TEST_PARENT_A_GENERATION_ID`; `requireTestEnv()` clean
-- [x] 3.6 `/dashboard` accept + reject buttons still work in dev
+- [x] 3.4 Operator re-applied `seed.sql`; Table Editor shows Parent A draft batch alongside Parent B's — 625e006
+- [x] 3.5 `.env.test` updated with `TEST_PARENT_A_GENERATION_ID`; `requireTestEnv()` clean — 625e006
+- [x] 3.6 `/dashboard` accept + reject buttons still work in dev — 625e006
 
 ### Phase 4: Cookbook §6.5 & Test-Plan Sync
 
 #### Automated
 
-- [ ] 4.1 `npm test` still passes
-- [ ] 4.2 `npm run lint` passes
+- [x] 4.1 `npm test` still passes
+- [x] 4.2 `npm run lint` passes
 
 #### Manual
 

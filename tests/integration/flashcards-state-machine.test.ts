@@ -24,6 +24,7 @@ describe("flashcards-state-machine integration", () => {
   let session: SignedInSession;
   let supabase!: AppSupabase;
   let childId!: string;
+  let acceptRejectGenId!: string;
 
   const cleanupGenIds: string[] = [];
   let adversarialCardId: string | null = null;
@@ -42,6 +43,30 @@ describe("flashcards-state-machine integration", () => {
       .maybeSingle();
     if (!childData) throw new Error("No child row found for Parent A — re-apply seed.sql");
     childId = childData.id;
+
+    acceptRejectGenId = crypto.randomUUID();
+    cleanupGenIds.push(acceptRejectGenId);
+    const { error: genError } = await supabase
+      .from("flashcard_generations")
+      .insert({ id: acceptRejectGenId, child_id: childId, requested_level: "letters" });
+    if (genError) throw new Error(`beforeAll: failed to insert generation — ${genError.message}`);
+    const { error: cardsError } = await supabase.from("flashcards").insert([
+      {
+        child_id: childId,
+        generation_id: acceptRejectGenId,
+        level: "letters",
+        front_text: "accept-test-a",
+        status: "draft",
+      },
+      {
+        child_id: childId,
+        generation_id: acceptRejectGenId,
+        level: "letters",
+        front_text: "accept-test-b",
+        status: "draft",
+      },
+    ]);
+    if (cardsError) throw new Error(`beforeAll: failed to insert cards — ${cardsError.message}`);
   });
 
   afterAll(async () => {
@@ -80,10 +105,7 @@ describe("flashcards-state-machine integration", () => {
   }
 
   it("case 1: accept happy path — draft → accepted, SRS state initialised", async () => {
-    const env = requireTestEnv();
-    const genId = env.TEST_PARENT_A_GENERATION_ID;
-
-    const response = await postAcceptFlashcards(makeAcceptContext(genId));
+    const response = await postAcceptFlashcards(makeAcceptContext(acceptRejectGenId));
     const body = (await response.json()) as AcceptBatchSuccessResponse;
 
     expect(response.status).toBe(200);
@@ -94,7 +116,7 @@ describe("flashcards-state-machine integration", () => {
     const { data } = await supabase
       .from("flashcards")
       .select("status, srs_state, next_review_at, reps_count")
-      .eq("generation_id", genId)
+      .eq("generation_id", acceptRejectGenId)
       .eq("child_id", childId);
 
     expect(data).toHaveLength(2);
@@ -107,10 +129,7 @@ describe("flashcards-state-machine integration", () => {
   });
 
   it("case 2: double accept → 404 — batch no longer awaiting acceptance", async () => {
-    const env = requireTestEnv();
-    const genId = env.TEST_PARENT_A_GENERATION_ID;
-
-    const response = await postAcceptFlashcards(makeAcceptContext(genId));
+    const response = await postAcceptFlashcards(makeAcceptContext(acceptRejectGenId));
     const body = (await response.json()) as FlashcardMutationErrorResponse;
 
     expect(response.status).toBe(404);
