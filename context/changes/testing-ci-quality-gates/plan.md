@@ -365,13 +365,13 @@ Ship the local mirror of the CI gate (husky `pre-push` running `npm test`) and u
 
 #### Automated
 
-- [x] 3.1 `package.json` contains `"prepare": "husky"` and `npm install` re-establishes hooks
-- [x] 3.2 `.husky/pre-push` exists and is executable
-- [x] 3.3 Lint still passes: `npm run lint`
-- [x] 3.4 A failing test reproduces locally: temporarily break a test, run `git push` on a throwaway branch, push is rejected; `git push --no-verify` succeeds
+- [x] 3.1 `package.json` contains `"prepare": "husky"` and `npm install` re-establishes hooks — 78b912a
+- [x] 3.2 `.husky/pre-push` exists and is executable — 78b912a
+- [x] 3.3 Lint still passes: `npm run lint` — 78b912a
+- [x] 3.4 A failing test reproduces locally: temporarily break a test, run `git push` on a throwaway branch, push is rejected; `git push --no-verify` succeeds — 78b912a
 
 #### Manual
 
-- [x] 3.5 Fresh clone, install, `git push` on a working tree runs `npm test` and pushes only on green
-- [x] 3.6 AGENTS.md, README.md/CLAUDE.md CI notes (if present), tests/fixtures/README.md, and test-plan.md changes read correctly and are internally consistent
-- [x] 3.7 A contributor following the updated docs alone can configure GitHub secrets and trigger the workflow on a fresh fork
+- [x] 3.5 Fresh clone, install, `git push` on a working tree runs `npm test` and pushes only on green — 78b912a
+- [x] 3.6 AGENTS.md, README.md/CLAUDE.md CI notes (if present), tests/fixtures/README.md, and test-plan.md changes read correctly and are internally consistent — 78b912a
+- [x] 3.7 A contributor following the updated docs alone can configure GitHub secrets and trigger the workflow on a fresh fork — 78b912a
