@@ -70,7 +70,7 @@ orchestrator updates Status as artifacts appear on disk.
 | 1 | Bootstrap + auth boundary | Install Vitest and prove authn/authz on protected parent APIs | #1, #2 | unit + integration | complete | context/changes/testing-bootstrap-auth-boundary/ |
 | 2 | Deck generation & acceptance gates | Level guard, generate timeout/errors, accept/reject state machine | #3, #4, #5, #6 | unit + integration (stub LLM) | complete | context/changes/deck-generation-acceptance-gates/ |
 | 3 | Practice + mastery signal | SRS updates and mastery reflect completed practice | #7 | integration | complete | context/changes/testing-practice-mastery-signal/ |
-| 4 | CI quality gates | Wire `npm test` into local workflow and CI on PR | cross-cutting | gates | not started | — |
+| 4 | CI quality gates | Wire `npm test` into local workflow and CI on PR | cross-cutting | gates | complete | context/changes/testing-ci-quality-gates/ |
 
 ## 4. Stack
 
@@ -102,7 +102,7 @@ phase lands; before that, the gate is `planned`.
 | Gate | Where | Required? | Catches |
 |------|-------|-----------|---------|
 | lint + typecheck | local + CI | required | syntactic / type drift |
-| unit + integration | local + CI | required after §3 Phase 4 | logic regressions, auth/deck/practice failures |
+| unit + integration | local + CI | required | logic regressions, auth/deck/practice failures |
 | e2e on critical flows | CI on PR | planned | defer until integration coverage proves insufficient |
 | post-edit hook | local (agent loop) | planned | not in initial rollout |
 | visual diff (deterministic) | CI on PR | optional | not planned for MVP dashboard |
@@ -444,7 +444,7 @@ contributors should respect these unless the underlying assumption changes.
 
 ## 8. Freshness Ledger
 
-- Strategy (§1–§5) last reviewed: 2026-06-03
+- Strategy (§1–§5) last reviewed: 2026-06-05
 - Stack versions last verified: 2026-06-03
 - AI-native tool references last verified: 2026-06-03
 

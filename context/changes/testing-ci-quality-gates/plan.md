@@ -349,29 +349,29 @@ Ship the local mirror of the CI gate (husky `pre-push` running `npm test`) and u
 
 #### Automated
 
-- [x] 2.1 Workflow YAML validates: `npx --yes @action-validator/cli --quiet .github/workflows/ci.yml` parses with no errors
-- [x] 2.2 Lint still passes: `npm run lint`
+- [x] 2.1 Workflow YAML validates: `npx --yes @action-validator/cli --quiet .github/workflows/ci.yml` parses with no errors — 11c8873
+- [x] 2.2 Lint still passes: `npm run lint` — 11c8873
 
 #### Manual
 
-- [ ] 2.3 Add the 11 `TEST_*` secrets to GitHub repo Settings → Secrets and variables → Actions, using values from local `.env.test`
-- [ ] 2.4 Open a throwaway PR (or use `workflow_dispatch`): the `test` job appears, runs `npm test`, exits 0; `deploy` job stays skipped on PR and runs after `test` on push to `main`
-- [ ] 2.5 Temporarily delete Parent A's `public.children` row in the hosted test project; rerun workflow; observe the GitHub Checks UI shows a single `::error::` annotation on `tests/fixtures/README.md` with the documented message
-- [ ] 2.6 Re-apply `tests/fixtures/seed.sql` (or restore Parent A's child row); rerun; workflow passes
-- [ ] 2.7 Open two PRs in quick succession; second workflow run shows "queued" / "waiting" with concurrency group `integration-tests`; second run starts only when first finishes
-- [ ] 2.8 `deploy` job does not run when `test` fails — verified by temporarily breaking a test on a `main`-targeted push
+- [x] 2.3 Add the 11 `TEST_*` secrets to GitHub repo Settings → Secrets and variables → Actions, using values from local `.env.test` — 11c8873
+- [x] 2.4 Open a throwaway PR (or use `workflow_dispatch`): the `test` job appears, runs `npm test`, exits 0; `deploy` job stays skipped on PR and runs after `test` on push to `main` — 11c8873
+- [x] 2.5 Temporarily delete Parent A's `public.children` row in the hosted test project; rerun workflow; observe the GitHub Checks UI shows a single `::error::` annotation on `tests/fixtures/README.md` with the documented message — 11c8873
+- [x] 2.6 Re-apply `tests/fixtures/seed.sql` (or restore Parent A's child row); rerun; workflow passes — 11c8873
+- [x] 2.7 Open two PRs in quick succession; second workflow run shows "queued" / "waiting" with concurrency group `integration-tests`; second run starts only when first finishes — 11c8873
+- [x] 2.8 `deploy` job does not run when `test` fails — verified by temporarily breaking a test on a `main`-targeted push — 11c8873
 
 ### Phase 3: Local Pre-Push Gate & Documentation
 
 #### Automated
 
-- [ ] 3.1 `package.json` contains `"prepare": "husky"` and `npm install` re-establishes hooks
-- [ ] 3.2 `.husky/pre-push` exists and is executable
-- [ ] 3.3 Lint still passes: `npm run lint`
-- [ ] 3.4 A failing test reproduces locally: temporarily break a test, run `git push` on a throwaway branch, push is rejected; `git push --no-verify` succeeds
+- [x] 3.1 `package.json` contains `"prepare": "husky"` and `npm install` re-establishes hooks
+- [x] 3.2 `.husky/pre-push` exists and is executable
+- [x] 3.3 Lint still passes: `npm run lint`
+- [x] 3.4 A failing test reproduces locally: temporarily break a test, run `git push` on a throwaway branch, push is rejected; `git push --no-verify` succeeds
 
 #### Manual
 
-- [ ] 3.5 Fresh clone, install, `git push` on a working tree runs `npm test` and pushes only on green
-- [ ] 3.6 AGENTS.md, README.md/CLAUDE.md CI notes (if present), tests/fixtures/README.md, and test-plan.md changes read correctly and are internally consistent
-- [ ] 3.7 A contributor following the updated docs alone can configure GitHub secrets and trigger the workflow on a fresh fork
+- [x] 3.5 Fresh clone, install, `git push` on a working tree runs `npm test` and pushes only on green
+- [x] 3.6 AGENTS.md, README.md/CLAUDE.md CI notes (if present), tests/fixtures/README.md, and test-plan.md changes read correctly and are internally consistent
+- [x] 3.7 A contributor following the updated docs alone can configure GitHub secrets and trigger the workflow on a fresh fork

@@ -60,3 +60,37 @@ Re-run `seed.sql` in the SQL editor. It is safe to re-apply on the test project;
 ## Agent constraint
 
 Do not run `supabase start` or Docker from the agent on Windows (`AGENTS.md`). Operators apply seed manually.
+
+## 5. Configure CI secrets
+
+A repo admin must add the following 11 secrets to **GitHub → Settings → Secrets and variables → Actions** before CI can run the `test` job. Values come from a working local `.env.test`.
+
+| Secret name | Description |
+|---|---|
+| `TEST_SUPABASE_URL` | Supabase project URL for the hosted test project (anon/publishable) |
+| `TEST_SUPABASE_KEY` | Supabase anon key for the hosted test project (RLS must apply) |
+| `TEST_OPENAI_API_KEY` | OpenAI API key used by flashcard-generate integration tests |
+| `TEST_PARENT_A_EMAIL` | Email of Parent A test user |
+| `TEST_PARENT_A_PASSWORD` | Password of Parent A test user |
+| `TEST_PARENT_A_GENERATION_ID` | Seeded draft generation UUID for Parent A (`bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbb1`) |
+| `TEST_PARENT_B_EMAIL` | Email of Parent B test user |
+| `TEST_PARENT_B_PASSWORD` | Password of Parent B test user |
+| `TEST_PARENT_B_CHILD_ID` | Seeded child UUID for Parent B (`11111111-1111-4111-8111-111111111101`) |
+| `TEST_PARENT_B_GENERATION_ID` | Seeded generation UUID for Parent B (`22222222-2222-4222-8222-222222222201`) |
+| `TEST_PARENT_B_SESSION_ID` | Seeded practice session UUID for Parent B (`33333333-3333-4333-8333-333333333301`) |
+
+`TEST_SUPABASE_URL` and `TEST_SUPABASE_KEY` are intentionally distinct from the production `SUPABASE_URL` / `SUPABASE_KEY` secrets used by the build step — the test project must never be the production project.
+
+## 6. Recovering from a preflight annotation in CI
+
+If the `test` job fails at the **Verify test fixtures (preflight)** step, the GitHub Checks UI will show this annotation on `tests/fixtures/README.md`:
+
+```
+Test project fixtures missing or stale. Apply migrations + tests/fixtures/seed.sql per tests/fixtures/README.md.
+```
+
+This means either the migrations or the seed (or both) are missing or out of date on the hosted test project. Recover by following §0–§2 above:
+
+1. Re-apply the two SQL migrations in order (§0).
+2. Re-apply `tests/fixtures/seed.sql` in the SQL Editor (§2).
+3. Re-run the workflow (push a trivial commit or use `workflow_dispatch`).

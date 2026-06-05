@@ -43,4 +43,8 @@ Local Supabase: `npx supabase start` (Docker). Deploy: `npx wrangler deploy`.
 
 ## Pull Requests
 
-CI (@.github/workflows/ci.yml) on push/PR to `main`: `npm ci`, `npx astro sync`, `npm run lint`, `npm run build` (needs `SUPABASE_URL` and `SUPABASE_KEY` repo secrets). Deploy job on push to `main` / `workflow_dispatch` needs `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID`. Run `npm run lint` and `npm run build` locally before opening a PR.
+CI (@.github/workflows/ci.yml) on push/PR to `main`: `npm ci`, `npx astro sync`, `npm run lint`, `npm run build` (needs `SUPABASE_URL` and `SUPABASE_KEY` repo secrets), then `npm test` against the hosted Supabase test project (needs `TEST_*` repo secrets — see `tests/fixtures/README.md`). Deploy job on push to `main` / `workflow_dispatch` needs `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID`, and only runs after both `ci` and `test` pass.
+
+Run `npm run lint`, `npm run build`, and `npm test` locally before opening a PR. Integration tests require `.env.test` configured against a dedicated hosted Supabase test project — missing vars fail fast via `requireTestEnv()` in @tests/helpers/env.ts.
+
+A husky `pre-push` hook runs `npm test` automatically on every `git push`; bypass with `git push --no-verify` for WIP pushes you don't intend to PR yet.
