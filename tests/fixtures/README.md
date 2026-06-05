@@ -40,6 +40,7 @@ Copy `.env.test.example` → `.env.test` and set:
 
 ```
 TEST_PARENT_A_GENERATION_ID=bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbb1
+TEST_PARENT_A_CHILD_ID=aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaa1
 TEST_PARENT_B_CHILD_ID=11111111-1111-4111-8111-111111111101
 TEST_PARENT_B_GENERATION_ID=22222222-2222-4222-8222-222222222201
 TEST_PARENT_B_SESSION_ID=33333333-3333-4333-8333-333333333301
@@ -63,7 +64,7 @@ Do not run `supabase start` or Docker from the agent on Windows (`AGENTS.md`). O
 
 ## 5. Configure CI secrets
 
-A repo admin must add the following 11 secrets to **GitHub → Settings → Secrets and variables → Actions** before CI can run the `test` job. Values come from a working local `.env.test`.
+A repo admin must add the following 12 secrets to **GitHub → Settings → Secrets and variables → Actions** before CI can run the `test` job. Values come from a working local `.env.test`.
 
 | Secret name | Description |
 |---|---|
@@ -73,6 +74,7 @@ A repo admin must add the following 11 secrets to **GitHub → Settings → Secr
 | `TEST_PARENT_A_EMAIL` | Email of Parent A test user |
 | `TEST_PARENT_A_PASSWORD` | Password of Parent A test user |
 | `TEST_PARENT_A_GENERATION_ID` | Seeded draft generation UUID for Parent A (`bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbb1`) |
+| `TEST_PARENT_A_CHILD_ID` | Seeded child UUID for Parent A (`aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaa1`) |
 | `TEST_PARENT_B_EMAIL` | Email of Parent B test user |
 | `TEST_PARENT_B_PASSWORD` | Password of Parent B test user |
 | `TEST_PARENT_B_CHILD_ID` | Seeded child UUID for Parent B (`11111111-1111-4111-8111-111111111101`) |

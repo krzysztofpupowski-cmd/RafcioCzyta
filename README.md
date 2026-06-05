@@ -180,10 +180,11 @@ In Supabase → **Authentication** → **URL Configuration**, set **Site URL** a
 
 GitHub Actions (`.github/workflows/ci.yml`):
 
-- **Every push / PR to `main`**: lint + build
-- **Push to `main` or manual `workflow_dispatch`**: deploy via `cloudflare/wrangler-action@v3`
+- **Every push / PR to `main`**: `ci` job (lint + build)
+- **Every push / PR to `main`**: `test` job (`npm test` against the hosted Supabase test project)
+- **Push to `main` or manual `workflow_dispatch`**: deploy via `cloudflare/wrangler-action@v3`, only after `ci` and `test` pass
 
-Repository secrets: `SUPABASE_URL`, `SUPABASE_KEY`, `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID`. The Cloudflare token must use the **Edit Cloudflare Workers** template (includes Workers KV write for the `SESSION` binding).
+Repository secrets: `SUPABASE_URL`, `SUPABASE_KEY`, `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID`, plus 12 `TEST_*` secrets for the `test` job (see `tests/fixtures/README.md` §5). The Cloudflare token must use the **Edit Cloudflare Workers** template (includes Workers KV write for the `SESSION` binding).
 
 Manual deploy from CLI (requires [GitHub CLI](https://cli.github.com/)):
 

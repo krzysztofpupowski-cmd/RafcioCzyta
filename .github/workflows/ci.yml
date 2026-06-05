@@ -50,15 +50,31 @@ jobs:
           TEST_PARENT_A_EMAIL: ${{ secrets.TEST_PARENT_A_EMAIL }}
           TEST_PARENT_A_PASSWORD: ${{ secrets.TEST_PARENT_A_PASSWORD }}
           TEST_PARENT_A_GENERATION_ID: ${{ secrets.TEST_PARENT_A_GENERATION_ID }}
+          TEST_PARENT_A_CHILD_ID: ${{ secrets.TEST_PARENT_A_CHILD_ID }}
           TEST_PARENT_B_EMAIL: ${{ secrets.TEST_PARENT_B_EMAIL }}
           TEST_PARENT_B_PASSWORD: ${{ secrets.TEST_PARENT_B_PASSWORD }}
           TEST_PARENT_B_CHILD_ID: ${{ secrets.TEST_PARENT_B_CHILD_ID }}
           TEST_PARENT_B_GENERATION_ID: ${{ secrets.TEST_PARENT_B_GENERATION_ID }}
           TEST_PARENT_B_SESSION_ID: ${{ secrets.TEST_PARENT_B_SESSION_ID }}
-        run: npx vitest run tests/smoke/fixtures-preflight.test.ts
-      - name: Annotate preflight failure
-        if: failure() && steps.preflight.conclusion == 'failure'
+        run: |
+          set +e
+          output="$(npx vitest run tests/smoke/fixtures-preflight.test.ts 2>&1)"
+          status=$?
+          printf '%s\n' "$output"
+          if [ "$status" -ne 0 ]; then
+            if printf '%s\n' "$output" | grep -Fq "Test project fixtures missing or stale. Apply migrations + tests/fixtures/seed.sql per tests/fixtures/README.md."; then
+              echo "reason=fixtures-stale" >> "$GITHUB_OUTPUT"
+            else
+              echo "reason=other" >> "$GITHUB_OUTPUT"
+            fi
+          fi
+          exit "$status"
+      - name: Annotate stale fixtures preflight failure
+        if: failure() && steps.preflight.conclusion == 'failure' && steps.preflight.outputs.reason == 'fixtures-stale'
         run: echo "::error file=tests/fixtures/README.md::Test project fixtures missing or stale. Apply migrations + tests/fixtures/seed.sql per tests/fixtures/README.md."
+      - name: Annotate generic preflight failure
+        if: failure() && steps.preflight.conclusion == 'failure' && steps.preflight.outputs.reason != 'fixtures-stale'
+        run: echo "::error file=.github/workflows/ci.yml::Preflight check failed before test suite. Check the preflight step logs for the exact root cause."
       - name: Run test suite
         env:
           SUPABASE_URL: ${{ secrets.TEST_SUPABASE_URL }}
@@ -67,6 +83,7 @@ jobs:
           TEST_PARENT_A_EMAIL: ${{ secrets.TEST_PARENT_A_EMAIL }}
           TEST_PARENT_A_PASSWORD: ${{ secrets.TEST_PARENT_A_PASSWORD }}
           TEST_PARENT_A_GENERATION_ID: ${{ secrets.TEST_PARENT_A_GENERATION_ID }}
+          TEST_PARENT_A_CHILD_ID: ${{ secrets.TEST_PARENT_A_CHILD_ID }}
           TEST_PARENT_B_EMAIL: ${{ secrets.TEST_PARENT_B_EMAIL }}
           TEST_PARENT_B_PASSWORD: ${{ secrets.TEST_PARENT_B_PASSWORD }}
           TEST_PARENT_B_CHILD_ID: ${{ secrets.TEST_PARENT_B_CHILD_ID }}

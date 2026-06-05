@@ -79,7 +79,7 @@ Full server-side rendering (`output: "server"` in astro.config.mjs). All pages a
 GitHub Actions workflow (`.github/workflows/ci.yml`) runs on every push and PR to `main`:
 
 1. `ci` job — lint + build (needs `SUPABASE_URL` and `SUPABASE_KEY` repo secrets)
-2. `test` job — `npm test` against the hosted Supabase test project (needs 11 `TEST_*` repo secrets; see `tests/fixtures/README.md §5`)
+2. `test` job — `npm test` against the hosted Supabase test project (needs 12 `TEST_*` repo secrets; see `tests/fixtures/README.md §5`)
 3. `deploy` job — Cloudflare Workers deploy (push to `main` / `workflow_dispatch` only; blocked until both `ci` and `test` pass)
 
 Workflow runs are serialized via `concurrency: group: integration-tests` to prevent parallel runs from corrupting shared test fixtures. A husky `pre-push` hook runs `npm test` locally before every push; bypass with `git push --no-verify` for WIP.
