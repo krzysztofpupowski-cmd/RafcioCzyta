@@ -371,25 +371,25 @@ Phase 3 adds ~13 integration tests against hosted Supabase. Keep each file's mat
 
 #### Automated
 
-- [x] 2.1 `npm test` — all ten Phase 2 cases pass (two in `authn-protected-apis.test.ts`, eight in `practice-flow.test.ts`) against the hosted test project
-- [x] 2.2 `npm run lint` passes
-- [x] 2.3 `npm run build` passes
+- [x] 2.1 `npm test` — all ten Phase 2 cases pass (two in `authn-protected-apis.test.ts`, eight in `practice-flow.test.ts`) against the hosted test project — b4f0dc6
+- [x] 2.2 `npm run lint` passes — b4f0dc6
+- [x] 2.3 `npm run build` passes — b4f0dc6
 
 #### Manual
 
-- [x] 2.4 Manual `/practice` happy path in dev still works after handler extraction + matrix completion
+- [x] 2.4 Manual `/practice` happy path in dev still works after handler extraction + matrix completion — b4f0dc6
 
 ### Phase 3: Mastery Summary Integration + SRS Fixture Helper
 
 #### Automated
 
-- [ ] 3.1 `npm test` — all four cases in `mastery-summary.test.ts` pass
-- [ ] 3.2 `npm run lint` passes
-- [ ] 3.3 `npm run build` passes
+- [x] 3.1 `npm test` — all four cases in `mastery-summary.test.ts` pass
+- [x] 3.2 `npm run lint` passes
+- [x] 3.3 `npm run build` passes
 
 #### Manual
 
-- [ ] 3.4 `/dashboard` mastery indicator renders the expected integer percent for the test user
+- [x] 3.4 `/dashboard` mastery indicator renders the expected integer percent for the test user
 
 ### Phase 4: Cookbook §6.6 & Test-Plan Sync
 
