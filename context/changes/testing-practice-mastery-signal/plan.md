@@ -383,22 +383,22 @@ Phase 3 adds ~13 integration tests against hosted Supabase. Keep each file's mat
 
 #### Automated
 
-- [x] 3.1 `npm test` — all four cases in `mastery-summary.test.ts` pass
-- [x] 3.2 `npm run lint` passes
-- [x] 3.3 `npm run build` passes
+- [x] 3.1 `npm test` — all four cases in `mastery-summary.test.ts` pass — 78aec7d
+- [x] 3.2 `npm run lint` passes — 78aec7d
+- [x] 3.3 `npm run build` passes — 78aec7d
 
 #### Manual
 
-- [x] 3.4 `/dashboard` mastery indicator renders the expected integer percent for the test user
+- [x] 3.4 `/dashboard` mastery indicator renders the expected integer percent for the test user — 78aec7d
 
 ### Phase 4: Cookbook §6.6 & Test-Plan Sync
 
 #### Automated
 
-- [ ] 4.1 `npm test` still passes
-- [ ] 4.2 `npm run lint` passes
+- [x] 4.1 `npm test` still passes
+- [x] 4.2 `npm run lint` passes
 
 #### Manual
 
-- [ ] 4.3 §6.6 readable standalone — Phase 4 (CI quality gates) contributor can copy the practice-flow + mastery patterns without re-reading the full plan
-- [ ] 4.4 `change.md` set to `status: ready_for_implement` with updated date
+- [x] 4.3 §6.6 readable standalone — Phase 4 (CI quality gates) contributor can copy the practice-flow + mastery patterns without re-reading the full plan
+- [x] 4.4 `change.md` set to `status: implemented` with updated date

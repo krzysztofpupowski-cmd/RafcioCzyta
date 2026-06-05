@@ -6,7 +6,7 @@
 >
 > Refresh: re-run `/10x-test-plan --refresh` when stale (see §8).
 >
-> Last updated: 2026-06-03
+> Last updated: 2026-06-05
 
 ## 1. Strategy
 
@@ -67,9 +67,9 @@ orchestrator updates Status as artifacts appear on disk.
 
 | # | Phase name | Goal (one line) | Risks covered | Test types | Status | Change folder |
 |---|------------|-----------------|---------------|------------|--------|---------------|
-| 1 | Bootstrap + auth boundary | Install Vitest and prove authn/authz on protected parent APIs | #1, #2 | unit + integration | shipped | context/changes/testing-bootstrap-auth-boundary/ |
-| 2 | Deck generation & acceptance gates | Level guard, generate timeout/errors, accept/reject state machine | #3, #4, #5, #6 | unit + integration (stub LLM) | shipped | context/changes/deck-generation-acceptance-gates/ |
-| 3 | Practice + mastery signal | SRS updates and mastery reflect completed practice | #7 | integration | not started | — |
+| 1 | Bootstrap + auth boundary | Install Vitest and prove authn/authz on protected parent APIs | #1, #2 | unit + integration | complete | context/changes/testing-bootstrap-auth-boundary/ |
+| 2 | Deck generation & acceptance gates | Level guard, generate timeout/errors, accept/reject state machine | #3, #4, #5, #6 | unit + integration (stub LLM) | complete | context/changes/deck-generation-acceptance-gates/ |
+| 3 | Practice + mastery signal | SRS updates and mastery reflect completed practice | #7 | integration | complete | context/changes/testing-practice-mastery-signal/ |
 | 4 | CI quality gates | Wire `npm test` into local workflow and CI on PR | cross-cutting | gates | not started | — |
 
 ## 4. Stack
@@ -330,10 +330,103 @@ Delete the adversarial row in `afterAll`.
 
 Full example: `tests/integration/flashcards-state-machine.test.ts`.
 
-### 6.6 Per-rollout-phase notes
+### 6.6 Adding a test for practice / mastery
+
+Use when writing tests that touch the SRS update path or the mastery
+indicator. Two canonical sub-patterns shipped by
+`context/changes/testing-practice-mastery-signal/`.
+
+#### Sub-pattern A — Practice-flow integration via handlers
+
+Sign in once in `beforeAll`; build the fixture programmatically (insert
+draft cards → accept via `postAcceptFlashcards` → backdate
+`next_review_at`); drive `postPracticeStart → postPracticeReview →
+postPracticeEnd`; assert directly against the DB after each step.
+
+```ts
+// beforeAll: insert generation + draft cards
+const { error: genError } = await supabase
+  .from("flashcard_generations")
+  .insert({ id: genId, child_id: childId, requested_level: "letters" });
+
+// accept to install real SRS state via production handler
+await postAcceptFlashcards(makeAcceptContext(genId));
+
+// force all cards due now (ts-fsrs initial step may be "just now" — be explicit)
+await supabase
+  .from("flashcards")
+  .update({ next_review_at: "2000-01-01T00:00:00Z" })
+  .eq("generation_id", genId);
+
+// drive the flow
+const startRes = await postPracticeStart(makeStartContext());
+const { sessionId, cards } = (await startRes.json()) as StartPracticeSuccessResponse;
+
+const reviewRes = await postPracticeReview(
+  makeReviewContext({ sessionId, flashcardId: cards[0].id, rating: Rating.Good })
+);
+expect((await reviewRes.json() as ReviewPracticeSuccessResponse).outcome).toBe("correct");
+
+// assert DB state after review
+const { data: card } = await supabase
+  .from("flashcards").select("srs_state, reps_count, last_reviewed_at, mastery_score")
+  .eq("id", cards[0].id).single();
+expect(card!.reps_count).toBeGreaterThanOrEqual(1);
+
+// assert practice_attempts row
+const { data: attempts } = await supabase
+  .from("practice_attempts").select("outcome")
+  .eq("session_id", sessionId).eq("flashcard_id", cards[0].id);
+expect(attempts).toHaveLength(1);
+expect(attempts![0].outcome).toBe("correct");
+
+// end is idempotent — second call returns same endedAt
+const end1 = await postPracticeEnd(makeEndContext(sessionId));
+const end2 = await postPracticeEnd(makeEndContext(sessionId));
+expect((await end2.json() as EndPracticeSuccessResponse).endedAt)
+  .toBe((await end1.json() as EndPracticeSuccessResponse).endedAt); // same timestamp
+```
+
+Full example: `tests/integration/practice-flow.test.ts`.
+
+#### Sub-pattern B — Mastery threshold via `buildMasteredSrsState`
+
+Import the helper and install the resulting columns onto an already-accepted
+card. The helper throws if ts-fsrs ever stops crossing the 90-point
+threshold — so a mysterious mastery-test failure always points to the
+helper's own error message, not a silent assertion mismatch.
+
+```ts
+import { buildMasteredSrsState } from "../helpers/srs-fixture";
+
+// after inserting + accepting a card:
+const fixture = buildMasteredSrsState();
+await supabase.from("flashcards").update({
+  srs_state: fixture.stored,
+  mastery_score: fixture.mastery_score,
+  reps_count: fixture.reps_count,
+  last_reviewed_at: fixture.last_reviewed_at,
+  next_review_at: fixture.next_review_at,
+}).eq("id", cardId);
+
+// then call the handler
+const res = await getMasterySummaryHandler(makeGetContext());
+const { summary } = (await res.json()) as MasterySummarySuccessResponse;
+expect(summary).toEqual({ acceptedCount: 1, masteredCount: 1, percentMastered: 100 });
+```
+
+**Key notes:**
+- Update **all five** SRS columns (`srs_state`, `mastery_score`, `reps_count`, `last_reviewed_at`, `next_review_at`) when installing a fixture — keeps production column invariants intact.
+- Null `srs_state` cards are counted in `acceptedCount` but silently skipped in `masteredCount` (per `getMasterySummary` contract). Assert this explicitly when the test covers that edge case.
+- Use `beforeEach` to pre-delete accepted cards at the target level before each case — prevents count bleed from earlier test cases in the same file.
+
+Full example: `tests/integration/mastery-summary.test.ts`.
+
+### 6.7 Per-rollout-phase notes
 
 - **Phase 1 — Bootstrap + auth boundary** (shipped 2026-06-03): `context/changes/testing-bootstrap-auth-boundary/`. Vitest + `.env.test` fail-fast; handler extraction for seven representative routes; integration against hosted test project with two-parent seed. Representative unauthenticated matrix: one 303 route (`POST /api/children`), three 401 JSON routes (generate, mastery summary, practice review). Cross-parent IDOR: accept `generationId`, practice `review`/`end` `sessionId`; RLS smoke on `children`. CI test job intentionally deferred to rollout Phase 4 (§3 row 4).
 - **Phase 2 — Deck generation & acceptance gates** (shipped 2026-06-04): `context/changes/deck-generation-acceptance-gates/`. LLM stub harness at the `ai`/`@ai-sdk/openai` boundary; level-guard unit + generate-error matrix (happy / timeout / failure / missing-key) + accept-reject state machine with adversarial draft-row exclusion (risk #4). Seed extended with a Parent A draft batch; reject handler extracted to `src/lib/api-handlers/flashcards-reject-post.ts`.
+- **Phase 3 — Practice + mastery signal** (shipped 2026-06-05): `context/changes/testing-practice-mastery-signal/`. SRS adapter unit on all four ratings; practice flow integration (start → review×2 → end) with direct `practice_attempts` assertion + review-error matrix + end-idempotency; mastery summary integration with `buildMasteredSrsState` helper landing the ≥90 threshold deterministically. Practice-start handler extracted to `src/lib/api-handlers/practice-start-post.ts`; authn matrix completed with `postPracticeStart` and `postPracticeEnd` 401 cases.
 
 ## 7. What We Deliberately Don't Test
 
