@@ -4,7 +4,9 @@ import { postAuthSignin } from "@/lib/api-handlers/auth-signin-post";
 import { postChildren } from "@/lib/api-handlers/children-post";
 import { postGenerateFlashcards } from "@/lib/api-handlers/flashcards-generate-post";
 import { getMasterySummaryHandler } from "@/lib/api-handlers/mastery-summary-get";
+import { postPracticeEnd } from "@/lib/api-handlers/practice-end-post";
 import { postPracticeReview } from "@/lib/api-handlers/practice-review-post";
+import { postPracticeStart } from "@/lib/api-handlers/practice-start-post";
 import { requireTestEnv } from "../helpers/env";
 import { createApiContext, createCookieStore } from "../helpers/api-context";
 
@@ -63,6 +65,36 @@ describe("unauthenticated protected APIs", () => {
     });
 
     const response = await postPracticeReview(context);
+    const body = (await response.json()) as { ok: boolean; error?: string };
+
+    expect(response.status).toBe(401);
+    expect(body.ok).toBe(false);
+    expect(body.error).toBeTruthy();
+  });
+
+  it("postPracticeStart returns 401 JSON", async () => {
+    const context = createApiContext({
+      method: "POST",
+      pathname: "/api/practice/start",
+    });
+
+    const response = await postPracticeStart(context);
+    const body = (await response.json()) as { ok: boolean; error?: string };
+
+    expect(response.status).toBe(401);
+    expect(body.ok).toBe(false);
+    expect(body.error).toBeTruthy();
+  });
+
+  it("postPracticeEnd returns 401 JSON", async () => {
+    const context = createApiContext({
+      method: "POST",
+      pathname: "/api/practice/end",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ sessionId: "00000000-0000-0000-0000-000000000001" }),
+    });
+
+    const response = await postPracticeEnd(context);
     const body = (await response.json()) as { ok: boolean; error?: string };
 
     expect(response.status).toBe(401);

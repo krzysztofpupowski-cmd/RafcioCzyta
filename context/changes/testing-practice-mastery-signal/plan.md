@@ -359,25 +359,25 @@ Phase 3 adds ~13 integration tests against hosted Supabase. Keep each file's mat
 
 #### Automated
 
-- [x] 1.1 `npm test` runs `tests/unit/srs-adapter.test.ts` green (no `.env.test` dependencies)
-- [x] 1.2 `npm run lint` passes
-- [x] 1.3 `npm run build` passes
+- [x] 1.1 `npm test` runs `tests/unit/srs-adapter.test.ts` green (no `.env.test` dependencies) — 925c8db
+- [x] 1.2 `npm run lint` passes — 925c8db
+- [x] 1.3 `npm run build` passes — 925c8db
 
 #### Manual
 
-- [x] 1.4 Local `/practice` start still works after `practice-start-post.ts` extraction
+- [x] 1.4 Local `/practice` start still works after `practice-start-post.ts` extraction — 925c8db
 
 ### Phase 2: Practice Flow Integration + Authn Matrix Completion
 
 #### Automated
 
-- [ ] 2.1 `npm test` — all ten Phase 2 cases pass (two in `authn-protected-apis.test.ts`, eight in `practice-flow.test.ts`) against the hosted test project
-- [ ] 2.2 `npm run lint` passes
-- [ ] 2.3 `npm run build` passes
+- [x] 2.1 `npm test` — all ten Phase 2 cases pass (two in `authn-protected-apis.test.ts`, eight in `practice-flow.test.ts`) against the hosted test project
+- [x] 2.2 `npm run lint` passes
+- [x] 2.3 `npm run build` passes
 
 #### Manual
 
-- [ ] 2.4 Manual `/practice` happy path in dev still works after handler extraction + matrix completion
+- [x] 2.4 Manual `/practice` happy path in dev still works after handler extraction + matrix completion
 
 ### Phase 3: Mastery Summary Integration + SRS Fixture Helper
 
