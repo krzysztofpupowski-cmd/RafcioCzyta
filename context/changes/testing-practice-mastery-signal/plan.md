@@ -395,10 +395,10 @@ Phase 3 adds ~13 integration tests against hosted Supabase. Keep each file's mat
 
 #### Automated
 
-- [x] 4.1 `npm test` still passes
-- [x] 4.2 `npm run lint` passes
+- [x] 4.1 `npm test` still passes — 1c3e385
+- [x] 4.2 `npm run lint` passes — 1c3e385
 
 #### Manual
 
-- [x] 4.3 §6.6 readable standalone — Phase 4 (CI quality gates) contributor can copy the practice-flow + mastery patterns without re-reading the full plan
-- [x] 4.4 `change.md` set to `status: implemented` with updated date
+- [x] 4.3 §6.6 readable standalone — Phase 4 (CI quality gates) contributor can copy the practice-flow + mastery patterns without re-reading the full plan — 1c3e385
+- [x] 4.4 `change.md` set to `status: implemented` with updated date — 1c3e385
