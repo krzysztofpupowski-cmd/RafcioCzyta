@@ -336,21 +336,21 @@ Ship the local mirror of the CI gate (husky `pre-push` running `npm test`) and u
 
 #### Automated
 
-- [x] 1.1 Preflight test passes locally against a configured `.env.test`: `npx vitest run tests/smoke/fixtures-preflight.test.ts`
-- [x] 1.2 Full suite still passes: `npm test`
-- [x] 1.3 Lint passes: `npm run lint`
+- [x] 1.1 Preflight test passes locally against a configured `.env.test`: `npx vitest run tests/smoke/fixtures-preflight.test.ts` — 31c7c86
+- [x] 1.2 Full suite still passes: `npm test` — 31c7c86
+- [x] 1.3 Lint passes: `npm run lint` — 31c7c86
 
 #### Manual
 
-- [x] 1.4 Temporarily delete Parent A's `public.children` row in the hosted test project; rerun preflight; assert the failure message reads exactly `Test project fixtures missing or stale. Apply migrations + tests/fixtures/seed.sql per tests/fixtures/README.md.`
-- [x] 1.5 Re-apply `tests/fixtures/seed.sql` (or restore Parent A's child row); preflight passes again
+- [x] 1.4 Temporarily delete Parent A's `public.children` row in the hosted test project; rerun preflight; assert the failure message reads exactly `Test project fixtures missing or stale. Apply migrations + tests/fixtures/seed.sql per tests/fixtures/README.md.` — 31c7c86
+- [x] 1.5 Re-apply `tests/fixtures/seed.sql` (or restore Parent A's child row); preflight passes again — 31c7c86
 
 ### Phase 2: CI Workflow — `test` Job
 
 #### Automated
 
-- [ ] 2.1 Workflow YAML validates: `npx --yes @action-validator/cli --quiet .github/workflows/ci.yml` parses with no errors
-- [ ] 2.2 Lint still passes: `npm run lint`
+- [x] 2.1 Workflow YAML validates: `npx --yes @action-validator/cli --quiet .github/workflows/ci.yml` parses with no errors
+- [x] 2.2 Lint still passes: `npm run lint`
 
 #### Manual
 

@@ -7,6 +7,12 @@ on:
     branches: [main]
   workflow_dispatch:
 
+# Serialize the entire workflow so two PRs cannot run their test jobs
+# concurrently and corrupt shared Parent A fixtures in the hosted test project.
+concurrency:
+  group: integration-tests
+  cancel-in-progress: false
+
 jobs:
   ci:
     runs-on: ubuntu-latest
@@ -24,8 +30,52 @@ jobs:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
 
-  deploy:
+  test:
     needs: ci
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npx astro sync
+      - name: Verify test fixtures (preflight)
+        id: preflight
+        env:
+          SUPABASE_URL: ${{ secrets.TEST_SUPABASE_URL }}
+          SUPABASE_KEY: ${{ secrets.TEST_SUPABASE_KEY }}
+          OPENAI_API_KEY: ${{ secrets.TEST_OPENAI_API_KEY }}
+          TEST_PARENT_A_EMAIL: ${{ secrets.TEST_PARENT_A_EMAIL }}
+          TEST_PARENT_A_PASSWORD: ${{ secrets.TEST_PARENT_A_PASSWORD }}
+          TEST_PARENT_A_GENERATION_ID: ${{ secrets.TEST_PARENT_A_GENERATION_ID }}
+          TEST_PARENT_B_EMAIL: ${{ secrets.TEST_PARENT_B_EMAIL }}
+          TEST_PARENT_B_PASSWORD: ${{ secrets.TEST_PARENT_B_PASSWORD }}
+          TEST_PARENT_B_CHILD_ID: ${{ secrets.TEST_PARENT_B_CHILD_ID }}
+          TEST_PARENT_B_GENERATION_ID: ${{ secrets.TEST_PARENT_B_GENERATION_ID }}
+          TEST_PARENT_B_SESSION_ID: ${{ secrets.TEST_PARENT_B_SESSION_ID }}
+        run: npx vitest run tests/smoke/fixtures-preflight.test.ts
+      - name: Annotate preflight failure
+        if: failure() && steps.preflight.conclusion == 'failure'
+        run: echo "::error file=tests/fixtures/README.md::Test project fixtures missing or stale. Apply migrations + tests/fixtures/seed.sql per tests/fixtures/README.md."
+      - name: Run test suite
+        env:
+          SUPABASE_URL: ${{ secrets.TEST_SUPABASE_URL }}
+          SUPABASE_KEY: ${{ secrets.TEST_SUPABASE_KEY }}
+          OPENAI_API_KEY: ${{ secrets.TEST_OPENAI_API_KEY }}
+          TEST_PARENT_A_EMAIL: ${{ secrets.TEST_PARENT_A_EMAIL }}
+          TEST_PARENT_A_PASSWORD: ${{ secrets.TEST_PARENT_A_PASSWORD }}
+          TEST_PARENT_A_GENERATION_ID: ${{ secrets.TEST_PARENT_A_GENERATION_ID }}
+          TEST_PARENT_B_EMAIL: ${{ secrets.TEST_PARENT_B_EMAIL }}
+          TEST_PARENT_B_PASSWORD: ${{ secrets.TEST_PARENT_B_PASSWORD }}
+          TEST_PARENT_B_CHILD_ID: ${{ secrets.TEST_PARENT_B_CHILD_ID }}
+          TEST_PARENT_B_GENERATION_ID: ${{ secrets.TEST_PARENT_B_GENERATION_ID }}
+          TEST_PARENT_B_SESSION_ID: ${{ secrets.TEST_PARENT_B_SESSION_ID }}
+        run: npm test
+
+  deploy:
+    needs: [ci, test]
     if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     steps:
