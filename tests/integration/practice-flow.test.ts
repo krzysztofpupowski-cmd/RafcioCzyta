@@ -314,6 +314,7 @@ describe("practice-flow integration", () => {
     await supabase
       .from("flashcards")
       .update({ next_review_at: "2099-01-01T00:00:00Z" })
+      .in("generation_id", cleanupGenIds)
       .eq("child_id", childId)
       .eq("status", "accepted");
 
@@ -328,7 +329,7 @@ describe("practice-flow integration", () => {
     await supabase
       .from("flashcards")
       .update({ next_review_at: "2000-01-01T00:00:00Z" })
-      .eq("generation_id", cleanupGenIds[0])
+      .in("generation_id", cleanupGenIds)
       .eq("child_id", childId);
   });
 });

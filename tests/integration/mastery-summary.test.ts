@@ -2,7 +2,7 @@
 // types are error-typed here. Type safety is enforced by callers and Supabase RLS.
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 
-import { afterAll, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { afterAll, beforeAll, describe, expect, it } from "vitest";
 
 import { postAcceptFlashcards } from "@/lib/api-handlers/flashcards-accept-post";
 import { getMasterySummaryHandler } from "@/lib/api-handlers/mastery-summary-get";
@@ -34,14 +34,6 @@ describe("mastery-summary integration", () => {
       .maybeSingle();
     if (!childData) throw new Error("No child row found for Parent A — re-apply seed.sql");
     childId = childData.id;
-
-    // Pre-delete any existing accepted cards for this child at level 'letters'
-    // so each case starts from a deterministic empty state.
-  });
-
-  beforeEach(async () => {
-    // Pre-delete accepted cards at level 'letters' so each case starts from a deterministic empty state.
-    await supabase.from("flashcards").delete().eq("child_id", childId).eq("status", "accepted").eq("level", "letters");
   });
 
   afterAll(async () => {
@@ -59,6 +51,19 @@ describe("mastery-summary integration", () => {
       cookies: session.cookies,
       locals: { user: session.user },
     });
+  }
+
+  function expectedPercent(masteredCount: number, acceptedCount: number): number {
+    if (acceptedCount === 0) return 0;
+    return Math.round((masteredCount / acceptedCount) * 100);
+  }
+
+  async function getCurrentSummary() {
+    const response = await getMasterySummaryHandler(makeGetContext());
+    const body = (await response.json()) as MasterySummarySuccessResponse;
+    expect(response.status).toBe(200);
+    expect(body.ok).toBe(true);
+    return body.summary;
   }
 
   async function insertAndAccept(cardCount: number): Promise<string[]> {
@@ -104,15 +109,17 @@ describe("mastery-summary integration", () => {
   }
 
   it("case 1: no accepted cards → summary is all zeros", async () => {
+    const baseline = await getCurrentSummary();
     const response = await getMasterySummaryHandler(makeGetContext());
     const body = (await response.json()) as MasterySummarySuccessResponse;
 
     expect(response.status).toBe(200);
     expect(body.ok).toBe(true);
-    expect(body.summary).toEqual({ acceptedCount: 0, masteredCount: 0, percentMastered: 0 });
+    expect(body.summary).toEqual(baseline);
   });
 
   it("case 2: single mastered card → acceptedCount=1, masteredCount=1, percentMastered=100", async () => {
+    const baseline = await getCurrentSummary();
     const [cardId] = await insertAndAccept(1);
     const fixture = buildMasteredSrsState();
 
@@ -130,13 +137,20 @@ describe("mastery-summary integration", () => {
 
     const response = await getMasterySummaryHandler(makeGetContext());
     const body = (await response.json()) as MasterySummarySuccessResponse;
+    const acceptedCount = baseline.acceptedCount + 1;
+    const masteredCount = baseline.masteredCount + 1;
 
     expect(response.status).toBe(200);
     expect(body.ok).toBe(true);
-    expect(body.summary).toEqual({ acceptedCount: 1, masteredCount: 1, percentMastered: 100 });
+    expect(body.summary).toEqual({
+      acceptedCount,
+      masteredCount,
+      percentMastered: expectedPercent(masteredCount, acceptedCount),
+    });
   });
 
   it("case 3: mixed — one mastered, one fresh → acceptedCount=2, masteredCount=1, percentMastered=50", async () => {
+    const baseline = await getCurrentSummary();
     const [card0Id, card1Id] = await insertAndAccept(2);
     const fixture = buildMasteredSrsState();
 
@@ -159,13 +173,20 @@ describe("mastery-summary integration", () => {
 
     const response = await getMasterySummaryHandler(makeGetContext());
     const body = (await response.json()) as MasterySummarySuccessResponse;
+    const acceptedCount = baseline.acceptedCount + 2;
+    const masteredCount = baseline.masteredCount + 1;
 
     expect(response.status).toBe(200);
     expect(body.ok).toBe(true);
-    expect(body.summary).toEqual({ acceptedCount: 2, masteredCount: 1, percentMastered: 50 });
+    expect(body.summary).toEqual({
+      acceptedCount,
+      masteredCount,
+      percentMastered: expectedPercent(masteredCount, acceptedCount),
+    });
   });
 
   it("case 4: null srs_state skipped silently — acceptedCount=2, masteredCount=1, percentMastered=50", async () => {
+    const baseline = await getCurrentSummary();
     const [card0Id, card1Id] = await insertAndAccept(2);
     const fixture = buildMasteredSrsState();
 
@@ -187,10 +208,16 @@ describe("mastery-summary integration", () => {
 
     const response = await getMasterySummaryHandler(makeGetContext());
     const body = (await response.json()) as MasterySummarySuccessResponse;
+    const acceptedCount = baseline.acceptedCount + 2;
+    const masteredCount = baseline.masteredCount + 1;
 
     expect(response.status).toBe(200);
     expect(body.ok).toBe(true);
     // null srs_state card is counted in acceptedCount but skipped in masteredCount.
-    expect(body.summary).toEqual({ acceptedCount: 2, masteredCount: 1, percentMastered: 50 });
+    expect(body.summary).toEqual({
+      acceptedCount,
+      masteredCount,
+      percentMastered: expectedPercent(masteredCount, acceptedCount),
+    });
   });
 });
