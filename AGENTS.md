@@ -41,6 +41,20 @@ Local Supabase: `npx supabase start` (Docker). Deploy: `npx wrangler deploy`.
 - ESLint enforces strict TypeScript, React Compiler, Astro a11y rules, and Prettier. Husky pre-commit runs lint-staged (`eslint --fix` on `*.{ts,tsx,astro}`, Prettier on `*.{json,css,md}`).
 - **`src/db/database.types.ts` is excluded from ESLint's type resolution** (`eslint.config.js` line 73: `{ ignores: ["src/db/database.types.ts"] }`). Every type derived from `Database` — i.e. all exports from `src/types.ts` (`Child`, `Flashcard`, `ReadingLevel`, etc.) — is treated as an error type by `@typescript-eslint`, causing `no-unsafe-assignment`, `no-unsafe-member-access`, `no-unsafe-return`, and `no-redundant-type-constituents` errors. **Pattern**: service modules (`src/lib/services/`) use a file-wide `/* eslint-disable */` block (see `src/lib/services/children.ts` as the canonical template). Astro pages and React components that receive these types use `// eslint-disable-next-line` inline comments on the specific problem lines. Do NOT remove the ignore entry — `database.types.ts` is auto-generated and must stay out of the type-checked graph.
 
+## E2E Testing Rules
+
+- Use getByRole, getByLabel, getByText as primary locators.
+  Fall back to getByTestId only when accessibility attributes are ambiguous.
+- Never use CSS selectors, XPath, or DOM structure for locating elements.
+- Each test must be independently runnable — no shared state between tests.
+- Never use page.waitForTimeout(). Wait for specific conditions:
+  toBeVisible(), waitForURL(), waitForResponse().
+- Assert the business outcome, not implementation details.
+- Use unique identifiers (e.g., timestamp suffix) for test data
+  to avoid collisions in parallel runs. Clean up in afterEach.
+- Use storageState for authentication — never log in through UI
+  in individual tests.
+
 ## Pull Requests
 
 CI (@.github/workflows/ci.yml) on push/PR to `main`: `npm ci`, `npx astro sync`, `npm run lint`, `npm run build` (needs `SUPABASE_URL` and `SUPABASE_KEY` repo secrets), then `npm test` against the hosted Supabase test project (needs `TEST_*` repo secrets — see `tests/fixtures/README.md`). Deploy job on push to `main` / `workflow_dispatch` needs `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID`, and only runs after both `ci` and `test` pass.
