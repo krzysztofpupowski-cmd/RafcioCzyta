@@ -80,6 +80,8 @@ Koszt dzisiaj: rodzic musi sam decydować, co przygotować dalej, a dziecko trac
 
   > Socratic: Counter-argument considered: "Akceptacja każdej fiszki może być zbyt dużym obciążeniem dla rodzica." Resolution: revised; akceptacja powinna działać partiami.
 
+  > **Semantyka usuwania:** odrzucenie partii (`rejectBatch`, `POST /api/flashcards/reject`) jest w MVP operacją **Delete** dla fiszek — materiał znika z widoku rodzica (zakładki „Przygotowane” i „Zaakceptowane”) i nie trafia do kolejki ćwiczeń. W bazie status zmienia się na `rejected` (soft-delete); fizyczne `DELETE` nie jest wymagane w pierwszej wersji.
+
 - FR-005: Rodzic może przeglądać przygotowane i zaakceptowane fiszki bez pełnej edycji treści w MVP. Priority: must-have
   > Socratic: Counter-argument considered: "Na start wystarczyłoby zaakceptuj/odrzuć, bez pełnej edycji." Resolution: revised; pełna edycja fiszek nie należy do MVP.
 
@@ -105,6 +107,30 @@ Aplikacja dobiera i dopuszcza do ćwiczeń tylko taki materiał czytelniczy, kt�
 Reguła konsumuje poziom czytania wybrany przez rodzica, ewentualną opcję bezpiecznego startu oraz decyzje akceptacji/odrzucenia fiszek. Wynikiem jest zestaw materiałów dopuszczonych do ćwiczeń i powtórek.
 
 Rodzic doświadcza tej reguły podczas generowania fiszek: propozycje AI nie są jeszcze materiałem ćwiczeniowym, dopóki nie przejdą kontroli rodzica.
+
+## Model danych i operacje CRUD
+
+MVP nie udostępnia pełnego edytora treści fiszek; zarządzanie materiałem odbywa się przez cztery operacje na trwałych danych w Supabase.
+
+### Fiszki (główna encja produktowa)
+
+| Operacja   | Działanie rodzica                                                           | Implementacja                                                                    |
+| ---------- | --------------------------------------------------------------------------- | -------------------------------------------------------------------------------- |
+| **Create** | Generuje nową partię propozycji AI                                          | `generateFlashcards()` → `POST /api/flashcards/generate`                         |
+| **Read**   | Przegląda partie w przygotowaniu i zaakceptowany materiał                   | `listDraftBatches()`, `listAcceptedFlashcards()`                                 |
+| **Update** | Akceptuje partię — fiszki przechodzą do ćwiczeń i dostają stan SRS          | `acceptBatch()` → `POST /api/flashcards/accept`                                  |
+| **Delete** | Odrzuca partię — fiszki znikają z widoku rodzica i nie trafiają do powtórek | `rejectBatch()` → `POST /api/flashcards/reject` (status `rejected`, soft-delete) |
+
+Odrzucenie jest świadomym zamiennikiem twardego usuwania: wiersze pozostają w bazie ze statusem `rejected`, ale listy i endpointy ćwiczeń filtrują wyłącznie `draft` oraz `accepted`, więc odrzucony materiał jest dla rodzica usunięty z produktu.
+
+### Profil dziecka
+
+| Operacja            | Implementacja                                                             |
+| ------------------- | ------------------------------------------------------------------------- |
+| **Create / Update** | `upsertMyChild()` → `POST /api/children` (jedno dziecko na konto rodzica) |
+| **Read**            | `getMyChild()` (dashboard, API mastery/practice)                          |
+
+Usuwanie profilu dziecka nie należy do MVP — konto rodzica przechowuje jeden profil na stałe.
 
 ## Access Control
 

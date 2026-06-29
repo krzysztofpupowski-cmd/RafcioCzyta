@@ -178,6 +178,7 @@ export async function backfillAcceptedCardsWithoutSrs(
   return { updatedCount };
 }
 
+/** Soft-delete: sets status to `rejected` so cards leave parent-facing lists and practice queues (see PRD §Model danych i operacje CRUD). */
 export async function rejectBatch(
   supabase: AppSupabase,
   input: { childId: string; generationId: string },

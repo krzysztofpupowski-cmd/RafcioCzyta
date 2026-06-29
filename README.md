@@ -1,8 +1,23 @@
-# 10x Astro Starter
+# RafcioCzyta
 
-![](./public/template.png)
+Aplikacja webowa dla rodziców uczących dziecko czytania w domu: ustawienie poziomu, generacja fiszek AI, akceptacja lub odrzucenie partii oraz ćwiczenia w algorytmie powtórek (FSRS).
 
-A modern, opinionated starter template for building fast, accessible web applications.
+Szczegóły produktu: [context/foundation/prd.md](context/foundation/prd.md) · roadmapa: [context/foundation/roadmap.md](context/foundation/roadmap.md)
+
+## Operacje na danych (CRUD)
+
+Główna encja to **fiszki**. MVP nie ma edytora treści — rodzic zarządza materiałem przez generację, akceptację i odrzucenie partii.
+
+| Operacja | Co robi rodzic                                     | API / serwis                                             |
+| -------- | -------------------------------------------------- | -------------------------------------------------------- |
+| Create   | Generuje partię fiszek AI                          | `POST /api/flashcards/generate` · `generateFlashcards()` |
+| Read     | Przegląda przygotowane i zaakceptowane fiszki      | `listDraftBatches()`, `listAcceptedFlashcards()`         |
+| Update   | Akceptuje partię (materiał trafia do powtórek)     | `POST /api/flashcards/accept` · `acceptBatch()`          |
+| Delete   | Odrzuca partię (materiał znika z widoku i ćwiczeń) | `POST /api/flashcards/reject` · `rejectBatch()`          |
+
+**Odrzucenie = usuwanie w MVP:** `rejectBatch()` ustawia status `rejected` (soft-delete). Fiszki nie są fizycznie kasowane z bazy, ale nie pojawiają się w listach ani w kolejce ćwiczeń — to zamierzona semantyka Delete opisana w PRD (§Model danych i operacje CRUD).
+
+Profil dziecka: Create/Read/Update przez `POST /api/children` i `upsertMyChild()` (jedno dziecko na konto).
 
 ## Tech Stack
 
@@ -111,7 +126,13 @@ npx supabase stop
 
 The local Studio UI is available at `http://localhost:54323`.
 
-No database tables or migrations are required — this project uses Supabase Auth's built-in `auth.users` table only.
+6. Apply domain migrations (children, flashcards, practice sessions, RLS):
+
+```bash
+npx supabase db reset --local
+```
+
+Migrations live in `supabase/migrations/`. Auth uses Supabase `auth.users`; app tables are in the `public` schema.
 
 ### Using a cloud Supabase project instead
 
@@ -139,12 +160,12 @@ Users can then sign in immediately after sign-up without clicking a confirmation
 
 ### Auth routes
 
-| Route                 | Description                                                             |
-| --------------------- | ----------------------------------------------------------------------- |
-| `/auth/signin`        | Email/password sign-in form                                             |
-| `/auth/signup`        | Email/password sign-up form                                             |
-| `/auth/confirm-email` | Post-signup "check your inbox" page                                     |
-| `/dashboard`          | Example protected page (redirects to `/auth/signin` if unauthenticated) |
+| Route                 | Description                                                                                       |
+| --------------------- | ------------------------------------------------------------------------------------------------- |
+| `/auth/signin`        | Email/password sign-in form                                                                       |
+| `/auth/signup`        | Email/password sign-up form                                                                       |
+| `/auth/confirm-email` | Post-signup "check your inbox" page                                                               |
+| `/dashboard`          | Panel rodzica: poziom dziecka, fiszki, ćwiczenia (redirects to `/auth/signin` if unauthenticated) |
 
 Route protection is handled in `src/middleware.ts`. Add paths to the `PROTECTED_ROUTES` array there to require authentication.
 
